@@ -1,0 +1,110 @@
+/*encoding: utf-8*/
+
+.IM_sizer {
+ position: absolute;
+ right: 5px;
+ width: 10px;
+ height: 10px;
+ background: transparent url('../style_images/sizer.png') no-repeat 0 0;	
+ cursor:se-resize;
+ z-index:20;
+}
+   
+.IM_close {
+ width: 17px;
+ height: 17px;
+ background: transparent url('../style_images/close.png') no-repeat 0 0;			
+ position:absolute;
+ top:3px;
+ right:8px;
+ cursor:pointer;
+ z-index:20;
+}
+   
+.IM_minimize {
+ width: 17px;
+ height: 17px;
+ background: transparent url('../style_images/minimize.png') no-repeat 0 0;			
+ position:absolute;
+ top:3px;
+ right:49px;
+ cursor:pointer;
+ z-index:20;
+}
+   
+.IM_detach {
+ width: 17px;
+ height: 17px;
+ background: transparent url('../style_images/detach.png') no-repeat 0 0;			
+ position:absolute;
+ top:3px;
+ right:70px;
+ cursor:pointer;
+ z-index:20;
+}
+   
+.IM_maximize {
+ width: 17px;
+ height: 17px;
+ background: transparent url('../style_images/maximize.png') no-repeat 0 0;			
+ position:absolute;
+ top:3px;
+ right:28px;
+ cursor:pointer;
+ z-index:20;
+}
+
+.IM_titleBar {
+ height: 23px;
+ background: transparent url('../style_images/') no-repeat 0 0;			
+ position:absolute;
+ top:3px;
+ left:5px;
+ color:white;
+ cursor:pointer;
+ z-index:20;
+}
+   
+.IM_close_inactive {
+ width: 17px;
+ height: 17px;
+ background: transparent url('../style_images/close_inactive.png') no-repeat 0 0;			
+ position:absolute;
+ top:3px;
+ right:8px;
+ cursor:pointer;
+ z-index:20;
+}
+   
+.IM_minimize_inactive {
+ width: 17px;
+ height: 17px;
+ background: transparent url('../style_images/minimize_inactive.png') no-repeat 0 0;			
+ position:absolute;
+ top:3px;
+ right:49px;
+ cursor:pointer;
+ z-index:20;
+}
+   
+.IM_detach_inactive {
+ width: 17px;
+ height: 17px;
+ background: transparent url('../style_images/detach_inactive.png') no-repeat 0 0;			
+ position:absolute;
+ top:3px;
+ right:70px;
+ cursor:pointer;
+ z-index:20;
+}
+   
+.IM_maximize_inactive {
+ width: 17px;
+ height: 17px;
+ background: transparent url('../style_images/maximize_inactive.png') no-repeat 0 0;			
+ position:absolute;
+ top:3px;
+ right:28px;
+ cursor:pointer;
+ z-index:20;
+}

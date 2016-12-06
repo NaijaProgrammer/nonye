@@ -1,0 +1,341 @@
+<?php $user_is_logged_in = UserModel::user_is_logged_in(); ?>
+<!--<nav class="navbar navbar-inverse navbar-static-top" role="navigation">-->
+<nav id="main-navigation" class="navbar navbar-inverse navbar-fixed-top main-navigation-bottom-border" role="navigation">
+ <div class="container">
+  <div class="navbar-header">
+   <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbarCollapse">
+    <span class="sr-only">Toggle navigation</span>
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+   </button>
+   <a class="navbar-brand" href="<?php //echo sanitize_html_attribute(get_site_url()); ?>"><?php //echo get_site_name(); ?></a>
+  </div>         
+  <div class="collapse navbar-collapse" id="navbarCollapse">
+   <?php /*
+   <ul class="nav navbar-nav">
+    <li><a href="#">About</a></li>
+	<li><a href="#">Blog</a></li>
+	<li><a href="#">Contact</a></li>
+    <li><a href="#">FAQ</a></li>
+   </ul>
+   */?>
+   <ul class="nav navbar-nav">
+    <?php if($user_is_logged_in): ?>
+	<li class="dropdown cursor-pointer authenticated-user-menu">
+	 <a class="dropdown-toggle glyphicon glyphicon-user" data-toggle="dropdown" aria-expanded="false"></a>
+	 <ul class="dropdown-menu" role="menu">
+	  <li title="My account"><a href="<?php echo get_user_profile_url(); ?>"><span class="fa fa-icon fa-th-list"></span>&nbsp;My account</a></li>
+	  <li title="Registered users"><a href="<?php echo get_site_url(); ?>/users"><span class="fa fa-icon fa-users"></span>&nbsp; Users</a></li>
+	  <li title="Sign out"><a href="<?php echo get_site_url(); ?>/logout"><span class="fa fa-icon fa-sign-out"></span>&nbsp; Sign out</a></li>
+	 </ul>
+	</li>
+	<?php else: ?>
+	<li class="user-auth-btn" title="Login or Signup"><a class="glyphicon glyphicon-user cursor-pointer"></a></li>
+	<?php endif; ?>
+   </ul>
+   <ul class="nav navbar-nav full-effect">
+	<li class="hidden-xs hidden-sm">
+	 <div id="user-notification-dropdown-container" class="dropdown dropdown-lg">
+	  <span class="notification-counter"></span>
+	  <span id="notifications-toggler" class="glyphicon glyphicon-bell cursor-pointer"  data-toggle="dropdown" aria-expanded="false"></span>
+	  <div class="dropdown-menu dropdown-menu-left" role="menu">
+	   <div>
+	   <ul id="notifications"><ul>
+	   </div>
+	  </div>
+	 </div>
+	</li>
+   </ul>
+   <ul class="nav navbar-nav pull-right">
+	<li class="hidden-xs hidden-sm">
+     <div class="input-group" id="adv-search">
+      <input id="post-search-keyword" type="text" class="form-control" placeholder="Find posts (Enter keyword to search for)" />
+      <div class="input-group-btn">
+       <div class="btn-group" role="group">
+        <div class="dropdown dropdown-lg">
+         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>
+         <div class="dropdown-menu dropdown-menu-right" role="menu">
+          <form id="post-search-form" class="form-horizontal" role="form">
+		   <?php /*
+           <div class="form-group">
+            <label for="filter">Filter by</label>
+            <select class="form-control">
+             <option value="0" selected>All Posts</option>
+             <option value="1">Featured</option>
+             <option value="2">Most popular</option>
+             <option value="3">Top rated</option>
+             <option value="4">Most commented</option>
+            </select>
+           </div>
+		   */?>
+		   
+           <div class="form-group">
+            <label for="authors">Authors</label>
+            <input id="post-search-filter-authors" class="form-control" type="text" placeholder="Type to filter by authors' display name" />
+           </div>
+           <div class="form-group">
+            <label for="forums">Forums</label>
+            <input id="post-search-filter-forums" class="form-control" type="text" placeholder="Type to filter by forums"/>
+           </div>
+		   <div class="form-group">
+            <label for="categories">Categories</label>
+            <input id="post-search-filter-categories" class="form-control" type="text" placeholder="Type to filter by categories" />
+           </div>
+		   <div class="form-group">
+            <label for="tags">Tags</label>
+            <input id="post-search-filter-tags" class="form-control" type="text" placeholder="Type to filter by tags" />
+           </div>
+		   <div id="post-search-status-message" class="text-center"></div>
+           <button type="submit" class="btn btn-primary pull-right pl25 pr25 post-search-btn" style="border-radius:3px;"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+          </form>
+         </div>
+        </div>
+        <button type="button" class="btn btn-primary pr25 post-search-btn"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+       </div>
+      </div>
+     </div>
+	</li>
+	<li>
+	 <button class="<?php echo $user_is_logged_in ? 'post-editor-opener' : 'user-auth-btn'; ?> cursor-pointer btn btn-primary btn-small widget-button" data-parent-id="0" title="Start a new topic">
+	 + New Topic
+	 </button>
+	</li>
+   </ul>
+  </div>
+ </div>
+</nav>
+<div id="notice-bar">
+ <span id="notice-bar-content-area"></span>
+ <span id="notice-bar-dismisser" class="float-right cursor-pointer ml10 mr10" onclick="slideUp('notice-bar');" title="Dismiss">&times;</span>
+</div>
+<script>
+function notify(msg,opts)
+{
+	opts     = opts || {};
+	duration = opts.duration || 5;
+	$Html('notice-bar-content-area', msg);
+	
+	if( $Style('notice-bar').display != 'block' )
+	{
+		slideDown('notice-bar', {
+			'onSlideDownEnd' : function(){
+				setTimeout( function(){slideUp('notice-bar')}, duration * 1000 );
+			}
+		});
+	}
+}
+</script>
+
+
+<link rel="stylesheet" href="<?php echo SITE_URL; ?>/js/lib/jquery-tag-editor/jquery.tag-editor.css">
+<script src="<?php echo SITE_URL; ?>/js/lib/jquery-ui/jquery-ui.min.js"></script>
+<script src="<?php echo SITE_URL; ?>/js/lib/jquery-tag-editor/jquery.caret.min.js"></script>
+<script src="<?php echo SITE_URL; ?>/js/lib/jquery-tag-editor/jquery.tag-editor.min.js"></script>
+<?php //see: http://stackoverflow.com/a/15088879/1743192 ?>
+
+<?php if(file_exists(SITE_DIR. '/cache/users-cache.php')): ?>
+<?php include SITE_DIR. '/cache/users-cache.php'; ?>
+<?php
+$users = array();
+foreach($users_cache AS $user_data)
+{  
+	$users[] = $user_data['username'];
+}
+
+$users_str = json_encode($users, true);
+?>
+<script>
+var availUsers = JSON.parse('<?php echo $users_str; ?>');
+$('#post-search-filter-authors').tagEditor({
+	forceLowercase : false,
+	placeholder    : 'Type to filter by authors\' display name',
+	maxTags        : 5,
+	autocomplete   : {
+		delay    : 0, // show suggestions immediately
+		position : { collision: 'flip' }, // automatic menu position up/down
+		source   : availUsers
+	},
+	beforeTagSave : function(field, editor, tags, tag, val)
+	{
+		//prevent user from entering forums that don't exist
+		if(!Site.Util.inArray(val, availUsers))
+		{
+			return false;
+		}
+
+		return val;
+	}
+});
+</script>
+<?php endif; ?>
+<?php if(file_exists(SITE_DIR. '/cache/forums-cache.php')): ?>
+<?php include SITE_DIR. '/cache/forums-cache.php'; ?>
+<?php
+$forums = array();
+foreach($forums_cache AS $forum_data)
+{  
+	$forums[] = $forum_data['name'];
+}
+
+$forums_str = json_encode($forums, true);
+?>
+<script>
+var availForums = JSON.parse('<?php echo $forums_str; ?>');
+$('#post-search-filter-forums').tagEditor({
+	forceLowercase : false,
+	placeholder    : 'Type to filter by forums',
+	maxTags        : 5,
+	autocomplete   : {
+		delay    : 0, // show suggestions immediately
+		position : { collision: 'flip' }, // automatic menu position up/down
+		source   : availForums
+	},
+	beforeTagSave : function(field, editor, tags, tag, val)
+	{
+		//prevent user from entering forums that don't exist
+		if(!Site.Util.inArray(val, availForums))
+		{
+			return false;
+		}
+
+		return val;
+	}
+});
+</script>
+<?php endif; ?>
+<?php if(file_exists(SITE_DIR. '/cache/categories-cache.php')): ?>
+<?php include SITE_DIR. '/cache/categories-cache.php'; ?>
+<?php
+$categories = array();
+foreach($categories_cache AS $category_data)
+{  
+	$categories[] = $category_data['name'];
+}
+
+$categories_str = json_encode($categories, true);
+?>
+<script>
+var availCategories = JSON.parse('<?php echo $categories_str; ?>');
+$('#post-search-filter-categories').tagEditor({
+	forceLowercase : false,
+	placeholder    : 'Type to filter by categories',
+	maxTags        : 5,
+	autocomplete   : {
+		delay    : 0, // show suggestions immediately
+		position : { collision: 'flip' }, // automatic menu position up/down
+		source   : availCategories
+	},
+	beforeTagSave : function(field, editor, tags, tag, val)
+	{
+		//prevent user from entering forums that don't exist
+		if(!Site.Util.inArray(val, availCategories))
+		{
+			return false;
+		}
+
+		return val;
+	}
+});
+</script>
+<?php endif; ?>
+<?php if(file_exists(SITE_DIR. '/cache/tags-cache.php')): ?>
+<?php include SITE_DIR. '/cache/tags-cache.php'; ?>
+<?php
+$tags = array();
+foreach($tags_cache AS $tag_data)
+{  
+	$tags[] = $tag_data['name'];
+}
+
+$tags_str = json_encode($tags, true);
+?>
+<script>
+var availTags = JSON.parse('<?php echo $tags_str; ?>');
+$('#post-search-filter-tags').tagEditor({
+	forceLowercase : false,
+	placeholder    : 'Type to filter by tags',
+	maxTags        : 5,
+	autocomplete   : {
+		delay    : 0, // show suggestions immediately
+		position : { collision: 'flip' }, // automatic menu position up/down
+		source   : availTags
+	},
+	beforeTagSave : function(field, editor, tags, tag, val)
+	{
+		//prevent user from entering forums that don't exist
+		if(!Site.Util.inArray(val, availTags))
+		{
+			return false;
+		}
+
+		return val;
+	}
+});
+</script>
+<?php endif; ?>
+<script>
+$('.post-search-btn').on('click', function(e){
+	e.preventDefault();
+	
+	var statusMsgFieldID = 'post-search-status-message';
+	
+	var title      = $('#post-search-keyword').val();
+	var authors    = $('#post-search-filter-authors').tagEditor('getTags')[0].tags; //.val();
+	var forums     = $('#post-search-filter-forums').tagEditor('getTags')[0].tags; //.val();
+	var categories = $('#post-search-filter-categories').tagEditor('getTags')[0].tags; //.val();
+	var tags       = $('#post-search-filter-tags').tagEditor('getTags')[0].tags; //.val();
+	
+	$.ajax(ajaxURL, {
+		method : 'GET',
+		cache  : true,
+		data   : { 
+			'p'            : 'posts', 
+			'search-posts' : true, 
+			'title'        : title,
+			'authors'      : JSON.stringify(authors),
+			'forums'       : JSON.stringify(forums),
+			'categories'   : JSON.stringify(categories),
+			'tags'         : JSON.stringify(tags)
+		},
+		error : function(jqXHR, status, error){
+			if(isDevServer)
+			{
+				console.log( 'Post search filter attempt status : ' + status + '\r\nerror : ' + error );
+			}
+			
+			displayStatusMessage(statusMsgFieldID, 'An unknown error occurred. Please try again.', 'error');
+		},
+		success  : function(data, status, jqXHR){ console.log(data);
+		
+			if(isDevServer)
+			{
+				console.log( 'Post search filter attempt status : ' + status + '\r\nsuccess : ' + data );
+			}
+			
+			data = JSON.parse(data);
+			
+			if(data.length <= 0)
+			{
+				return;
+			}
+			
+			var viewType = ( (Site.Util.getQueryStringParameterValue('v') == 'list') ? 'list' : 'grid' );
+			var newURL   = siteURL + '/posts/search/'       +
+			'?title='      + encodeURIComponent(title)      + 
+			'&authors='    + encodeURIComponent(authors)    + 
+			'&forums='     + encodeURIComponent(forums)     + 
+			'&categories=' + encodeURIComponent(categories) + 
+			'&tags='       + encodeURIComponent(tags);
+			
+			history.pushState(null, "", newURL );
+			displayPosts(data, viewType, 'overwrite');
+		},
+		complete : function(jqXHR, status)
+		{
+			//unsetAsProcessing(btnID);
+			//enable(btnID);
+		}
+	});
+})
+</script>

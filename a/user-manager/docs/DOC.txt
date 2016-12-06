@@ -1,0 +1,16 @@
+login-type-codes: 
+
+1=Manual login; 
+
+2=Auto-login from remember me; 
+
+3=Auto-login from browser (mistakenly) closed and re-opened when user session is still valid;
+
+
+
+logout-type-codes:
+
+1=Manual logout
+
+2=Auto-logout from session death
+

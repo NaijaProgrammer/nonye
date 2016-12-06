@@ -1,0 +1,29 @@
+#chatRoomMessageWindow{
+background-color: white;
+position: absolute;
+top: 30px; 
+left: 5px;
+padding-left: 2px;
+padding-right: 2px;
+overflow-y: auto;
+overflow-x: auto;
+border: none;
+}
+
+#roomUsersListPane{
+position: absolute;
+display: block;
+width: 150px; 
+top: 30px;
+right: 5px;
+background-color: #ffffff;
+border-width: 1px;
+border-style: solid;
+border-color: #bfbcb8 #e0dcd8 #e0dcd8 #bfbcb8;
+border-top: none;
+padding-left: 2px;
+padding-right: 2px;
+text-align: left;
+overflow-x: hidden;
+overflow-y: auto;
+}

@@ -1,0 +1,208 @@
+{
+
+   "menus": [
+		{
+			"command": "formatblock",
+			"header": "- formatting -",
+			"values": {
+				"h1": "Title 1 &lt;h1&gt;",
+				"h2": "Title 2 &lt;h2&gt;",
+				"h3": "Title 3 &lt;h3&gt;",
+				"h4": "Title 4 &lt;h4&gt;",
+				"h5": "Title 5 &lt;h5&gt;",
+				"h6": "Title 6 &lt;h6&gt;",
+				"p": "Paragraph &lt;p&gt;",
+				"pre": "Preformatted &lt;pre&gt;"
+			}
+		}, 
+
+		{
+			"command": "fontname",
+			"header": "- font -",
+			"values": [
+				"Arial",
+				"Arial Black",
+				"Courier New",
+				"Times New Roman"
+			]
+		}, 
+
+		{
+			"command": "fontsize",
+			"header": "- size -",
+			"values": {
+				"1": "Very small",
+				"2": "A bit small",
+				"3": "Normal",
+				"4": "Medium-large",
+				"5": "Big",
+				"6": "Very big",
+				"7": "Maximum"
+			}
+		} , 
+
+		{
+			"command": "forecolor",
+			"header": "- text color -",
+			"values": {
+				"Red": "Red",
+                                "green": "Green",
+				"blue": "Blue",
+				"white": "White",
+				"black": "Black"
+			}
+		}, 
+
+		{
+			"command": "backcolor",
+			"header": "- hi-lite color-",
+			"values": {	
+				"red": "Red",
+				"green": "Green",
+                                "blue": "Blue",
+                                "white": "White",
+				"black": "Black"
+			}
+		}
+	],
+
+   "buttons" : 
+   [
+
+      {
+       'id'     : 'btnRedo',
+       'image'  : 'redo',
+       'title'  : 'Redo',
+       'command': 'redo'
+      },
+
+      {
+       'id'     : 'btnUndo',
+       'image'  : 'undo',
+       'title'  : 'Undo',
+       'command': 'undo'
+      },
+
+      {
+       'id'     : 'btnBold',          
+       'image'  : 'text_bold',           
+       'title'  : 'Bold',
+       'command': 'bold'
+      },
+         
+      {
+       'id'     : 'btnItalic',        
+       'image'  : 'text_italic',       
+       'title'  : 'Italic',
+       'command': 'italic'
+      },
+                
+      {
+       'id'     : 'btnUnderline',     
+       'image'  : 'text_underline',      
+       'title'  : 'Underline',
+       'command': 'underline'
+      },  
+
+      {
+       'id'     : 'btnAlignLeft',     
+       'image'  : 'text_align_left',     
+       'title'  : 'Left',
+       'command': 'justifyleft'
+      },       
+
+      {
+       'id'     : 'btnAlignCenter',   
+       'image'  : 'text_align_center', 
+       'title'  : 'Center',
+       'command': 'justifycenter'
+      }, 
+                  
+      {
+       'id'     : 'btnAlignJustify',  
+       'image'  : 'text_align_justify',  
+       'title'  : 'Justify',
+       'command': 'justifyfull'
+      },    
+
+      {
+       'id'     : 'btnAlignRight',    
+       'image'  : 'text_align_right',  
+       'title'  : 'Right',
+       'command': 'justifyright'
+      } ,               
+                  
+      {
+       'id'     : 'btnHR',            
+       'image'  : 'text_horizontalrule', 
+       'title'  : 'Rule',
+       'command': 'inserthorizontalrule'
+      },       
+
+      {
+       'id'     : 'btnUL',            
+       'image'  : 'text_list_bullets', 
+       'title'  : 'UL',
+       'command': 'insertunorderedlist'
+      }, 
+                  
+      {
+       'id'     : 'btnOL',            
+       'image'  : 'text_list_numbers',   
+       'title'  : 'OL',
+       'command': 'insertorderedlist'
+      },  
+
+      {
+       'id'     : 'btnBlockquote',
+       'image'  : 'quote',
+       'title'  : 'Quotation',
+       'command': 'formatblock',
+       'value'  : 'blockquote'
+      }, 
+
+      {
+       'id'     : 'btnRemoveIndentation',
+       'image'  : 'text_indent_remove',
+       'title'  : 'Remove indentation',
+       'command': 'outdent'
+       
+      }, 
+ 
+      {
+       'id'     : 'btnAddIndentation',
+       'image'  : 'text_indent',
+       'title'  : 'Add indentation',
+       'command': 'indent'
+      },  
+
+      {
+       'id'     : 'btnAddTextColor',
+       'image'  : 'textcolor',
+       'title'  : 'More Text Color',
+       'command': 'forecolor'
+      },
+
+
+      {
+       'id'     : 'btnAddBgColor',
+       'image'  : 'color_swatch',
+       'title'  : 'More Background Color',
+       'command': 'backcolor'
+      },    
+
+      {
+       'id'     : 'btnAddImage',      
+       'image'  : 'image_add',         
+       'title'  : 'Add Image',
+       'command': 'insertimage'
+      },
+                  
+      {
+       'id'     : 'btnAddLink',       
+       'image'  : 'link',                
+       'title'  : 'Hyperlink',
+       'command': 'createLink'
+      }
+   ]
+}

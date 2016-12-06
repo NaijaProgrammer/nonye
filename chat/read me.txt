@@ -1,0 +1,4 @@
+1. Implement functions in file 'includes/custom/custom_functions.php'
+2. Install by navigating to  the install folder, e.g : 'host.domain.com/chat_app_folder/install/'
+3. Add chat_loader.php to the head of your page(s) where you want the chat functionality using the script tag : <script type="text/javascript" src="path_to_chat_dir/chat_loader.php"></script>
+4. Done!!!

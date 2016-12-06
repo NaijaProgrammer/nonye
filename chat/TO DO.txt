@@ -1,0 +1,10 @@
+remember to remove Temporary block from ajax_get_buddies.php
+
+
+Modifications to my Site's version
+1. change chat class
+2. Alter 'chat' table to include 'recipint_online' column
+3. add is_online function to custom functions
+4. add userName to chat_loader.php
+5. change 'js' folder completely
+6. change popup folder completely

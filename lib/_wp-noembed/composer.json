@@ -1,0 +1,16 @@
+{
+	"name"       : "johnbillion/noembed",
+	"description": "WordPress plugin that adds support for Noembed.com embeds",
+	"homepage"   : "https://github.com/johnbillion/noembed/",
+	"type"       : "wordpress-plugin",
+	"license"    : "GPL-2.0+",
+	"authors"    : [
+		{
+			"name"    : "John Blackbourn",
+			"homepage": "https://johnblackbourn.com/"
+		}
+	],
+	"require": {
+		"composer/installers": "~1.0"
+	}
+}

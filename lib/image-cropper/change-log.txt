@@ -1,0 +1,9 @@
+1. July 25, 2016 16:51
+Updated image-cropper.php to auto-detect if jQuery is already present on the page.
+This is to avoid conflict with the version of jQuery being used by the site.
+Possible issues that may arise as a result of this update:
+	plugin jquery version is 1.9.0, if site is using an unsupported version, plugin may not work properly
+
+
+2. Same date as 1
+Added ability to specify extra data to send along with the form for cropping using the "post_data" member

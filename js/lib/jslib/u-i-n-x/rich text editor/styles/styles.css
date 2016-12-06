@@ -1,0 +1,33 @@
+div.rte-editbox {
+ border: 1px #aaaaaa solid;
+ padding: 5px;
+ overflow: auto;/*scroll;*/
+}
+.rteControlsContainer{
+ padding: 5px;
+ background-color: #eeeeee;
+ display: inline-block;
+ border: 1px solid #aaaaaa;
+}
+.rteControlBtns{
+ background-color: transparent;
+ cursor: pointer;
+ padding: 5px;
+ margin-top: 5px;
+ margin-left: 0;
+ border: 1px solid #eeeeee;
+ border-radius: 0;
+}
+.rteControlBtns:hover{
+ background-color: #ffffff; 
+ border: 1px outset;
+ border-radius: 2px;
+}
+.rteViewModeSwitcherBox{
+ text-align: right;
+}
+.rteViewModeSwitcherBox label{
+ cursor: pointer;
+ cursor: hand;
+ font-size: 12px;
+}

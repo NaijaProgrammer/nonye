@@ -1,0 +1,5 @@
+/*
+* Edit this file to customise the display of the crop popup window
+*/
+.ui-dialog-titlebar { display:none !important; }
+.cropped-image-save-button { text-align:center; float:right; margin-top:5px;}

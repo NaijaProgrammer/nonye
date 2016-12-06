@@ -1,0 +1,14 @@
+TO DO:
+Messages to set on admin backend:
+1. successful registration
+2. Password forgot/recovery form submission
+3. Password reset success
+
+create field for setting 
+'active-theme'
+'password-min-length'
+'default-user-image-url'
+'registration-success-message'
+'registration-success-mail-sender'
+'password-recovery-mail' : {{user_email}},{{site_name}},{{password_reset_url}}, {{nonce}},
+'password-recovery-mail-sender'

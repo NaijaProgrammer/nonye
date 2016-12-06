@@ -1,0 +1,92 @@
+1. After your form, output the call to call ImageCropper::get_image_cropper($opts = array())
+2. Process the image yourself on the backend 
+   If the width and height of the uploaded image is too large,
+   you may use ImageCropper::resize_image($arr), 
+   to resize the uploaded image so it can fit in the frontend cropping container.
+3. On success, and returning an [ajax] response to the front-end script, call the js function activateImageResizer(opts)
+4. This activates the image resizer, 
+5. On clicking of the submit  button of the image resizer, it posts to the action_page argument specified in the call to get_image_cropper() in step 1
+6. In the action_page, check for the existence of the $_POST['operation'] member, and that its value is create_image_thumbnail
+7. If above is true, call ImageCropper::create_image_thumbnail($opts): e.g:
+	if( isset($_POST['operation']) && ($_POST['operation'] == 'create_image_thumbnail') )
+	{
+		ImageCropper::create_image_thumbnail($creation_data_array);
+		
+		//then, the page should return a JSON object
+		//(with one [not-really-]mandatory member named 'thumbnailUrl', pointing to the url of the cropped thumbnail)
+		//it can optionally return other members in the JSON object
+		//This json object is auto-passed to the 'crop_success_callback' js function specified in the call to get_image_cropper
+	}
+	
+=====Values posted by the image cropper form to the action page parameter specified in call to get_image_cropper()=====
+operation constant value: 'create_image_thumbnail'
+img_src (the url of the image to be resized
+width   (the width of the final resized image
+height  (the height of the final resized image
+x       (the horizontal point at which to begin resizing image
+y       (the vertical point at which to begin resizing the image
+NOTE: 
+These values are captured by the front-end javascript.
+You use these values on the back-end to perform the actual image cropping/resizing:
+To create a thumbnail (resize/crop an image), you have two options:
+1. call ImageCropper::create_image_thumbnail($creation_data_array);
+   This method internally calls ImageCropper::crop_image()
+   It automatically receives these values, so you don't need to specify them.
+   You only specify the special data members for this function as described below in the section dealing with the call to ImageCropper::create_image_thumbnail()
+   
+2. call ImageCropper::crop_image()
+   Then use these values for the $crop_data member values.
+
+   
+=====$data members for ImageCropper::resize_image()=====
+source_image [could be File name, url, HTML file input field name, binary string, or a GD image resource]
+destination_image_name
+destination_directory string
+width int
+height int
+save_source_image boolean
+
+	
+=====$data members for ImageCropper::get_image_cropper()=====
+plugin_url string url path to the image cropper plugin
+unique_id_prefix string 
+action_page string
+include_thumb_scale_details boolean
+crop_button_value string
+crop_success_callback string (representing a js function) [optional] 
+	On crop success, the image area select and the image on which the image area select manipulation takes place
+	are auto-dismissed by the imageCropper plugin.
+	This callback function specified here allows you do any further actions you want to do on crop success
+	the function auto-receives the server response as a json object
+	containing several values, one of which must be 'thumbnailUrl' which points to the cropped image url
+
+
+=====$data members for ImageCropper::create_image_thumbnail()===== 
+thumbnail_directory string, 
+thumbnail_name string
+save_original_image boolean
+
+
+=====$data members for ImageCropper::crop_image()=====
+source_image [could be File name, url, HTML file input field name, binary string, or a GD image resource]
+destination_directory
+destination_image_name
+width int
+height int
+x
+y
+save_source_image boolean
+
+
+=====argument values for activateImageResizer javascript function=====
+imageUrl             
+uniqueIDPrefix           
+displayCropWindowAsPopup (whether to display the crop window as a jquery dialog [default false])
+maxHeight                (maximum height allowable for cropped image [default 150])
+maxWidth                 (maximum width allowable for cropped image [default 150])
+minHeight                (minimum height allowable for cropped image [default 100])
+minWidth                 (minimum width allowable for cropped image [default 50])
+popupWidth               (maximum width of the popup [default 500])
+popupHeight              (maximum height of the popup [default 500])
+/*inputContainerID         (where to display the image that will have the resize handles for image selection [optional])*/
+previewContainerID       (where to display the image selection preview [optional])

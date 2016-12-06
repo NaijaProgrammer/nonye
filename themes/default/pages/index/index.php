@@ -1,0 +1,1 @@
+<?php //the index controller loads and executes the posts controller

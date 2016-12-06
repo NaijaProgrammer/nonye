@@ -1,0 +1,7 @@
+currFlWin //in floatingWindow.js' create()
+AWLCurrentWindow //in focusManager.js' reFillOpenConversationsStack()
+winToLoad = []; //in detachManager.js
+pwc = 0; //in detachManager.js
+detachedWindowsIds = []; //in detachManager.js
+hoverTarget ;//in buddiesHandler.js
+buddiesGetter: //in buddiesHandler.js

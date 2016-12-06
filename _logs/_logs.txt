@@ -1,0 +1,6 @@
+Aug. 30, 2015 12:20PM:
+Site long delay in loading caused by hidden .git/ directory in lib/pcl dir,
+so, when lib/pcl/ini.php autoloads the lib/pcl directory contents,
+the files, directories and sub-directories in the .git/ directory are also loaded,
+and there are a lot of them, leading to a longer time for the autoload function
+to loop through all of them.

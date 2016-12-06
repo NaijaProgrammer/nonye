@@ -1,0 +1,21 @@
+.pager { margin: 20px 0; }
+.pager .current { border-color: #f69c55; }
+.page-numbers.current { font-weight: normal; color: #fff; background-color: #f69c55;}
+.page-numbers {
+    color: #777;
+    display: block;
+    float: left;
+    text-decoration: none;
+    font-size: 12px;
+    color: #888;
+    margin-right: 5px;
+    padding: 4px 8px;
+    border: 1px solid #eee;
+}
+.pager a>span {
+    -webkit-transition: color 0.15s ease, background 0.15s ease, border 0.15s ease;
+    -moz-transition: color 0.15s ease, background 0.15s ease, border 0.15s ease;
+    -ms-transition: color 0.15s ease, background 0.15s ease, border 0.15s ease;
+    -o-transition: color 0.15s ease, background 0.15s ease, border 0.15s ease;
+}
+.pager li > a, .pager li>span { border-radius: 0; }

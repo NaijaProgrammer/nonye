@@ -1,0 +1,26 @@
+RewriteEngine On
+#RewriteCond %{HTTP_HOST} !^www\.
+#RewriteRule ^(.*)$ http://www.%{HTTP_HOST}/$1 [R=301,L]
+
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_FILENAME} !-d
+#RewriteRule !\.(js|ico|gif|jpg|css)$ /sites/zamaju-forums/index.php [L]
+
+RewriteCond %{SCRIPT_FILENAME} !-f
+RewriteCond %{SCRIPT_FILENAME} !-d
+RewriteRule ^$ index.php?URI=$1 [L,QSA]
+
+RewriteCond %{SCRIPT_FILENAME} !-f
+RewriteCond %{SCRIPT_FILENAME} !-d
+RewriteRule ^(.*)/? index.php?URI=$1 [L,QSA]
+
+#Prevent Direct Access to files
+<FilesMatch "(?i)((\.tpl|\.ini|\.log|(?<!robots)\.txt))">
+ Order deny,allow
+ Deny from all
+</FilesMatch>
+
+Options +FollowSymlinks
+
+#Prevent Directoy listing 
+Options -Indexes

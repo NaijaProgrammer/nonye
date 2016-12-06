@@ -1,0 +1,11 @@
+.pm_messageWindow{
+background: white;
+position: absolute;
+top: 30px; 
+left: 5px;
+padding-left: 2px;
+padding-right: 2px;
+overflow-y: auto;
+overflow-x: auto;
+border: none;
+}

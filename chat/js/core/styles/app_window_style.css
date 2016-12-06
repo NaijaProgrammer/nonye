@@ -1,0 +1,160 @@
+#im_container{position: relative; font-family: serif, sans-serif, verdana;}
+.pm_container{position: relative; font-family: serif, sans-serif, verdana;}
+#chat_room_container{position: relative; font-family: serif, sans-serif, verdana;}
+
+.window_dragger{
+ position: absolute;
+ top: 0px;
+ width: 100%;
+ height: 23px;
+ cursor: move;
+}
+
+.top_divs{
+position: absolute;
+top: 0px;
+height: 23px;
+width: 100%;
+border-bottom: 1px solid #42464b;
+}
+
+.textEditDiv{
+background: transparent;
+position: absolute;
+left: 5px;
+height: 25px;
+}
+
+.textEditDiv .biu_imgs img{
+ margin-right: 2px;
+}
+
+.text_editor{
+position: absolute;
+top: 3px;
+left: 95px;
+margin: 0;
+padding: 0;
+z-index: 1000;
+}
+
+.text_editor li{
+margin: 0;
+padding: 0;
+list-style: none;
+float: left; 
+font: bold 10px Arial;
+margin-left: 4px;
+border: none; /*1px solid #42464b;*/
+}
+
+.text_editor li a{
+background-color: #272728;
+background-repeat: no-repeat;
+background-position: center right;
+display: block; /*IMP*/
+margin: 0;
+color: #fff;
+text-decoration: none;
+border: 1px solid #373b41;
+height: 12px;
+padding: 4px 5px;
+text-align: left;
+}
+
+.text_editor div{
+position: absolute; 
+visibility: hidden; 
+margin: 0;
+padding: 0;
+background: #eaebd8;
+border: 1px solid transparent; 
+height: 60px; 
+overflow-y: auto;
+overflow-x: hidden;
+}
+
+.text_editor div a{
+position: relative;
+display: block;
+margin: 0;
+padding: 5px 10px;
+padding-left: 2px; 
+white-space: nowrap;
+text-align: left;
+text-decoration: none;
+background-color: #272728;
+color: #ffffff;
+font: 11px Arial;
+}
+
+.text_editor div a:hover{
+background: #373b41;
+color: #ffffff; /*#ff;*/
+}
+
+.text_editor div.fontsList a{
+width: 100px; 
+}
+
+.text_editor div.fontSizeList a, .text_editor div.fontColourList a{
+width: 20px; 
+}
+
+.text_editor div.emoteList a{
+ width: 25px;
+ height: 15px;
+}
+
+.textForm{
+position: absolute;
+height: 50px; 
+left: 5px;
+}
+
+textarea{
+height: 55px; 
+background: #ffffff;
+}
+
+.textForm .send_button, .textForm .reset_button{
+ position: absolute;
+ width: 50px;
+}
+
+.creator_info{
+  font-family: serif, sans-serif, verdana;
+  position: absolute;
+  color: white;
+}
+
+.creator_info a:link, creator_info a:visited{
+ color: silver;
+ text-decoration: none;
+ font-weight: normal;
+}
+
+.creator_info a:hover{
+ color: white;
+}
+
+.clear{
+ clear: both;
+}
+
+.errorDiv{
+ position: absolute; 
+ left: 10px;
+ top: 30px; 
+ width: 307px;
+ height: 20px;
+ color: red;
+ font-weight: bold;
+ background-color: silver;
+ padding-left: 5px;
+ padding-right: 5px;
+ z-index: 1;
+ opacity: .95;
+ filter: alpha(opacity=95);
+ display: none;
+}

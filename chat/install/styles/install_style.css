@@ -1,0 +1,12 @@
+form div label{
+ float: left;
+ width: 150px;
+}
+form input{
+ margin-bottom: 20px;
+ width: 200px;
+}
+.req{
+ color: orange;
+ font-size: 12px;
+}

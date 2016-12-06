@@ -1,0 +1,74 @@
+
+.hex-wrap {
+  margin-left: auto;
+  margin-right: auto;
+  float: none;
+  margin-right: 15px;
+
+}
+.hex-wrap {
+  position: relative;
+  text-align: left;
+}
+.hex::before {
+  -webkit-transform: rotate(60deg);
+  -moz-transform: rotate(60deg);
+  -ms-transform: rotate(60deg);
+  -o-transform: rotate(60deg);
+  transform: rotate(60deg);
+}
+.hex::before, .hex::after {
+  background: inherit;
+  border-radius: inherit;
+  content: "";
+  height: inherit;
+  position: absolute;
+  width: inherit;
+}
+.hex::after {
+  -webkit-transform: rotate(-60deg);
+  -moz-transform: rotate(-60deg);
+  -ms-transform: rotate(-60deg);
+  -o-transform: rotate(-60deg);
+  transform: rotate(-60deg);
+}
+.hex::before, .hex::after {
+  background: inherit;
+  border-radius: inherit;
+  content: "";
+  height: inherit;
+  position: absolute;
+  width: inherit;
+}
+.small .hex {
+  height: 72px;
+  width: 50px;
+}
+.hex {
+  border-radius: 11px;
+  margin: 0 auto;
+  position: relative;
+  -webkit-transform: rotate(30deg);
+  -moz-transform: rotate(30deg);
+  -ms-transform: rotate(30deg);
+  -o-transform: rotate(30deg);
+  transform: rotate(30deg);
+  transition: opacity 0.5s ease 0s;
+}
+.small i {
+  font-size: 40px;
+  text-align: center;
+  width: 40px;
+}
+.hex i {
+  color: #fff;
+  left: 15%;
+  position: absolute;
+  top: 30%;
+  -webkit-transform: rotate(-30deg);
+  -moz-transform: rotate(-30deg);
+  -ms-transform: rotate(-30deg);
+  -o-transform: rotate(-30deg);
+  transform: rotate(-30deg);
+  z-index: 9999;
+}

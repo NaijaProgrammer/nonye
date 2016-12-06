@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns#">
+ <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge; chrome=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	
+    <title></title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="" />
+	<meta name="robots" content="all" />
+	
+	<link rel="stylesheet" href="css/bootstrap.min.css" />
+	<link rel="stylesheet" href="../../css/font-awesome-4.1.0.css" />
+	<link rel="stylesheet" href="../../css/util.css" />
+    <link rel="stylesheet" href="css/theme.css" />
+	<script src="js/jquery-2.2.1.min.js"></script>
+	<script src="js/functions.js"></script>
+ </head>
+ <body>
+  <div id="screen-overlay"></div>
+  <div id="modal-content">Hello</div>
+  <div class="container" style="margin-top:35px">
+  
+  <div class="row">
+  <ol class="pull-right where-am-i">
+    <li><a href="#" class="view-switcher" data-display="categories-list">Categories List</a></li>
+    <li class="active"><a href="" class="view-switcher" data-display="posts-list">Topics List</a></li>
+  </ol>
+  </div>
+  
+  <section id="categories-list" style="display:none;">
+  <div class="page-header page-heading">
+    <h1 class="pull-left">Forums</h1>
+    <ol class="breadcrumb pull-right where-am-i">
+      <li><a href="#">Forums</a></li>
+      <li class="active">List of topics</li>
+    </ol>
+    <div class="clearfix"></div>
+  </div>
+  <p class="lead">This is the right place to discuss any ideas, critics, feature requests and all the ideas regarding our website. Please follow the forum rules and always check FAQ before posting to prevent duplicate posts.</p>
+ 
+  <table class="table forum table-striped">
+    <thead>
+      <tr>
+        <th class="cell-stat"></th>
+        <th><h3>Forum Name</h3></th>
+        <th class="cell-stat text-center hidden-xs hidden-sm">Topics</th>
+        <th class="cell-stat text-center hidden-xs hidden-sm">Posts</th>
+        <th class="cell-stat-2x hidden-xs hidden-sm">Last Post</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="text-center"><i class="fa fa-question fa-2x text-primary"></i></td>
+        <td><h4><a href="#">Category 1</a><br><small>Some description</small></h4></td>
+        <td class="text-center hidden-xs hidden-sm"><a href="#">9 542</a></td>
+        <td class="text-center hidden-xs hidden-sm"><a href="#">89 897</a></td>
+        <td class="hidden-xs hidden-sm">by <a href="#">John Doe</a><br><small><i class="fa fa-clock-o"></i> 3 months ago</small></td>
+      </tr>
+      <tr>
+        <td class="text-center"><i class="fa fa-exclamation fa-2x text-danger"></i></td>
+        <td><h4><a href="#">Category 2</a><br><small>Category description</small></h4></td>
+        <td class="text-center hidden-xs hidden-sm"><a href="#">6532</a></td>
+        <td class="text-center hidden-xs hidden-sm"><a href="#">152123</a></td>
+        <td class="hidden-xs hidden-sm">by <a href="#">Jane Doe</a><br><small><i class="fa fa-clock-o"></i> 1 years ago</small></td>
+      </tr>
+	  <tr>
+        <td class="text-center"><i class="fa fa-exclamation fa-2x text-danger"></i></td>
+        <td><h4><a href="#">Category 3</a><br><small>Category description</small></h4></td>
+        <td class="text-center hidden-xs hidden-sm"><a href="#">6532</a></td>
+        <td class="text-center hidden-xs hidden-sm"><a href="#">152123</a></td>
+        <td class="hidden-xs hidden-sm">by <a href="#">Jane Doe</a><br><small><i class="fa fa-clock-o"></i> 1 years ago</small></td>
+      </tr>
+    </tbody>
+  </table>
+  <table class="table forum table-striped">
+    <thead>
+      <tr>
+        <th class="cell-stat"></th>
+        <th>
+          <h3>Open discussion</h3>
+        </th>
+        <th class="cell-stat text-center hidden-xs hidden-sm">Topics</th>
+        <th class="cell-stat text-center hidden-xs hidden-sm">Posts</th>
+        <th class="cell-stat-2x hidden-xs hidden-sm">Last Post</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td></td>
+        <td colspan="4" class="center">No topics have been added yet.</td>
+      </tr>
+    </tbody>
+  </table>
+  </section>
+  <section id="posts-list" style="display:non;">
+   
+   <table class="table">
+    <thead>
+      <tr>
+        <th class="cell-stat"></th>
+        <th><h3></h3></th>
+		<th class="cell-stat text-center hidden-xs hidden-sm">Category</th>
+        <th class="cell-stat text-center hidden-xs hidden-sm">Views</th>
+		<th class="cell-stat text-center hidden-xs hidden-sm">Replies</th>
+        <th class="cell-stat-2x text-center hidden-xs hidden-sm">Last Activity</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="post-summary">
+        <td class="post-author hidden-xs position-relative"><img class="user-image" src="" /></td>
+        <td class="post-header">
+		 <a class="post-title" href="" title="">Whats the easiest way to determine if a user is online? (PHP/MYSQL)</a>
+		 <small class="post-date" title="Saturday July 02, 2016 09:AM"><i class="fa fa-edit"></i>&nbsp;July 02, 2016</small>
+		 <div class="summary-text">
+		  Here's a brief descriptionHere's a brief descriptionHere's a brief descriptionHere's a brief description
+		  Here's a brief descriptionHere's a brief descriptionHere's a brief descriptionHere's a brief description
+		 </div>
+		 <div style="margin-top:5px;">
+		  <a href="" title="view posts tagged tech"><small class="float-left post-tag">Tech</small></a>
+		  <a href="" title="view posts tagged code"><small class="float-left post-tag">Code</small></a>
+		 </div>
+		</td>
+		<td class="text-center hidden-xs hidden-sm"><a href="#" title="view posts posted under ">Category name</a></td>
+        <td class="text-center hidden-xs hidden-sm"><a href="#" title="9542 views">9 542</a></td>
+        <td class="text-center hidden-xs hidden-sm"><a href="#" title="89897 replies">89 897</a></td>
+        <td class="text-center hidden-xs hidden-sm">by 
+		 <a href="#" title="John doe edited/commented on June 5, 2015 09:AM">John Doe</a><br>
+		 <small><i class="fa fa-clock-o"></i> 3 months ago</small>
+		</td>
+      </tr>
+	  <tr class="post-summary">
+        <td class="post-author hidden-xs position-relative"><img class="user-image" src="" /></td>
+        <td class="post-header">
+		 <a class="post-title" href="" title="">How can I prevent SQL-injection in PHP?How can I prevent SQL-injection in PHP?How can I prevent SQL-injection in PHP?</a>
+		 <small class="post-date" title="Saturday July 02, 2016 09:AM"><i class="fa fa-edit"></i>&nbsp;July 02, 2016</small>
+		 <div class="summary-text">
+		  Here's a brief descriptionHere's a brief descriptionHere's a brief descriptionHere's a brief description
+		  Here's a brief descriptionHere's a brief descriptionHere's a brief descriptionHere's a brief description
+		 </div>
+		 <div style="margin-top:5px;">
+		  <a href="" title="view posts tagged tech"><small class="float-left post-tag">Tech</small></a>
+		  <a href="" title="view posts tagged code"><small class="float-left post-tag">Code</small></a>
+		 </div>
+		</td>
+		<td class="text-center hidden-xs hidden-sm"><a href="#" title="view posts posted under ">Category name</a></td>
+        <td class="text-center hidden-xs hidden-sm"><a href="#" title="9542 views">9 542</a></td>
+        <td class="text-center hidden-xs hidden-sm"><a href="#" title="89897 replies">89 897</a></td>
+        <td class="text-center hidden-xs hidden-sm">by 
+		 <a href="#" title="John doe edited/commented on June 5, 2015 09:AM">John Doe</a><br>
+		 <small><i class="fa fa-clock-o"></i> 3 months ago</small>
+		</td>
+      </tr>
+	  <tr class="post-summary">
+        <td class="post-author hidden-xs position-relative"><img class="user-image" src="" /></td>
+        <td class="post-header">
+		 <a class="post-title" href="" title="">Whats the easiest way to determine if a user is online? (PHP/MYSQL)</a>
+		 <small class="post-date" title="Saturday July 02, 2016 09:AM"><i class="fa fa-edit"></i>&nbsp;July 02, 2016</small>
+		 <div class="summary-text">
+		  Here's a brief descriptionHere's a brief descriptionHere's a brief descriptionHere's a brief description
+		  Here's a brief descriptionHere's a brief descriptionHere's a brief descriptionHere's a brief description
+		 </div>
+		 <div style="margin-top:5px;">
+		  <a href="" title="view posts tagged tech"><small class="float-left post-tag">Tech</small></a>
+		  <a href="" title="view posts tagged code"><small class="float-left post-tag">Code</small></a>
+		 </div>
+		</td>
+		<td class="text-center hidden-xs hidden-sm"><a href="#" title="view posts posted under ">Category name</a></td>
+        <td class="text-center hidden-xs hidden-sm"><a href="#" title="9542 views">9 542</a></td>
+        <td class="text-center hidden-xs hidden-sm"><a href="#" title="89897 replies">89 897</a></td>
+        <td class="text-center hidden-xs hidden-sm">by 
+		 <a href="#" title="John doe edited/commented on June 5, 2015 09:AM">John Doe</a><br>
+		 <small><i class="fa fa-clock-o"></i> 3 months ago</small>
+		</td>
+      </tr>
+    </tbody>
+  </table>
+  </section>
+ 
+  
+ </div>
+
+ 
+<script>
+/*
+function showModalOverlay()
+{
+	var contentWidth  = 200;
+	var contentHeight = 200;
+	var screenWidth   = window.innerWidth;
+	var screenHeight  = window.innerHeight;
+	var xpos = (screenWidth - contentWidth) * 0.5;
+	var ypos = (screenHeight - contentHeight) * 0.5;
+	
+	document.getElementById('modal-content').style.left = xpos + 'px';
+	document.getElementById('modal-content').style.top  = ypos + 'px';
+	
+	document.getElementById('screen-overlay').style.height = docHeight() + 'px';
+	document.getElementById('screen-overlay').style.visibility = 'visible';
+	document.getElementById('modal-content').style.visibility = 'visible';
+}
+function hideModalOverlay()
+{
+	document.getElementById('screen-overlay').style.visibility = 'hidden';
+	document.getElementById('modal-content').style.visibility = 'hidden';
+}
+function docHeight()
+{
+    var D = document;
+    return Math.max(
+        Math.max(D.body.scrollHeight, D.documentElement.scrollHeight),
+        Math.max(D.body.offsetHeight, D.documentElement.offsetHeight),
+        Math.max(D.body.clientHeight, D.documentElement.clientHeight)
+    );
+}
+
+$('.view-switcher').on('click', function(event){
+	var target = event.target;
+	var view = target.getAttribute('data-display');
+	showModalOverlay();
+});
+
+$('.user-image').on('mouseover', function(event){
+
+	var d = document.createElement('div');
+	var $evtTarget = $(event.target);
+	
+	setTimeout(function(){
+	d.innerHTML = createUserCard({
+		userUrl      : 'http://twitter.com',
+		userUrlText  : '@michael',
+		userBio      : 'brief description',
+		userPage     : '/michael',
+		userName     : 'mikky',
+		userImage    : 'gravatar.com/images/',
+		userLastSeen : '5 mins ago',
+		userJoinDate : 'July 5, 2016'
+	});
+	$evtTarget.parent().append(d);
+	}, 1000);
+	
+	$(d).on('mouseout', function(){
+		//$evtTarget.parent().remove(d);
+		$(d).remove();
+	});
+});
+function switchViews()
+{
+		
+}
+*/
+</script>
+  <script src="js/bootstrap.min.js"></script>	
+ </body>
+</html>

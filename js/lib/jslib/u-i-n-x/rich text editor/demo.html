@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <script type="text/javascript" src="http://localhost:81/PROJECTS/MINE/code libraries/JSLib/JSLib.js"></script>
+  <script type="text/javascript" src="http://localhost:81/PROJECTS/MINE/code libraries/JSLib/globalLibrary.js"></script>
+  <script type="text/javascript" src="js/rte_textarea.js"></script>
+ </head>
+ <body>
+ <form method="post">
+ <textarea name="test" id="test" style="width: 650px; height: 100px;"></textarea>
+ <input type="submit" />
+ </form>
+  <script type="text/javascript">
+  var te = new RTE({'textField' : 'test', 'initOnLoad': false});
+  te.init(); 
+ 
+ </script>
+ </body>
+</html>

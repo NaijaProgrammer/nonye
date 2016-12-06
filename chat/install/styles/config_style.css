@@ -1,0 +1,12 @@
+form div label{
+ float: left;
+ width: 600px;
+}
+form input{
+ margin-bottom: 20px;
+ width: 200px;
+}
+.help{
+ color: blue;
+ font-size: 12px;
+}

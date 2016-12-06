@@ -1,0 +1,90 @@
+/**
+* sitewide styles css
+* @author Michael Orji
+*/
+a:link, a:visited, a:hover { text-decoration:none; }
+.inline { display:inline; }
+.inline-block { display: inline-block; }
+.block { display:block; }
+.no-display { display:none; }
+.no-visible { visibility:hidden; }
+.no-padding { padding:0;}
+.no-border { border:none;}
+.no-list-style { list-style-type:none; }
+.text-centered { text-align:center; }
+.float-left { float:left; }
+.float-right { float:right; }
+.clear { clear: both;}
+.lost-focus { opacity:0.1; }
+.disabled, input[disabled]{ cursor: not-allowed;}
+.cursor-pointer { cursor:pointer; }
+.resize-y { resize:vertical; }
+.resize-x { resize:horizontal; }
+.resize { resize: both; }
+.bg-white { background-color:#fff; }
+.white { color:#fff; }
+.black { color:#000; }
+.red { color: #f00; }
+.green { color:#0f0;}
+.blue { color:#00f; }
+.bg-no-repeat { background-repeat: no-repeat !important; }
+.bg-right { background-position: right !important; }
+.bg-spinner { background-image: url('../resources/images/spinner.svg') !important; }
+.font-bold { font-weight:bold; }
+
+/** Positioning */
+.position-relative { position:relative; }
+.position-absolute { position:absolut; }
+.position-fixed { position:fixed; }
+
+/* credits: http://www.paulund.co.uk/creating-different-css3-box-shadows-effects */
+.focused
+{
+    position:relative;
+    box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1);
+	border-right:1px solid #ccc;
+}
+.focused:before, .focused:after
+{
+    content:"";
+    position:absolute; 
+    z-index:-1;
+    top:0;
+    bottom:0;
+    left:10px;
+    right:10px;
+    border-radius:100px / 10px;
+} 
+.focused:after
+{
+    right:10px; 
+    left:auto; 
+    transform:skew(8deg) rotate(3deg);
+}
+
+/* Social connect */
+.fb-color{ color: #3b5998; }
+.github-color { color: #6d6d6d; }
+.google-color-blue { color: #5b76f7;}
+.google-color-red { color:#e0492f; }
+.linkedin-color { color:#0077b5; }
+.twitter-color{ color: #00bced; }
+.yahoo-color{ color: #810293; }
+
+.bg-fb-color{ background: #395697; /*#3b5998;*/ }
+.bg-github-color { background: #6d6d6d; }
+.bg-google-color-blue{ background: #5b76f7; }
+.bg-google-color-red { background:#e0492f;}
+.bg-linkedin-color { background:#0077b5; }
+.bg-twitter-color{ background: #00bced; }
+.bg-yahoo-color{ background: #810293; }
+
+.fb-icon:before { content: "\f09a"; }
+.github-icon:before { content: "\f09b"; }
+.google-icon:before { content: "\f1a0"; }
+.linkedin-icon:before { content: "\f0e1"; }
+.linkedin-icon-square:before { content: "\f08c"; }
+.twitter-icon:before { content: "\f099"; }
+.yahoo-icon:before { content: "\f19e"; }
+
+.icon-font-awesome { font-family: FontAwesome; }

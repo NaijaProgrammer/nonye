@@ -1,0 +1,37 @@
+#IMWin_creator_info{
+ left: 8px;
+}
+#buddy_list_holder{
+ display: block;
+ position: absolute;
+ left: 5px;
+ right: 5px;
+ margin-top: 70px;
+ background-color: #efefef;
+ border-width: 1px;
+ border-style: solid;
+ border-color: #bfbcb8 #e0dcd8 #e0dcd8 #bfbcb8;
+ text-align: left;
+ overflow-x: hidden;
+ overflow-y: auto;
+}
+
+ul.sortable li { position: relative; }
+   
+ul.box {
+ list-style-type: none;
+ padding: 0px;
+ margin: 0px;
+ width: 100%;
+ cursor: default;
+}
+   
+ul.box li {
+ color: #333;
+ vertical-align: middle;
+ font-family: Tahoma, Arial, sans-serif;
+ font-size: 12px;
+ padding: 5px 3px 1px 3px;
+ margin: 0;
+ list-style-type: none;
+}

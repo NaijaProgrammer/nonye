@@ -1,0 +1,5 @@
+1. check if site has oembed support, and use it
+2. If site doesn't, check if they support open graph and use it
+3. If site doesn't check if they support twitter cards and use it.
+
+read article:https://medium.com/slack-developer-blog/everything-you-ever-wanted-to-know-about-unfurling-but-were-afraid-to-ask-or-how-to-make-your-e64b4bb9254#.uldc3du9b

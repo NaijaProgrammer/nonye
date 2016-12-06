@@ -1,0 +1,61 @@
+Available functions
+
+get_current_theme()
+load_plugin($opts=array())
+
+URL functions
+=============
+set_login_redirect_url(string $url)
+get_login_redirect_url(boolean $unset)
+get_request_url(void)
+get_uri_end_point([array $opts = array('uri'=>get_request_uri, 'ignore_query_string'=>false)])
+determine_query_string_separator(string $url) //get '?' or '&'
+url_contains_query_string(string $url)
+get_slug(string text)
+
+
+USER functions
+==============
+assign_role_to_user(int $user_id, string $role)
+get_valid_user_id([int $user_id = ''])
+get_users_by(array $query_data [, array $orders=array(), int $limit = 1])
+get_user_data( [int $user_id='', string $data_key = '', string $default_value=''])
+get_user_profile_url([int user_id = ''])
+generate_username(int user_id)
+generate_user_profile_page(int $user_id)
+generate_user_profile_image_url(int $user_id)
+username_exists(string $username)
+email_exists(string $email)
+is_valid_email(string $email)
+update_user_last_seen_data( [int $user_id = ''] )
+update_user_data(int $user_id, array $update_data)
+
+
+UTILITY functions
+=================
+escape_output_string(string $str)
+generate_random_string([string $allowed_chars = '123456789', int $str_length = 10])
+sort_by_key_value(array $data, string $sort_key)
+parse_file_contents(string $file [, array|object $file_data=array()])
+get_array_member_value( array $array_name, string|int $member_index [, string $optional_return_value=''] )
+get_file_name(string $file_name)
+get_file_extension(string $file_name)
+make_remote_request($url, $opts=array())
+do_parallel_curl_request($data, $options = array())
+create_json_string($data=array(), $output=false)
+extract_number_from_string($string_with_number)
+format_number($number, $num_of_decimals = 2)
+paginate($data)
+is_selected_radio_button($button_value, $group_name)
+set_as_selected_option($option_value, $selected_value)
+set_as_selected_radio_button($button_value, $group_name)
+set_as_checked($checkbox_value_name)
+generate_data_rows($data [, $recursive=true])
+generate_mail_message( [$opts = array('title'=>'', 'message'=>'')] )
+
+DATE and TIME functions
+=======================
+get_date_difference_data(Date start_date [,Date end_date = Date('F d, Y G:i:s')])
+format_date_difference(Date start_date [,Date end_date = Date('F d, Y G:i:s'), string format = 'dhms'])
+format_date(Date $date, [, string $format = 'F d, Y'])
+function format_time( [ int $timestamp = time(), string $format = 'Y-m-d H:i:s'] )

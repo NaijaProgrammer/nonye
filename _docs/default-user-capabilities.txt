@@ -1,0 +1,17 @@
+Access Admin Portal
+View Site Settings
+Edit Site Settings
+Manage Site Settings
+View Users
+Edit Users
+Delete Users
+Manage Users
+View Capabilities
+Edit Capabilities
+Manage Capabilities
+View Roles
+Edit Roles
+Manage Roles
+
+
+create_new_capability(array('name'=>$capability_name, 'description'=>$capability_desc));
