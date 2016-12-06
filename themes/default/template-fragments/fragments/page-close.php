@@ -16,7 +16,7 @@
 				if(isDevServer)
 				{
 					console.log( 'User last seen status : ' + status + '\r\nsuccess : ' + data );
-				} 
+				}
 			},
 			complete : function(jqXHR, status)
 			{
@@ -39,9 +39,9 @@
 				if(isDevServer)
 				{
 					console.log( 'User notification status : ' + status + '\r\nsuccess : ' + data );
-				} 
+				}
 				data = JSON.parse(data);
-				
+
 				if(data.length > 0)
 				{
 					updateNotificationsBar(data);
@@ -53,7 +53,7 @@
 				setTimeout(getUserNotifications, 1000 * 5);
 			}
 		});
-		
+
 		function getMaxNotificationID()
 		{
 			var IDS = getDisplayedNotifications();
@@ -62,7 +62,7 @@
 		function updateNotificationsBar(notifications)
 		{
 			var notificationsCount = parseInt( $('.notification-counter').html() );
-			
+
 			if(isNaN(notificationsCount))
 			{
 				notificationsCount = 0;
@@ -77,14 +77,14 @@
 				$('#notifications').html( $('#notifications').html() + '<li>' + notification.activity + '</li>' );
 				addToDisplayedNotificationsQueue(notification.id);
 			}
-			
+
 			updateNotificationsCounter(notificationsCount, true);
 		}
-		
+
 	}, 1000);
-	
-	$('#notifications-toggler').on('click', function(){ 
-	
+
+	$('#notifications-toggler').on('click', function(){
+
 		setTimeout(function(){
 			//if the notifications bar is open
 			if( $('#user-notification-dropdown-container')[0].className.indexOf('open') != -1 )
@@ -94,7 +94,7 @@
 				updateNotificationsCounter('', false);
 			}
 		}, 10);
-		
+
 		function clearDisplayedNotificationsQueue()
 		{
 			var notificationIDS = getDisplayedNotifications();
@@ -102,7 +102,7 @@
 			{
 				setNotificationAsSeen(notificationIDS[i]);
 			}
-			
+
 			function setNotificationAsSeen(notificationID)
 			{
 				$.ajax(ajaxURL + '/index.php', {
@@ -114,7 +114,7 @@
 						if(isDevServer)
 						{
 							console.log( 'User notification update status : ' + status + '\r\nsuccess : ' + data );
-						} 
+						}
 					},
 					complete : function(jqXHR, status){}
 				});
@@ -123,7 +123,7 @@
 	});
 
 	var displayedNotificationIDS = [];
-	
+
 	function addToDisplayedNotificationsQueue(notificationID)
 	{
 		displayedNotificationIDS.push(notificationID);
@@ -144,14 +144,14 @@
 	{
 		activate ? $('.notification-counter').addClass('active-counter') : $('.notification-counter').removeClass('active-counter');
 		$('.notification-counter').html(count);
-	}	
+	}
 })();
 </script>
 <?php endif; ?>
 
 <script>
 $(document).on('scroll', function(){
-	
+
 	var mainNav = $('#main-navigation');
 	if( $(document).scrollTop() > $("#main-navigation").height() )
 	{
@@ -173,7 +173,7 @@ $(document).ready(function(){
 	/* affix the navbar after scroll below header */
 	/*
 	$('#main-navigation').affix({
-		offset: { 
+		offset: {
 			top: $("#main-navigation").outerHeight(true)
 		}
 	});
@@ -185,19 +185,19 @@ $(document).ready(function(){
 });
 </script>
 <script src="<?php echo $theme_url; ?>/js/bootstrap.min.js"></script>
-<?php 
+<?php
 import_admin_functions();
 //if( UserModel::user_is_logged_in() ) : $page_instance->add_fragment( 'post-editor', array('value'=>'', 'placeholder'=>'Type in your post here') );
 if( user_can('Create Posts') )
 {
-	get_post_editor( $opts = array('placeholder'=>'Enter Post', 'value'=>'', 'show_on_init'=>true) );
+	get_post_editor( $opts = array('placeholder'=>'Enter Post', 'value'=>'', 'show_on_init'=>false) );
 }
 
-if( !UserModel::user_is_logged_in() ) 
+if( !UserModel::user_is_logged_in() )
 {
 	$page_instance->add_fragment( 'login-signup-forms', array() );
 }
-?> 
+?>
 
 <?php //include(INCLUDES_DIR. '/user-timezone-setter.php'); ?>
 <?php //echo date_default_timezone_get(); ?>
