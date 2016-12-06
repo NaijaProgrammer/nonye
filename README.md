@@ -35,7 +35,7 @@ Admin Features
 <li>Allow/disallow user-custom-tag creation at new post creation</li>
 <li>User Management page</li>
 <li>Global Site settings management page</li>
-<li>Edit email templates for emails that get sent on : registration, password-reset. Allows placeholders (common {{site_name}}, {{username}})</li>
+<li>Edit email templates for emails that get sent on : registration, password-reset. Allows placeholders. Common placeholders include {{site_name}}, {{username}}, {{site_url}}</li>
 <li>One-click export users (CVS, XML)</li>
 <li>One-click database backup</li>
 <li>Enable/disable showing of post: title, forum, category, body, and tags selection fields</li>
