@@ -12,14 +12,6 @@
    <a class="navbar-brand" href="<?php //echo sanitize_html_attribute(get_site_url()); ?>"><?php //echo get_site_name(); ?></a>
   </div>         
   <div class="collapse navbar-collapse" id="navbarCollapse">
-   <?php /*
-   <ul class="nav navbar-nav">
-    <li><a href="#">About</a></li>
-	<li><a href="#">Blog</a></li>
-	<li><a href="#">Contact</a></li>
-    <li><a href="#">FAQ</a></li>
-   </ul>
-   */?>
    <ul class="nav navbar-nav">
     <?php if($user_is_logged_in): ?>
 	<li class="dropdown cursor-pointer authenticated-user-menu">
@@ -64,19 +56,6 @@
          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>
          <div class="dropdown-menu dropdown-menu-right" role="menu">
           <form id="post-search-form" class="form-horizontal" role="form">
-		   <?php /*
-           <div class="form-group">
-            <label for="filter">Filter by</label>
-            <select class="form-control">
-             <option value="0" selected>All Posts</option>
-             <option value="1">Featured</option>
-             <option value="2">Most popular</option>
-             <option value="3">Top rated</option>
-             <option value="4">Most commented</option>
-            </select>
-           </div>
-		   */?>
-		   
            <div class="form-group">
             <label for="authors">Authors</label>
             <input id="post-search-filter-authors" class="form-control post-filter" type="text" placeholder="Type to filter by authors' display name" />
