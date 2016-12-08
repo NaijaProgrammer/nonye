@@ -129,6 +129,9 @@ $page_instance->add_nav();
   </div>
  </article>
  
+ 
+ <div id="post-comments-container">
+ 
  <?php $comments = $post->get_comments($count=false); ?>
  <?php foreach($comments AS $comment_id): ?>
   <?php $comment = PostModel::get_post_instance($comment_id); ?>
@@ -144,7 +147,7 @@ $page_instance->add_nav();
 	  data-user-image="<?php echo sanitize_html_attribute(get_user_image_url($comment_author->get('id'))); ?>"
 	  data-last-seen="<?php echo sanitize_html_attribute(get_time_elapsed_intelligent(format_date(format_time($comment_author->get('last-seen-time'))))); ?>"
 	  data-join-date="<?php echo sanitize_html_attribute(format_date($comment_author->get('date_registered'), 'F d, Y')); ?>"
-	  data-location="<?php echo sanitize_html_attribute($post_author->get('location')); ?>"
+	  data-location="<?php echo sanitize_html_attribute($comment_author->get('location')); ?>"
 	 />
 	 <p class="post-author"><?php echo $comment_author->get('username'); ?></p>
 	</a>
@@ -168,6 +171,8 @@ $page_instance->add_nav();
   </div>
  </article>
  <?php endforeach; ?>
+ 
+ </div>
  </div>
 
 </div>
@@ -175,47 +180,168 @@ $page_instance->add_nav();
 <!--<script src="<?php //echo $site_url; ?>/js/lib/jquery-ui/jquery-ui.min.js"></script>-->
 
 <script>
-$('.user-card-trigger').on('mouseover', function(event){
+initUserCard();
+function initUserCard(){
+	$('.user-card-trigger').on('mouseover', function(event){
 
-	var d = document.createElement('div');
-	var evtTarget = event.target;
-	var $evtTarget = $(event.target);
-	
-	setTimeout(function(){
-		d.innerHTML = createUserCard({
-			userUrl       : $evtTarget.attr('data-url'), //'http://twitter.com',
-			userName      : $evtTarget.attr('data-username'), //'mikky',
-			userImage     : $evtTarget.attr('data-user-image'), //'images/loveth.jpg',
-			userLastSeen  : $evtTarget.attr('data-last-seen'), //'5 mins ago',
-			userJoinDate  : $evtTarget.attr('data-join-date'), //'July 5, 2016'
-			userLocation  : $evtTarget.attr('data-location'), //
-		});
+		var d = document.createElement('div');
+		var evtTarget = event.target;
+		var $evtTarget = $(event.target);
 		
-		$(d).hide().appendTo($evtTarget.parent()).fadeIn(); //credits: http://stackoverflow.com/a/847557
-		//$evtTarget.parent().append(d);
+		setTimeout(function(){
+			d.innerHTML = createUserCard({
+				userUrl       : $evtTarget.attr('data-url'), //'http://twitter.com',
+				userName      : $evtTarget.attr('data-username'), //'mikky',
+				userImage     : $evtTarget.attr('data-user-image'), //'images/loveth.jpg',
+				userLastSeen  : $evtTarget.attr('data-last-seen'), //'5 mins ago',
+				userJoinDate  : $evtTarget.attr('data-join-date'), //'July 5, 2016'
+				userLocation  : $evtTarget.attr('data-location'), //
+			});
+			
+			$(d).hide().appendTo($evtTarget.parent()).fadeIn(); //credits: http://stackoverflow.com/a/847557
+			//$evtTarget.parent().append(d);
+			
+			activateMouseout()
+			
+		}, 1);
 		
-		activateMouseout()
 		
-	}, 1);
+		function activateMouseout(){
+			//$(d).on('mouseout', function(){
+			$('.UserCard').parent().on('mouseout', function(){
+				setTimeout(function(){
+					//$evtTarget.parent().remove(d);
+					$(d).fadeOut(function(){$(d).remove();});
+				}, 45);
+			});
+			
+			/*
+			$(document).on('click', function(e){
+			if( (e.target.className.indexOf('tag-editor') == -1) && ( e.target.className.indexOf('selectable-tag') == -1 ) && ( e.target.id != 'tags-container') )
+			{
+				
+			}*/
+		}
+	});
+}
+</script>
+
+<script>
+(function(){
 	
+	var commentIds = [];
+	//var maxCommentId = 0;
+	var parentPostId = <?php echo $post_id; ?>;
 	
-	function activateMouseout(){
-		//$(d).on('mouseout', function(){
-		$('.UserCard').parent().on('mouseout', function(){
-			setTimeout(function(){
-				//$evtTarget.parent().remove(d);
-				$(d).fadeOut(function(){$(d).remove();});
-			}, 45);
-		});
+	<?php foreach($comments AS $comment_id): ?>
+	commentIds.push(<?php echo $comment_id; ?>);
+	<?php endforeach; ?>
+	
+	//maxCommentId = getMaxNumber(commentIds);
+	//commentIds = [];
+	
+	function getMaxCommentId()
+	{
+		var maxCommentId = getMaxNumber(commentIds);
+		return maxCommentId;
+	}
+	
+	setTimeout(function getRecentComments(){
+	
+		$.ajax(ajaxURL, {
+			method : 'GET',
+			cache  : false,
+			data   : { p: 'posts', 'recent-comments': true, 'parent-id': parentPostId, 'id': getMaxCommentId() },
+			error : function(jqXHR, status, error){
+				
+			},
+			success  : function(data, status, jqXHR){ 
+				parsedData = JSON.parse(data);
+				
+				for(var i = 0; i < parsedData.length; i++)
+				{
+					currComment = parsedData[i];
+					commentIds.push(currComment.id);
+					assembleRecentComment(currComment);
+				}
+				
+				console.log(data, 'recent comments');
+				initUserCard();
+			},
+			complete : function(jqXHR, status)
+			{
+				setTimeout(getRecentComments, 1000 * 5);
+			}
+		})
 		
 		/*
-		$(document).on('click', function(e){
-		if( (e.target.className.indexOf('tag-editor') == -1) && ( e.target.className.indexOf('selectable-tag') == -1 ) && ( e.target.id != 'tags-container') )
+			'id'             
+			'content'  
+			'url' 
+			'shortURL'
+			'author'
+			'authorURL' 
+			'authorImageURL'
+			'authorLastSeen'
+			'authorJoinDate'
+			'authorLocation'
+			'parentTitle'
+		*/
+		function assembleRecentComment(data)
 		{
+			var themeUrl = '<?php echo $theme_url; ?>'; 
+			var responseTitle = 'Response to ' + data.parentTitle;
 			
-		}*/
-	}
-});
+			var str = [
+			'<a id="post-response-' + data.id + '" name="post-response-' + data.id + '"></a>',
+		    '<article>',
+		     '<div class="row">',
+		      '<div class="col-lg-2 text-center">',
+			   '<a href="' + data.authorURL + '">',
+			    '<img class="post-author-image user-card-trigger" src="' + data.authorImageURL + '"',
+			    'data-url="' + data.authorURL + '"',
+			    'data-username="' + data.author + '"',
+			    'data-user-image="' + data.authorImageURL + '"',
+			    'data-last-seen="' + data.authorLastSeen + '"',
+			    'data-join-date="' + data.authorJoinDate + '"',
+			    'data-location="' + data.authorLocation + '"',
+			    '/>',
+			    '<p class="post-author">' + data.author + '</p>',
+			   '</a>',
+		      '</div>',
+		      '<div class="col-lg-10">',
+			   '<div class="post-content">' + data.content + '',
+			    '<div class="share-icons">',
+				  '<a class="share-icon" title="share on Facebook" onclick="shareOnFb(\'' + data.shortURL  + '\');">',
+				   '<img src="' + themeUrl + '/images/social-icons/fb-icon.png" alt="share on facebook" />',
+				  '</a>',
+				  '<a class="share-icon" title="share on Google+" onclick="shareOnGPlus(\'' + data.shortURL  + '\')">',
+				   '<img src="' + themeUrl + '/images/social-icons/gplus-icon.png" alt="share on google-plus" />',
+				  '</a>',
+				  '<a class="share-icon" title="share on LinkedIn" ',
+				    'onclick="shareOnLinkedIn(\'' + data.shortURL  + '\', \'' + responseTitle + '\', \'' + data.content + '\')">',
+				   '<img src="' + themeUrl + '/images/social-icons/linked-in-icon.png" alt="share on linked-in" />',
+				  '</a>',	    
+				  '<a class="share-icon" title="share on Twitter" ',
+				   'href="https://twitter.com/intent/tweet?text=' + responseTitle + '&url=' + data.shortURL + '">',
+				   '<img src="' + themeUrl + '/images/social-icons/twitter-icon.png" alt="share on twitter" />',
+				  '</a>',
+				  '<a class="share-icon" title="permalink to this post" ',
+				    'onclick="slideToggle(\'response-' + data.id + '-permalink\')" style="top:10px;">',
+				   '<i class="fa fa-icon fa-2x glyphicon glyphicon-link"></i>',
+				  '</a>',
+				  '<div id="response-' + data.id + '-permalink" class="post-permalink" style="display:none;">' + data.shortURL + '</div>',
+			     '</div>',
+			    '</div>',
+		       '</div>',
+		      '</div>',
+		     '</article>'
+			].join('');
+			
+			$O('post-comments-container').innerHTML += str;
+		}
+	}, 1000);
+})();
 </script>
 
 <?php //$page_instance->add_footer('post-view'); ?>
