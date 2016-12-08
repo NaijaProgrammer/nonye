@@ -585,19 +585,12 @@ $('#new-post-form').on('submit', function(e){
 		cache    : false,
 		data     : data,
 		error    : function(jqXHR, status, error){
-			if(isDevServer)
-			{
-				console.log( 'status : ' + status + '\r\nerror : ' + error );
-			}
+			
 		},
 		success  : function(data, status, jqXHR){
-			if(isDevServer)
-			{
-				console.log( 'status : ' + status + '\r\nsuccess : ' + data );
-			}
 			
 			data = JSON.parse(data);
-				
+
 			if(data.error)
 			{
 				$('#status-message').removeClass('success');
@@ -621,6 +614,11 @@ $('#new-post-form').on('submit', function(e){
 				$('#status-message').html( 'Post submitted successfully. Redirecting...' );
 				$('#new-post-form')[0].reset();
 				$('#post-editor-wrapper').slideUp('slow');
+				
+				if( parentPostID > 0 ){
+					return; //since we are now using ajax to auto-get the most recent comments, (in view.php) no need to refresh the page to see the comment
+				}
+				
 				setTimeout(function redirect(){location.reload()}, 1000);
 			}
 		},
@@ -644,6 +642,7 @@ $('.post-editor-opener').on('click', function(event){
 	if(parentPostID > 0)
 	{
 		postTagsField.tagEditor('destroy'); //destroy this if it previously exists, so we can successfully hide the post-tags-field without issues. See comment in 'else' section
+		$('#post-create-btn').html('Post reply');
 		$('#parent-post-id').val(parentPostID);
 		$('#post-title-field').hide();
 		$('#post-forum-selector').hide();

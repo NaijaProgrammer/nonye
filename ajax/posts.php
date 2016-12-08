@@ -11,19 +11,13 @@ if(isset($_POST['create']))
 	$category_id = $_POST['category'];
 	$tags        = json_decode(trim($_POST['tags']));
 	
-	$require_post_title    = get_app_setting('require-post-title-field', true);
-	$require_post_forum    = get_app_setting('require-post-forum-field', true);
-	$require_post_category = get_app_setting('require-post-category-field', true);
-	$require_post_body     = get_app_setting('require-post-body-field', true);
-	$min_post_tags         = get_app_setting('minimum-post-tags');
-
 	$validate = Validator::validate(array(
 		array('error_condition'=>!$user_is_logged_in, 'error_message'=>'Login to create a new post', 'error_type'=>'unauthenticatedUser'),
-		array('error_condition'=>$require_post_title    && empty($title), 'error_message'=>'Enter a title for your post', 'error_type'=>'emptyTitle'),
-		array('error_condition'=>$require_post_forum    && empty($forum_id), 'error_message'=>'Choose a forum to post to', 'error_type'=>'emptyForum'),
-		array('error_condition'=>$require_post_category && empty($category_id), 'error_message'=>'Select your post category', 'error_type'=>'emptyCategory'),
-		array('error_condition'=>$require_post_body     && empty($content), 'error_message'=>'Enter the content of your post', 'error_type'=>'emptyContent'),
-		array('error_condition'=>count($tags) < $min_post_tags, 'error_message'=>'Add at least '. count($tags). ' tag(s) to your post', 'error_type'=>'tagCountIncomplete')
+		array('error_condition'=>empty($title), 'error_message'=>'Enter a title for your post', 'error_type'=>'emptyTitle'),
+		array('error_condition'=>empty($forum_id), 'error_message'=>'Choose a forum to post to', 'error_type'=>'emptyForum'),
+		array('error_condition'=>empty($category_id), 'error_message'=>'Select your post category', 'error_type'=>'emptyCategory'),
+		//array('error_condition'=>empty($content), 'error_message'=>'Enter the content of your post', 'error_type'=>'emptyContent'),
+		array('error_condition'=>empty($tags), 'error_message'=>'Add at least one tag to your post', 'error_type'=>'emptyTag')
 	));
 	
 	if($validate['error'])
@@ -203,8 +197,10 @@ else if(isset($_GET['get-posts']))
 		$response_data[] = get_post_data($post_id);
 	}
 }
+
+//Get the most recent comment on the site
 else if(isset($_GET['most-recent-comment']))
-{ 
+{
 	$rc_id = PostModel::get_reply_posts(array(), array('date_added'=>'DESC'), $limit = 1 );
 	$rc_id = ( is_array($rc_id) && !empty($rc_id) ) ? $rc_id[0] : 0;
 	$rc    = ($rc_id) ? PostModel::get_post_instance($rc_id) : null;
@@ -224,6 +220,74 @@ else if(isset($_GET['most-recent-comment']))
 			'parentTitle'    => $rc_parent->get('title'),
 		);
 		//var_dump($response_data);
+	}
+}
+
+//Get recent comments for specified post
+else if(isset($_GET['recent-comments']))
+{
+	$tp             = TABLES_PREFIX;
+	$dbh            = Db::get_instance(DB_SERVER, DB_USER, DB_PASS, DB_NAME)->get_connection();
+	$post_ids       = array();
+	$last_post_id   = $_GET['id'];
+	$parent_post_id = isset( $_GET['parent-id'] ) ? $_GET['parent-id'] : 0;
+	
+	$sql  = "SELECT `id` FROM {$tp}posts WHERE `parent_id` = ? AND `id` > ?";
+	$sql .= isset($_GET['author']) ? " AND `author_id` = ?" : "";
+	$sql .= " ORDER BY `id` DESC";
+	$stmt = $dbh->prepare( $sql );
+	
+	if(isset($_GET['author']))
+	{
+		$author_id = get_user_id($_GET['author']);
+		$stmt->bind_param( 'iii', $parent_post_id, $last_post_id, $author_id );
+	}
+	else
+	{
+		$stmt->bind_param( 'ii', $parent_post_id, $last_post_id );
+	}
+	
+	$stmt->execute();	
+	$stmt->bind_result($post_id);
+	
+	while ($stmt->fetch())
+	{
+		//we can't use this because we'd get mysql "Commands out of sync; you can't run this command now" error.
+		//because "The MySQL client does not allow you to execute a new query where there are still rows to be fetched from an in-progress query.(http://stackoverflow.com/a/3632320/1743192)"
+		//see also : http://dev.mysql.com/doc/refman/5.7/en/commands-out-of-sync.html
+		//$response_data[] = get_post_data($post_id); 
+		
+		//As a fix, I had to first let the $stmt->fetch error finish executing, while storing the result in $post_ids array.
+		//Afterwards, I loop through the array and for each ID, get the post data
+		$post_ids[] = $post_id;
+	}
+	
+	foreach($post_ids AS $post_id)
+	{
+		$comment_id = $post_id;
+		$comment = PostModel::get_post_instance($comment_id);
+		
+		if(is_object($comment))
+		{
+			$comment_author = UserModel::get_user_instance( $comment->get('author_id') );
+			$comment_parent = PostModel::get_post_instance( get_top_level_parent_post($comment_id) );
+			
+			$response_data[] = array(
+				'id'             => $comment_id,
+				'content'        => $comment->get('content'),
+				'url'            => get_post_url($comment_id),
+				'shortURL'       => get_post_short_url($comment_id),
+				'author'         => $comment_author->get('username'),
+				'authorURL'      => get_user_profile_url($comment_author->get('id')),
+				'authorImageURL' => $comment_author->get('image-url', get_app_setting('default-user-image-url')),
+				'authorLastSeen' => get_time_elapsed_intelligent(format_date(format_time($comment_author->get('last-seen-time')))),
+				'authorJoinDate' => format_date($comment_author->get('date_registered'), 'F d, Y'),
+				'authorLocation' => $comment_author->get('location'),
+				'parentTitle'    => $comment_parent->get('title'),
+			);
+		}
+
+		//$response_data[] = get_post_data($post_id); //this won't work cos it's designed to get only top level posts
 	}
 }
 else if(isset($_GET['get-embed-code']))
