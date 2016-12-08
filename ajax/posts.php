@@ -11,13 +11,19 @@ if(isset($_POST['create']))
 	$category_id = $_POST['category'];
 	$tags        = json_decode(trim($_POST['tags']));
 	
+	$require_post_title    = get_app_setting('require-post-title-field', true);
+	$require_post_forum    = get_app_setting('require-post-forum-field', true);
+	$require_post_category = get_app_setting('require-post-category-field', true);
+	$require_post_body     = get_app_setting('require-post-body-field', true);
+	$min_post_tags         = get_app_setting('minimum-post-tags');
+	
 	$validate = Validator::validate(array(
 		array('error_condition'=>!$user_is_logged_in, 'error_message'=>'Login to create a new post', 'error_type'=>'unauthenticatedUser'),
-		array('error_condition'=>empty($title), 'error_message'=>'Enter a title for your post', 'error_type'=>'emptyTitle'),
-		array('error_condition'=>empty($forum_id), 'error_message'=>'Choose a forum to post to', 'error_type'=>'emptyForum'),
-		array('error_condition'=>empty($category_id), 'error_message'=>'Select your post category', 'error_type'=>'emptyCategory'),
-		//array('error_condition'=>empty($content), 'error_message'=>'Enter the content of your post', 'error_type'=>'emptyContent'),
-		array('error_condition'=>empty($tags), 'error_message'=>'Add at least one tag to your post', 'error_type'=>'emptyTag')
+		array('error_condition'=>$require_post_title && empty($title), 'error_message'=>'Enter a title for your post', 'error_type'=>'emptyTitle'),
+		array('error_condition'=>$require_post_forum && empty($forum_id), 'error_message'=>'Choose a forum to post to', 'error_type'=>'emptyForum'),
+		array('error_condition'=>$require_post_category && empty($category_id), 'error_message'=>'Select your post category', 'error_type'=>'emptyCategory'),
+		array('error_condition'=>$require_post_body && empty($content), 'error_message'=>'Enter the content of your post', 'error_type'=>'emptyContent'),
+		array('error_condition'=>count($tags) < $min_post_tags, 'error_message'=>'Add at least '. count($tags). ' tag(s) to your post', 'error_type'=>'tagCountIncomplete')
 	));
 	
 	if($validate['error'])
