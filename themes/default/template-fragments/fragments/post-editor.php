@@ -48,7 +48,13 @@ $show_post_category_field = get_app_setting('require-post-category-field', true)
 $show_post_body_field     = get_app_setting('require-post-body-field', true);
 $show_post_tags_field     = get_app_setting('show-post-tags-field', true);
 ?>
-<?php $forums = ForumModel::get_forums( false, array(), array('name'=>'ASC'), 0 ); ?>
+<?php if($show_post_forum_field): $forums = ForumModel::get_forums( false, array(), array('name'=>'ASC'), 0 ); endif; ?>
+<?php 
+if($show_post_category_field && !$show_post_forum_field)
+{
+	$categories = CategoryModel::get_categories( false, array(), array('name'=>'ASC'), 0 );
+}
+?>
 
 <div id="post-editor-wrapper">
 <form id="new-post-form">
@@ -75,6 +81,9 @@ $show_post_tags_field     = get_app_setting('show-post-tags-field', true);
  <div class="col-md-4">
   <select id="post-category-selector" class="form-control bg-right bg-no-repeat">
    <option value="">Category</option>
+   <?php if(!$show_post_forum_field): ?>
+    <?php foreach($categories AS $category): ?><option value="<?php echo $category['id']; ?>"><?php echo $category['name']; ?></option><?php endforeach; ?>
+   <?php endif; ?>
   </select>
  </div>
  </div>
