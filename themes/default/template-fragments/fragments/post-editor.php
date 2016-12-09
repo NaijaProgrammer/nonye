@@ -641,6 +641,7 @@ $('#new-post-form').on('submit', function(e){
 <script>
 $('.post-editor-opener').on('click', function(event){ 
 
+    event.preventDefault();
 	var target = event.target;
 	var parentPostID = parseInt( target.getAttribute('data-parent-id') );
 	
