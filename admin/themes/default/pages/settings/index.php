@@ -32,6 +32,19 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 		$return_data = array('success'=>true, 'message'=>'Settings have been updated successfully');
 	}
 	
+	if($action == 'set_active_theme')
+	{
+		if( !empty($theme) )
+		{
+			update_app_settings( array('active-theme'=>$theme) );
+			$return_data = array( 'success'=>true, 'message'=>'Theme updated successfully' );
+		} 
+		else
+		{
+			$return_data = array( 'error'=>true, 'message'=>'No theme specified', 'error_type'=>'NoThemeNameGiven' );
+		}
+	}
+	
 	if($action == 'update_auto_mailer')
 	{
 		$update_type = strtolower($update_type);
@@ -113,8 +126,11 @@ $page_instance->load_nav();
 	 <?php foreach($dirs AS $dir): ?>
 	 <?php if($dir == '.' || $dir == '..'): continue; endif; ?>
 	 <?php $theme_info = get_theme_info($dir); ?>
-     <img src="<?php echo $theme_info['Screenshot']; ?>" width="250" height="250" style="padding:5px; border:1px solid #aaa; border-radius:3px;"/><br/>
-	 <div><?php echo $theme_info['Name']; ?> (<?php echo (get_current_theme() == $dir ? 'active' : '' ); ?>)</div>
+	 <div class="inline-block">
+	  <img src="<?php echo $theme_info['Screenshot']; ?>" width="250" height="250" style="padding:5px; border:1px solid #aaa; border-radius:3px;"/><br/>
+	  <?php echo $theme_info['Name']; ?>
+	  <?php echo '<br>'. (get_current_theme() == $dir ? '(active)' : '<a style="cursor:pointer" onclick="setAsActiveTheme(\''. $dir. '\')">Set as active theme</a>' ); ?>
+	 </div>
 	 <?php endforeach; ?>
 	 
     </div>
@@ -230,6 +246,42 @@ function attachUpdateListener(updateBtn)
 				enable(updateBtn);
 			}
 		});
+	});
+}
+
+function setAsActiveTheme(themeName){
+	Site.Util.runAjax({
+		'requestMethod'      : 'POST',
+		'requestURL'         : '',
+		'timeoutAfter'       : 30,
+		'requestData'        : 'action=set_active_theme&theme=' + themeName,
+		'debugCallback'      : function(reply){ console.log(reply); },
+		'readyStateCallback' : function(){},
+		'errorCallback'      : function(xhrObject, aborted)
+		{
+			if(aborted)
+			{
+				alert('Sorry. This request timed out. Please try again');
+			}
+		},
+		'successCallback' : function(reply)
+		{
+			var response = Site.Util.parseAjaxResponse(reply.rawValue);
+			if(response.error)
+			{
+				alert(response.message);
+				switch(response.errorType)
+				{
+					case 'unauthenticatedUserError'   : setTimeout( function(){ location.reload(); }, 5000 ); break;
+					case 'insufficientPrivilegeError' : setTimeout( function(){ location.href='<?php echo ADMIN_URL; ?>'; }, 5000 ); break;
+					default : '';
+				}
+			}
+			else if(response.success)
+			{
+				alert(response.message);
+			}
+		}
 	});
 }
 </script>
