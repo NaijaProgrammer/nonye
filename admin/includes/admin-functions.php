@@ -162,7 +162,10 @@ function user_can($capability, $user_id = 0)
 	$user_role         = get_user_role($user_id);
 	$user_capabilities = get_user_capabilities($user_id); //UserModel::get_user_data($user_id, 'capabilities');
 	
-	return is_super_admin($user_id) || role_has_capability($user_role, $capability) || in_array($capability, $user_capabilities);
+	$user_has_capability = ( is_array($user_capabilities) ? in_array($capability, $user_capabilities) : $user_capabilities == $capability );
+	
+	return is_super_admin($user_id) || role_has_capability($user_role, $capability) || $user_has_capability;
+	//return is_super_admin($user_id) || role_has_capability($user_role, $capability) || in_array($capability, $user_capabilities);
 }
 
 function verify_super_admin($user_id = 0)
