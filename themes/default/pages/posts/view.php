@@ -344,5 +344,13 @@ function initUserCard(){
 })();
 </script>
 
+<style>
+#post-editor-wrapper { position:relative !important;  width:50% !important; margin-left:auto !important; margin-right:auto !important; }
+#preview-window-wrapper { display:none; }
+#editor-window-wrapper { width:100% !important; }
+#post-create-btn { position: relative;  bottom: 15px; left:312px; /*right: 225px;*/ }
+#status-message { position:relative; right:327px; bottom:10px; }
+</style>
+
 <?php //$page_instance->add_footer('post-view'); ?>
 <?php $page_instance->close_page(); ?>
