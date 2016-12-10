@@ -629,9 +629,7 @@ $('#new-post-form').on('submit', function(e){
 			{
 				$('#status-message').removeClass('error');
 				$('#status-message').addClass('success');
-				$('#status-message').html( 'Post submitted successfully. Redirecting...' );
 				$('#new-post-form')[0].reset();
-				$('#post-editor-wrapper').slideUp('slow');
 				
 				if( parentPostID > 0 ){
 					enable('post-create-btn');
@@ -639,6 +637,8 @@ $('#new-post-form').on('submit', function(e){
 					return; //since we are now using ajax to auto-get the most recent comments, (in view.php) no need to refresh the page to see the comment
 				}
 				
+				$('#status-message').html( 'Post submitted successfully. Redirecting...' );
+				$('#post-editor-wrapper').slideUp('slow');
 				setTimeout(function redirect(){location.reload()}, 1000);
 			}
 		},
