@@ -650,8 +650,10 @@ $('#new-post-form').on('submit', function(e){
 });
 </script>
 <script>
-$('.post-editor-opener').on('click', function(event){ 
+$('.post-editor-opener').on( 'click', function(event){ showPostEditor(event); } )
 
+function showPostEditor(event)
+{
     event.preventDefault();
 	var target = event.target;
 	var parentPostID = parseInt( target.getAttribute('data-parent-id') );
@@ -681,5 +683,5 @@ $('.post-editor-opener').on('click', function(event){
 		initSelect2Fields();
 		initPostTags();
 	}
-});
+}
 </script>
