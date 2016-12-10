@@ -106,7 +106,7 @@ if($show_post_category_field && !$show_post_forum_field)
   <?php endif; ?>
   
   <input id="parent-post-id" type="hidden" value="0"/>
-  <div class="col-md-2" style="padding-right:0 !important;"><button id="post-create-btn" class="btn btn-primary float-right">Create</button></div>
+  <div class="col-md-2" style="padding-right:0 !important;"><button id="post-create-btn" class="btn btn-primary float-right pr25 pl25">Create</button></div>
  </div>
  
  <div class="col-md-6" style="padding-right:0 !important;"><span id="status-message" class="status-message"></span></div>
@@ -537,6 +537,9 @@ $('#new-post-form').on('submit', function(e){
 	e.preventDefault();
 	$('#status-message').html( '' );
 	
+	setAsProcessing('post-create-btn');
+	disable('post-create-btn');
+	
 	var formContent = ''; //$('#preview-window').html(); //tinymce.activeEditor.getContent();
 	<?php if($show_post_body_field): ?>
 	formContent = $('#preview-window').html();
@@ -594,7 +597,8 @@ $('#new-post-form').on('submit', function(e){
 		cache    : false,
 		data     : data,
 		error    : function(jqXHR, status, error){
-			
+			enable('post-create-btn');
+			unsetAsProcessing('post-create-btn');
 		},
 		success  : function(data, status, jqXHR){
 			
@@ -615,6 +619,11 @@ $('#new-post-form').on('submit', function(e){
 						setTimeout(function redirect(){location.reload()}, 2000);
 					}
 				}
+				else
+				{
+					enable('post-create-btn');
+					unsetAsProcessing('post-create-btn');
+				}
 			}
 			else
 			{
@@ -625,6 +634,8 @@ $('#new-post-form').on('submit', function(e){
 				$('#post-editor-wrapper').slideUp('slow');
 				
 				if( parentPostID > 0 ){
+					enable('post-create-btn');
+					unsetAsProcessing('post-create-btn');
 					return; //since we are now using ajax to auto-get the most recent comments, (in view.php) no need to refresh the page to see the comment
 				}
 				
