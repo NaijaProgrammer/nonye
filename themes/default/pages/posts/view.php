@@ -121,7 +121,7 @@ $page_instance->add_nav();
 	    <a class="share-icon" title="permalink to this post" onclick="slideToggle('post-permalink')" style="top:10px;"><i class="fa fa-icon fa-2x glyphicon glyphicon-link"></i></a>
 	    <div id="post-permalink" class="post-permalink" style="display:none;"><?php echo $post_short_url; ?></div>
 	 </div>
-	 <a class="<?php echo $user_is_logged_in ? 'post-editor-opener' : 'user-auth-btn'; ?> reply-link cursor-pointer" data-parent-id="<?php echo sanitize_html_attribute($post_id); ?>" title="reply">
+	 <a id="<?php echo $user_is_logged_in ? 'post-reply-form-opener' : ''; ?>" class="<?php echo $user_is_logged_in ? 'post-editor-opener' : 'user-auth-btn'; ?> reply-link cursor-pointer" data-parent-id="<?php echo sanitize_html_attribute($post_id); ?>" title="reply">
 	  <i class="fa fa-icon fa-reply" data-parent-id="<?php echo sanitize_html_attribute($post_id); ?>"></i>
 	 </a>
 	</div> 
@@ -351,6 +351,14 @@ function initUserCard(){
 #post-create-btn { position: relative;  bottom: 15px; left:312px; /*right: 225px;*/ }
 #status-message { position:relative; right:327px; bottom:10px; }
 </style>
+
+<script>
+$(document).ready(function(){
+	if( typeof document.getElementById('post-reply-form-opener') !== 'undefined' ){
+		$('#post-reply-form-opener').trigger('click');
+	}
+});
+</script>
 
 <?php //$page_instance->add_footer('post-view'); ?>
 <?php $page_instance->close_page(); ?>
