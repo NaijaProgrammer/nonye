@@ -290,7 +290,7 @@ function initUserCard(){
 		function assembleRecentComment(data)
 		{
 			var themeUrl = '<?php echo $theme_url; ?>'; 
-			var responseTitle = 'Response to ' + data.parentTitle;
+			var responseTitle = 'Response to ' + Site.Util.escapeHtml(data.parentTitle);
 			
 			var str = [
 			'<a id="post-response-' + data.id + '" name="post-response-' + data.id + '"></a>',
@@ -319,7 +319,7 @@ function initUserCard(){
 				   '<img src="' + themeUrl + '/images/social-icons/gplus-icon.png" alt="share on google-plus" />',
 				  '</a>',
 				  '<a class="share-icon" title="share on LinkedIn" ',
-				    'onclick="shareOnLinkedIn(\'' + data.shortURL  + '\', \'' + responseTitle + '\', \'' + data.content + '\')">',
+				    'onclick="shareOnLinkedIn(\'' + data.shortURL  + '\', \'' + responseTitle + '\', \'' + Site.Util.escapeHtml(data.content) + '\')">',
 				   '<img src="' + themeUrl + '/images/social-icons/linked-in-icon.png" alt="share on linked-in" />',
 				  '</a>',	    
 				  '<a class="share-icon" title="share on Twitter" ',
