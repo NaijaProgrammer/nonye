@@ -1,6 +1,7 @@
 <?php 
 $display_post_editor = isset($display_post_editor) ? $display_post_editor : true;
-$parent_post_id      = isset($parent_post_id) ? $parent_post_id : 0;
+$parent_post_id = isset($parent_post_id) ? $parent_post_id : 0;
+$header_title = isset($header_title) ? $header_title : 'Create new post';
 ?>
 <?php if(UserModel::user_is_logged_in()): ?>
 <script>
@@ -194,6 +195,7 @@ $(document).ready(function(){
 //import_admin_functions();
 //if( user_can('Create Posts') )
 //{
+	echo '<h3 class="post-editor-header-title text-centered">'. $header_title. '</h3>';
 	get_post_editor( $opts = array('placeholder'=>'Enter Post', 'value'=>'', 'show_on_init'=>false) );
 //}
 

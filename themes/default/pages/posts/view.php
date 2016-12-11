@@ -377,4 +377,4 @@ $(document).ready(function(){
 </script>-->
 
 <?php //$page_instance->add_footer('post-view'); ?>
-<?php $page_instance->close_page( array('display_post_editor'=>true, 'parent_post_id'=>$post_id) ); ?>
+<?php $page_instance->close_page( array('display_post_editor'=>true, 'parent_post_id'=>$post_id, 'header_title'=>'Add comment') ); ?>
