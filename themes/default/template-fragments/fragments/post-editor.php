@@ -37,6 +37,19 @@
 	word-wrap:break-word;
 	overflow-y:auto;
 }
+
+@media screen and (max-width: 767px){
+	#preview-window-wrapper{ display:none; }
+	#editor-window-wrapper { width:100%; padding:0; }
+	#editor-collapser { }
+	#post-create-btn { position:relative; right:15px; top:5px; }
+}
+@media screen and (max-width: 500px){
+	
+}
+@media screen and (max-width: 450px){
+	
+}
 </style>
 <?php
 $value       = isset($value)       ? $value       : '';
