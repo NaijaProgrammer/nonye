@@ -162,11 +162,15 @@ $(document).on('scroll', function(){
 	{
 		mainNav.removeClass('main-navigation-bottom-border');
 		mainNav.addClass('main-navigation-box-shadow');
+		
+		$('.scroll-top-btn').fadeIn('slow');
 	}
 	else
 	{
 		mainNav.removeClass('main-navigation-box-shadow');
 		mainNav.addClass('main-navigation-bottom-border');
+		
+		$('.scroll-top-btn').fadeOut('slow');
 	}
 });
 
@@ -184,7 +188,7 @@ $(document).ready(function(){
 	});
 	*/
 	/* smooth scrolling for scroll to top */
-	$('.scroll-top').click(function(){
+	$('.scroll-top-btn').click(function(){
 	  $('body,html').animate({scrollTop:0},1000);
 	})
 });

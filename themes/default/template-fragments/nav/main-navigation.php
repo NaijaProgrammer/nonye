@@ -99,9 +99,14 @@
 	<li>
 	 <?php //import_admin_functions(); ?>
 	 <?php //if( user_can('Create Posts') ): ?>
-	 <button class="post-editor-opener cursor-pointer btn btn-primary btn-small widget-button" data-parent-id="0" title="Start a new topic">+ New Topic</button>
+	 <button class="post-editor-opener cursor-pointer btn btn-primary btn-small widget-button" data-parent-id="0" title="Create post">+ New Post</button>
 	 <?php //endif; ?>
 	 <?php if(!$user_is_logged_in): ?><button class="user-auth-btn cursor-pointer btn btn-primary btn-small widget-button">Login</button><?php endif; ?>
+	</li>
+	
+	<li>
+	 <i class="fa fa-arrow-up scroll-top-btn btn btn-small widget-button" 
+	  style="color:#aaa; display:none; border:1px solid #aaa; border-radius:50%; background:#fff; margin-left:5px; margin-top:7px;" title="Back to top"></i>
 	</li>
 
    </ul>
