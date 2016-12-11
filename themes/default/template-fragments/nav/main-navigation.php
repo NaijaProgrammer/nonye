@@ -106,7 +106,7 @@
 	
 	<li>
 	 <i class="fa fa-arrow-up scroll-top-btn btn btn-small widget-button" 
-	  style="color:#aaa; display:none; border:1px solid #aaa; border-radius:50%; background:#fff; margin-left:5px; margin-top:5px;" title="Back to top"></i>
+	  style="color:#aaa; display:none; border:1px solid #aaa; border-radius:50%; background:#fff; margin-left:5px; margin-top:7px;" title="Back to top"></i>
 	</li>
 
    </ul>
