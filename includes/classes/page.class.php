@@ -141,7 +141,7 @@ class Page
 	
 	public function close_page($data = array())
 	{
-		$this->add_fragment('page-close');
+		$this->add_fragment('page-close', $data);
 	}
 	
 	public function add_fragment($fragment, $data = array())

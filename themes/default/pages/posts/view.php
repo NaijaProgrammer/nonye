@@ -365,13 +365,16 @@ function initUserCard(){
 }
 </style>
 
-<script>
+<!--<script>
 $(document).ready(function(){
+	/*
 	if( typeof document.getElementById('post-reply-form-opener') !== 'undefined' ){
 		$('#post-reply-form-opener').trigger('click');
 	}
+	*/
+	showPostEditor(<?php echo $post_id; ?>);
 });
-</script>
+</script>-->
 
 <?php //$page_instance->add_footer('post-view'); ?>
-<?php $page_instance->close_page(); ?>
+<?php $page_instance->close_page( array('display_post_editor'=>true, 'parent_post_id'=>$post_id) ); ?>
