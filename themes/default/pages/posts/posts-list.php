@@ -102,8 +102,12 @@ $page_instance->add_nav();
    <table class="table">
     <thead>
       <tr>
-	    <th class="cell-stat hidden-xs hidden-sm forums">Forum</th>
-		<th class="cell-stat hidden-xs hidden-sm categories">Category</th>
+	    <?php if( get_app_setting('show-post-forum-field', true) ): ?>
+		 <th class="cell-stat hidden-xs hidden-sm forums">Forum</th>
+		<?php endif; ?>
+		<?php if( get_app_setting('show-post-category-field', true) ): ?>
+		 <th class="cell-stat hidden-xs hidden-sm categories">Category</th>
+		<?php endif; ?>
         <th class="cell-stat hidden-xs hidden-sm views">Views</th>
 		<th class="cell-stat hidden-xs hidden-sm replies">Replies</th>
         <th><h3><!-- Title and Summary --></h3></th>
@@ -114,20 +118,30 @@ $page_instance->add_nav();
 	<?php foreach($posts AS $post_id): ?>
 	<?php $post = PostModel::get_post_instance($post_id); ?>
       <tr class="post-summary">
+	    <?php if( get_app_setting('show-post-forum-field', true) ): ?>
 	    <td class="hidden-xs hidden-sm forums">
-		 <?php $forum = ForumModel::get_forum_instance( $post->get_forums()[0] ); ?>
-		 <?php $forum_url = generate_url(array('controller'=>'posts', 'action'=>'forum', 'qs'=>array($forum->get('name')))); ?>
-		 <a href="<?php echo sanitize_html_attribute($forum_url); ?>" title="view <?php echo sanitize_html_attribute($forum->get('name')); ?> forum posts">
-		  <?php echo $forum->get('name'); ?>
-		 </a>
+		 <?php if( !empty($post->get_forums()) ): ?>
+		  <?php $forum = ForumModel::get_forum_instance( $post->get_forums()[0] ); ?>
+		  <?php $forum_url = generate_url(array('controller'=>'posts', 'action'=>'forum', 'qs'=>array($forum->get('name')))); ?>
+		  <a href="<?php echo sanitize_html_attribute($forum_url); ?>" title="view <?php echo sanitize_html_attribute($forum->get('name')); ?> forum posts">
+		   <?php echo $forum->get('name'); ?>
+		  </a>
+		 <?php endif; ?>
 		</td>
+		<?php endif; ?>
+		
+		<?php if( get_app_setting('show-post-category-field', true) ): ?>
 	    <td class="hidden-xs hidden-sm categories">
-		 <?php $category = CategoryModel::get_category_instance( $post->get_categories()[0] ); ?>
-		 <?php $category_url = generate_url(array('controller'=>'posts', 'action'=>'category', 'qs'=>array($category->get('name')))); ?>
-		 <a href="<?php echo sanitize_html_attribute($category_url); ?>" title="view posts filed under <?php echo sanitize_html_attribute($category->get('name')); ?> category">
-		  <?php echo $category->get('name'); ?>
-		 </a>
+		 <?php if( !empty($post->get_categories()) ): ?>
+		  <?php $category = CategoryModel::get_category_instance( $post->get_categories()[0] ); ?>
+		  <?php $category_url = generate_url(array('controller'=>'posts', 'action'=>'category', 'qs'=>array($category->get('name')))); ?>
+		  <a href="<?php echo sanitize_html_attribute($category_url); ?>" title="view posts filed under <?php echo sanitize_html_attribute($category->get('name')); ?> category">
+		   <?php echo $category->get('name'); ?>
+		  </a>
+		 <?php endif; ?>
 		</td>
+		<?php endif; ?>
+		
         <td class="hidden-xs hidden-sm views">
 		 <a href="#" title="<?php echo sanitize_html_attribute($post->get_view_data($count=true)); ?> views">
 		  <?php echo format_count($post->get_view_data($count=true)); ?>
