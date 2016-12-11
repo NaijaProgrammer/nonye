@@ -208,6 +208,11 @@ if( !UserModel::user_is_logged_in() )
 <script>
 $(document).ready(function(){
 	showPostEditor( <?php echo $parent_post_id; ?> );
+	
+	$('.post-editor-opener').on('click', function(event){ 
+		event.preventDefault();
+		$('body,html').animate({scrollTop:$(document).height()},1000);
+	});
 });
 </script>
 <?php endif; ?>
