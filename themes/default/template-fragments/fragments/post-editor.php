@@ -38,6 +38,11 @@
 	overflow-y:auto;
 }
 
+/* Begin - Style used for when the post editor is displayed on init */
+#post-editor-wrapper { position:relative; padding-bottom:35px; }
+#post-create-btn { position:relative; bottom:5px; }
+/* End - Style used for when the post editor is displayed on init */
+
 @media screen and (max-width: 767px){
 	#preview-window-wrapper{ display:none; }
 	#editor-window-wrapper { width:100%; padding:0; }
@@ -663,19 +668,20 @@ $('#new-post-form').on('submit', function(e){
 });
 </script>
 <script>
-$('.post-editor-opener').on( 'click', function(event){ showPostEditor(event); } )
+//$('.post-editor-opener').on( 'click', function(event){ showPostEditor(event); } )
 
-function showPostEditor(event)
+//function showPostEditor(event)
+function showPostEditor(parentPostID)
 {
-    event.preventDefault();
-	var target = event.target;
-	var parentPostID = parseInt( target.getAttribute('data-parent-id') );
+    //event.preventDefault();
+	//var target = event.target;
+	//var parentPostID = parseInt( target.getAttribute('data-parent-id') );
 	
 	$('#post-editor-wrapper').slideDown('slow');
 	$('#editor-collapser').on('click', function(event){ $('#post-editor-wrapper').slideUp('slow'); });
 	
 	//this is a response/comment to a post
-	if(parentPostID > 0)
+	if( parentPostID && parentPostID > 0 )
 	{
 		postTagsField.tagEditor('destroy'); //destroy this if it previously exists, so we can successfully hide the post-tags-field without issues. See comment in 'else' section
 		$('#post-create-btn').html('Post reply');
@@ -684,6 +690,7 @@ function showPostEditor(event)
 		$('#post-forum-selector').hide();
 		$('#post-category-selector').hide();
 		$('#post-tags-field').hide();
+		$('#tags-container').hide();
 	}
 	else
 	{

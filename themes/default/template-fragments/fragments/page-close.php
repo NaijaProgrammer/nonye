@@ -1,3 +1,7 @@
+<?php 
+$display_post_editor = isset($display_post_editor) ? $display_post_editor : true;
+$parent_post_id      = isset($parent_post_id) ? $parent_post_id : 0;
+?>
 <?php if(UserModel::user_is_logged_in()): ?>
 <script>
 (function compulsoryActions(){
@@ -186,18 +190,25 @@ $(document).ready(function(){
 </script>
 <script src="<?php echo $theme_url; ?>/js/bootstrap.min.js"></script>
 <?php
-import_admin_functions();
 //if( UserModel::user_is_logged_in() ) : $page_instance->add_fragment( 'post-editor', array('value'=>'', 'placeholder'=>'Type in your post here') );
-if( user_can('Create Posts') )
-{
+//import_admin_functions();
+//if( user_can('Create Posts') )
+//{
 	get_post_editor( $opts = array('placeholder'=>'Enter Post', 'value'=>'', 'show_on_init'=>false) );
-}
+//}
 
 if( !UserModel::user_is_logged_in() )
 {
 	$page_instance->add_fragment( 'login-signup-forms', array() );
 }
 ?>
+<?php if( $display_post_editor ): ?>
+<script>
+$(document).ready(function(){
+	showPostEditor( <?php echo $parent_post_id; ?> );
+});
+</script>
+<?php endif; ?>
 
 <?php //include(INCLUDES_DIR. '/user-timezone-setter.php'); ?>
 <?php //echo date_default_timezone_get(); ?>
