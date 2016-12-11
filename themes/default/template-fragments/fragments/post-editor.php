@@ -42,10 +42,10 @@
 $value       = isset($value)       ? $value       : '';
 $placeholder = isset($placeholder) ? $placeholder : '';
 
-$show_post_title_field    = get_app_setting('require-post-title-field', true);
-$show_post_forum_field    = get_app_setting('require-post-forum-field', true);
-$show_post_category_field = get_app_setting('require-post-category-field', true);
-$show_post_body_field     = get_app_setting('require-post-body-field', true);
+$show_post_title_field    = get_app_setting('show-post-title-field', true);
+$show_post_forum_field    = get_app_setting('show-post-forum-field', true);
+$show_post_category_field = get_app_setting('show-post-category-field', true);
+$show_post_body_field     = get_app_setting('show-post-body-field', true);
 $show_post_tags_field     = get_app_setting('show-post-tags-field', true);
 ?>
 <?php if($show_post_forum_field): $forums = ForumModel::get_forums( false, array(), array('name'=>'ASC'), 0 ); endif; ?>

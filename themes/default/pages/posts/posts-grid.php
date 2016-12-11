@@ -24,7 +24,10 @@ $page_instance->add_nav();
  <div class="clear" style="margin-bottom:5px;"></div>
  <div class="col-lg-3 hidden-xs" style="border:none;1px solid #ccc; padding-left:0">
   <?php $page_instance->add_sidebar('recent-comments'); ?>
-  <?php $page_instance->add_sidebar('categories'); ?>
+  
+  <?php if( get_app_setting('show-post-forum-field', true) ): $page_instance->add_sidebar('forums'); endif; ?>
+  <?php if( get_app_setting('show-post-category-field', true) ): $page_instance->add_sidebar('categories'); endif; ?>
+  
   <?php $page_instance->add_sidebar('popular-links'); ?>
  </div>
  <div id="posts-grid-container" class="col-lg-9" style="border:none; padding:0;">
