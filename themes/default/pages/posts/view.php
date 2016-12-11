@@ -355,7 +355,8 @@ function initUserCard(){
 @media screen and (max-width: 767px){
 	#post-editor-wrapper { width:100% !important; }
 	#editor-collapser { }
-	#post-create-btn { position:relative; right:15px; top:5px; }
+	#post-create-btn { position:relative; left:0; right:15px; }
+	#status-message { position:relative; right:15px; bottom:10px; }
 }
 @media screen and (max-width: 500px){
 	
