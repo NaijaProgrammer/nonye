@@ -35,7 +35,8 @@ $page_instance->add_nav();
 <?php $default_img_url = get_app_setting('default-user-image-url'); ?>
 <div class="container main-container">
  <div class="col-lg-3 hidden-xs" style="border:none;1px solid #ccc; padding-left:0">
-  <?php $page_instance->add_sidebar('forums'); ?>
+  <?php if( get_app_setting('show-post-forum-field', true) ): $page_instance->add_sidebar('forums'); endif; ?>
+  <?php if( get_app_setting('show-post-category-field', true) ): $page_instance->add_sidebar('categories'); endif; ?>
   <?php $page_instance->add_sidebar('popular-links'); ?>
  </div>
  <div id="post-stream" class="col-lg-9">
