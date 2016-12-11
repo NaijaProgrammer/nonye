@@ -15,6 +15,7 @@
 {
 	position:absolute; 
 	right:10px;
+	display:none;
 }
 #editor-window-wrapper, #preview-window-wrapper
 {

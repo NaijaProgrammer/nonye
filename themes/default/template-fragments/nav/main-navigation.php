@@ -96,18 +96,14 @@
 
 	</li>
 	
-	<?php /*
-	<?php import_admin_functions(); ?>
-	<?php if( user_can('Create Posts') ): ?>
 	<li>
-	 <button class="<?php echo $user_is_logged_in ? 'post-editor-opener' : 'user-auth-btn'; ?> cursor-pointer btn btn-primary btn-small widget-button" data-parent-id="0" title="Start a new topic">
-	 + New Topic
-	 </button>
+	 <?php //import_admin_functions(); ?>
+	 <?php //if( user_can('Create Posts') ): ?>
+	 <button class="post-editor-opener cursor-pointer btn btn-primary btn-small widget-button" data-parent-id="0" title="Start a new topic">+ New Topic</button>
+	 <?php //endif; ?>
+	 <?php if(!$user_is_logged_in): ?><button class="user-auth-btn cursor-pointer btn btn-primary btn-small widget-button">Login</button><?php endif; ?>
 	</li>
-	<?php endif; ?>
-	*/
-	?>
-	
+
    </ul>
   </div>
  </div>
