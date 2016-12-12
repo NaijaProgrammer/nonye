@@ -36,10 +36,17 @@ $page_instance->add_nav();
   <?php $post_id = $post->get('id'); ?>
   <?php $post_url = get_post_url($post_id); ?>
   <?php $post_title = $post->get('title'); ?>
+  
+  <?php if( !empty($post->get_forums()) ): ?>
   <?php $forum = ForumModel::get_forum_instance( $post->get_forums()[0] ); ?>
   <?php $forum_url = generate_url(array('controller'=>'posts', 'action'=>'forum', 'qs'=>array($forum->get('name')))); ?>
+  <?php endif; ?>
+  
+  <?php if( !empty($post->get_categories()) ): ?>
   <?php $category = CategoryModel::get_category_instance( $post->get_categories()[0] ); ?>
   <?php $category_url = generate_url(array('controller'=>'posts', 'action'=>'category', 'qs'=>array($category->get('name')))); ?>
+  <?php endif; ?>
+  
   <?php $post_author = UserModel::get_user_instance( $post->get('author_id') ); ?>
   <div class="item col-xs-6 col-sm-4 col-md-3 col-lg-3 post-summary">
    <div class="thumbnail">
