@@ -15,7 +15,7 @@ function create_forum_tables()
 				`creator_id`  int NOT NULL,
 				`name`        varchar(100),
 				`description` text,
-				`date_added` datetime NOT NULL
+				`date_created` datetime NOT NULL
 			) DEFAULT CHARACTER SET utf8 AUTO_INCREMENT=11;" );
 		}
 		
@@ -26,7 +26,7 @@ function create_forum_tables()
 				`name`        varchar(100),
 				`description` text,
 				`creator_id`  int NOT NULL,
-				`date_added`  datetime NOT NULL
+				`date_created`  datetime NOT NULL
 			) DEFAULT CHARACTER SET utf8 AUTO_INCREMENT=101;" ); //end sql command
 		}
 		
@@ -37,7 +37,7 @@ function create_forum_tables()
 				`name`        varchar(100),
 				`description` text,
 				`creator_id`  int NOT NULL,
-				`date_added`  datetime NOT NULL
+				`date_created`  datetime NOT NULL
 			) DEFAULT CHARACTER SET utf8 AUTO_INCREMENT=2345;" ); 
 		}
 		
@@ -48,8 +48,11 @@ function create_forum_tables()
 				`parent_id`   int NOT NULL default 0,
 				`author_id`   int NOT NULL,
 				`title`       text,
+				`excerpt`     text,
 				`content`     longtext,
-				`date_added`  datetime NOT NULL
+				`status`      varchar(100),
+				`date_published` datetime NOT NULL,
+				`date_created`  datetime NOT NULL
 			) DEFAULT CHARACTER SET utf8 AUTO_INCREMENT=3456;" ); //end sql command
 		}
 	  
@@ -61,7 +64,7 @@ function create_forum_tables()
 				`parent_id`  int NOT NULL default 0,
 				`author_id`  int NOT NULL,
 				`content`    longtext,
-				`date_added` datetime NOT NULL
+				`date_created` datetime NOT NULL
 			) DEFAULT CHARACTER SET utf8 AUTO_INCREMENT=1001;" );
 		}
 		

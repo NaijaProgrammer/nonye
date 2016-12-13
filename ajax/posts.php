@@ -6,7 +6,9 @@ if(isset($_POST['create']))
 {  
 	$author_id   = $current_user_id; //$_POST['creator_id'];
 	$title       = $_POST['title'];
+	$excerpt     = isset($_POST['excerpt']) ? $_POST['excerpt'] : '';
 	$content     = $_POST['content'];
+	$status      = $_POST['status'];
 	$forum_id    = $_POST['forum'];
 	$category_id = $_POST['category'];
 	$tags        = json_decode(trim($_POST['tags']));
@@ -61,6 +63,11 @@ if(isset($_POST['create']))
 		
 		if( is_object($post) )
 		{
+			if( $status == 'published' )
+			{
+				$post->set_publish_date();
+			}
+			
 			$post_id     = $post->get('id');
 			$activity_id =  ActivityManager::create_activity(array(
 				'object_id'      => $post_id,
