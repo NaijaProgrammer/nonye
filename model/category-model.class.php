@@ -16,7 +16,7 @@ class CategoryModel extends BaseModel
 		try
 		{
 			$dbh = self::get_db_connection();
-			$stmt = $dbh->prepare( "INSERT INTO {$tp}categories (`creator_id`, `name`, `description`, `date_added`) VALUES (?, ?, ?, UTC_TIMESTAMP())" );
+			$stmt = $dbh->prepare( "INSERT INTO {$tp}categories (`creator_id`, `name`, `description`, `date_created`) VALUES (?, ?, ?, UTC_TIMESTAMP())" );
 			$stmt->bind_param("iss", $creator_id, $name, $description);
 			$stmt->execute();
 			$insert_id = $stmt->insert_id;
@@ -42,7 +42,7 @@ class CategoryModel extends BaseModel
 	public static function get_categories( $ids_only = true, $where=array(), $order=array(), $limit = 0 )
 	{
 		$tp      = self::get_tables_prefix();
-		$sel_str = $ids_only ? "`id`" : "`id`, `name`, `description`, `creator_id`, `date_added`";
+		$sel_str = $ids_only ? "`id`" : "`id`, `name`, `description`, `creator_id`, `date_created`";
 		$select  = "SELECT $sel_str FROM {$tp}categories";
 		$categories = array();
 		$where_data = parent::parse_where_data($where);
@@ -54,7 +54,7 @@ class CategoryModel extends BaseModel
 			$replacement_values = $where_data['where_values'];
 		}
 		
-		$select .= parent:: parse_order_data($order, array('id', 'name', 'description', 'creator_id', 'date_added'));
+		$select .= parent:: parse_order_data($order, array('id', 'name', 'description', 'creator_id', 'date_created'));
 		
 		if( !empty($limit) )
 		{
@@ -84,10 +84,10 @@ class CategoryModel extends BaseModel
 			}
 			else
 			{
-				$stmt->bind_result($category_id, $name, $description, $creator_id, $date_added);
+				$stmt->bind_result($category_id, $name, $description, $creator_id, $date_created);
 				while ($stmt->fetch())
 				{
-					$categories[] = array('id'=>$category_id, 'name'=>$name, 'description'=>$description, 'creator_id'=>$creator_id, 'date_added'=>$date_added);
+					$categories[] = array('id'=>$category_id, 'name'=>$name, 'description'=>$description, 'creator_id'=>$creator_id, 'date_created'=>$date_created);
 				}
 			}
 			
@@ -126,7 +126,7 @@ class Category extends CategoryModel
 		$where = array( 'id'=>$this->get_id() );
 		foreach( $update_data AS $key => $value )
 		{
-			if( ($key != 'id') && ($key != 'date_added') )
+			if( ($key != 'id') && ($key != 'date_created') )
 			{
 				$udata[$key] = $value;
 			}
@@ -267,7 +267,7 @@ class Category extends CategoryModel
 				$replacement_values = $where_data['where_values'];
 			}
 			
-			$select .= parent::parse_order_data($order, array('id', 'parent_id', 'title', 'description', 'creator_id', 'date_added'));
+			$select .= parent::parse_order_data($order, array('id', 'parent_id', 'title', 'description', 'creator_id', 'date_created'));
 				
 			if( !empty($limit) )
 			{

@@ -17,16 +17,21 @@ class PostModel extends BaseModel
 			$data['parent_id'] = 0;
 		}
 		
+		if( !isset($data['excerpt']) )
+		{
+			$data['excerpt'] = '';
+		}
+		
 		extract($data);
-		$tp  = self::get_tables_prefix();
+		$tp = self::get_tables_prefix();
 		
 		//It's not a parameter of the query, in that you don't have to supply a value to MySQL.
 		//http://stackoverflow.com/a/9497221/1743192
 		try
 		{
 			$dbh = self::get_db_connection();
-			$stmt = $dbh->prepare( "INSERT INTO {$tp}posts (`parent_id`, `author_id`, `title`, `content`, `date_added`) VALUES (?, ?, ?, ?, UTC_TIMESTAMP())" );
-			$stmt->bind_param("iiss", $parent_id, $author_id, $title, $content);
+			$stmt = $dbh->prepare( "INSERT INTO {$tp}posts (`parent_id`, `author_id`, `title`, `excerpt`, `content`, `status`, `date_created`) VALUES (?, ?, ?, ?, ?, ?, UTC_TIMESTAMP())" );
+			$stmt->bind_param("iissss", $parent_id, $author_id, $title, $excerpt, $content, $status);
 			$stmt->execute();
 			
 			if($stmt->affected_rows)
@@ -78,7 +83,7 @@ class PostModel extends BaseModel
 	public static function get_posts( $ids_only = true, $where=array(), $order=array(), $limit = 0 )
 	{
 		$tp      = self::get_tables_prefix();
-		$sel_str = $ids_only ? "`id`" : "`id`, `parent_id`, `title`, `content`, `creator_id`, `date_added`";
+		$sel_str = $ids_only ? "`id`" : "`id`, `parent_id`, `title`, `excerpt`, `content`, `status`, `creator_id`, `date_created`";
 		$select  = "SELECT $sel_str FROM {$tp}posts";
 		$posts   = array();
 		$where_data = parent::parse_where_data($where);
@@ -90,7 +95,7 @@ class PostModel extends BaseModel
 			$replacement_values = $where_data['where_values'];
 		}
 		
-		$select .= parent:: parse_order_data($order, array('id', 'parent_id', 'title', 'content', 'creator_id', 'date_added'));
+		$select .= parent::parse_order_data($order, array('id', 'parent_id', 'title', 'excerpt', 'content', 'status', 'creator_id', 'date_created'));
 		
 		if( !empty($limit) )
 		{
@@ -120,10 +125,11 @@ class PostModel extends BaseModel
 			}
 			else
 			{
-				$stmt->bind_result($post_id, $parent_id, $name, $description, $creator_id, $date_added);
+				$stmt->bind_result($post_id, $parent_id, $name, $excerpt, $description, $status, $creator_id, $date_created);
 				while ($stmt->fetch())
 				{
-					$posts[] = array('id'=>$post_id, 'parent_id'=>$parent_id, 'name'=>$name, 'description'=>$description, 'creator_id'=>$creator_id, 'date_added'=>$date_added);
+					$posts[] = array('id'=>$post_id, 'parent_id'=>$parent_id, 'name'=>$name, 'excerpt'=>$excerpt, 
+						'description'=>$description, 'status'=>$status, 'creator_id'=>$creator_id, 'date_created'=>$date_created);
 				}
 			}
 			
@@ -153,7 +159,7 @@ class PostModel extends BaseModel
 			$replacement_values = $where_data['where_values'];
 		}
 		
-		$select .= parent:: parse_order_data($order, array('id', 'parent_id', 'content', 'creator_id', 'date_added'));
+		$select .= parent:: parse_order_data($order, array('id', 'parent_id', 'content', 'creator_id', 'date_created'));
 		
 		if( !empty($limit) )
 		{
@@ -195,7 +201,7 @@ class PostModel extends BaseModel
 	* $keywords string
 	* $authors array of author ids
 	* $filter_data members: array( forum=>array(id, id, id...), category=>array(id, id, id...), tag=>array(id, id, id...) )
-	* $orders members : array('title'=>'DESC', 'date_added'=>'ASC')
+	* $orders members : array('title'=>'DESC', 'date_created'=>'ASC')
 	*/
 	public static function search($keywords, $authors=array(), $filter_data=array(), $orders=array(), $limit = 0 )
 	{
@@ -231,7 +237,7 @@ class PostModel extends BaseModel
 	* $keywords string
 	* $authors array of author ids
 	* $filter_data members: array( forum=>array(id, id, id...), category=>array(id, id, id...), tag=>array(id, id, id...) )
-	* $orders members : array('title'=>'DESC', 'date_added'=>'ASC')
+	* $orders members : array('title'=>'DESC', 'date_created'=>'ASC')
 	* $limit string e.g 10, (15, 5)
 	*/
 	private static function assemble_post_search_str($keywords, $authors=array(), $filter_data=array(), $orders=array(), $limit=0)
@@ -239,7 +245,7 @@ class PostModel extends BaseModel
 		$tp               = self::get_tables_prefix();
 		$sql_str          = "SELECT DISTINCT `id` FROM {$tp}posts ";
 		$tables_whitelist = array('forum', 'category', 'tag');
-		$orders_whitelist = array('title', 'date_added');
+		$orders_whitelist = array('title', 'date_created');
 		$order_vals_wlist = array('ASC', 'DESC');
 		
 		$filter_str = '';
@@ -345,13 +351,40 @@ class Post extends PostModel
 		
 		foreach( $update_data AS $key => $value )
 		{
-			if( ($key != 'id') && ($key != 'parent_id') && ($key != 'date_added') )
+			if( ($key != 'id') && ($key != 'parent_id') && ($key != 'date_created') )
 			{
 				$udata[$key] = $value;
 			}
 		}
 		
 		return $this->update_table( self::get_tables_prefix(). "posts", $udata, $where );
+	}
+	
+	/*
+	* $date in format: 'YYYY-mm-dd HH:mm:ss'
+	*/
+	public function set_publish_date( $date = '' )
+	{
+		$table = self::get_tables_prefix(). "posts"
+		$dbh   = self::get_db_connection();
+		
+		$update_str  = "UPDATE {$table} SET `date_published` =  ";
+		$update_str .= !empty($date) ? $date : "UTC_TIMESTAMP()";
+		$update_str .= "WHERE `id` = ". $this->get_id();
+		
+		$stmt = $dbh->prepare( $update_str );
+		
+		$stmt->execute();
+		$affected_rows = $stmt->affected_rows;
+		$stmt->close();
+		
+		// Since every class shares the same instance,
+		// when we close the connection, we get a warning of:
+		// mysqli::query(): Couldn't fetch mysqli in C:\wamp\www\sites\zamaju-forums\a\pcl\sql\my_sql.class.php on line ...
+		// and as a result, the UserManagerSessionManager is not able to successfully delete expired sessions
+		//$dbh->close();
+		
+		return $affected_rows;
 	}
 	
 	public function record_view($viewer_id)
@@ -420,7 +453,6 @@ class Post extends PostModel
 	{
 		$tp  = self::get_tables_prefix();
 		$dbh = self::get_db_connection();
-		
 		
 		if( empty($data) )
 		{
