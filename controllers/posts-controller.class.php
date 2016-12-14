@@ -57,7 +57,7 @@ class PostsController extends AppController
 		{ 
 			$part  = ( $this->page == 'forum' || $this->page == 'category' || $this->page == 'tagged' || $this->page == 'author') ? urldecode( $this->request_parts[2] ) : '';
 			$limit = 20;
-			$order_data = array('date_added'=>'DESC');
+			$order_data = array('date_created'=>'DESC');
 			$image_url  = SITE_URL. '/logo-large.png';
 			
 			switch($this->page)
@@ -139,7 +139,7 @@ class PostsController extends AppController
 				'page_keywords'    => '',
 				'page_description' => '',
 				'robots_value'     => 'all',
-				'posts'            => PostModel::get_posts( true, array('parent_id'=>0), array('date_added'=>'DESC'), 20 ), //get only top-level posts
+				'posts'            => PostModel::get_posts( true, array('parent_id'=>0), array('date_created'=>'DESC'), 20 ), //get only top-level posts
 				'open_graph_data'  => array(
 					'url'          => generate_url(array('controller'=>'')),
 					'title'        => '',

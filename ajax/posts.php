@@ -214,7 +214,7 @@ else if(isset($_GET['get-posts']))
 //Get the most recent comment on the site
 else if(isset($_GET['most-recent-comment']))
 {
-	$rc_id = PostModel::get_reply_posts(array(), array('date_added'=>'DESC'), $limit = 1 );
+	$rc_id = PostModel::get_reply_posts(array(), array('date_created'=>'DESC'), $limit = 1 );
 	$rc_id = ( is_array($rc_id) && !empty($rc_id) ) ? $rc_id[0] : 0;
 	$rc    = ($rc_id) ? PostModel::get_post_instance($rc_id) : null;
 	

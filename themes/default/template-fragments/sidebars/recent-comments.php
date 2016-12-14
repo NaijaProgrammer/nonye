@@ -1,4 +1,4 @@
-<?php $rc_id = PostModel::get_reply_posts(array(), array('date_added'=>'DESC'), $limit = 1 ); ?>
+<?php $rc_id = PostModel::get_reply_posts(array(), array('date_created'=>'DESC'), $limit = 1 ); ?>
 <?php $rc_id = ( is_array($rc_id) && !empty($rc_id) ) ? $rc_id[0] : 0; ?>
 <?php $rc    = ($rc_id) ? PostModel::get_post_instance($rc_id) : null; ?>
 <?php if(is_object($rc)) : ?>
