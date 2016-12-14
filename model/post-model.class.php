@@ -365,7 +365,7 @@ class Post extends PostModel
 	*/
 	public function set_publish_date( $date = '' )
 	{
-		$table = self::get_tables_prefix(). "posts"
+		$table = self::get_tables_prefix(). "posts";
 		$dbh   = self::get_db_connection();
 		
 		$update_str  = "UPDATE {$table} SET `date_published` =  ";
