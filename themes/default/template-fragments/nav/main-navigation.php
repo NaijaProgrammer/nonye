@@ -1,4 +1,8 @@
 <?php $user_is_logged_in = UserModel::user_is_logged_in(); ?>
+<?php $show_post_forums_field = get_app_setting('show-post-forum-field', true); ?>
+<?php $show_post_categories_field = get_app_setting('show-post-category-field', true); ?>
+<?php $show_post_tags_field = get_app_setting('show-post-tags-field', true); ?>
+
 <!--<nav class="navbar navbar-inverse navbar-static-top" role="navigation">-->
 <nav id="main-navigation" class="navbar navbar-inverse navbar-fixed-top main-navigation-bottom-border" role="navigation">
  <div class="container">
@@ -60,18 +64,28 @@
             <label for="authors">Authors</label>
             <input id="post-search-filter-authors" class="form-control post-filter" type="text" placeholder="Type to filter by authors' display name" />
            </div>
+		   
+		   <?php if($show_post_forums_field): ?>
            <div class="form-group">
             <label for="forums">Forums</label>
             <input id="post-search-filter-forums" class="form-control post-filter" type="text" placeholder="Type to filter by forums"/>
            </div>
+		   <?php endif; ?>
+		   
+		   <?php if($show_post_categories_field): ?>
 		   <div class="form-group">
             <label for="categories">Categories</label>
             <input id="post-search-filter-categories" class="form-control post-filter" type="text" placeholder="Type to filter by categories" />
            </div>
+		   <?php endif; ?>
+		   
+		   <?php if($show_post_tags_field): ?>
 		   <div class="form-group">
             <label for="tags">Tags</label>
             <input id="post-search-filter-tags" class="form-control post-filter" type="text" placeholder="Type to filter by tags" />
            </div>
+		   <?php endif; ?>
+		   
 		   <div id="post-search-status-message" class="text-center"></div>
            <button type="submit" id="secondary-post-search-btn" class="btn btn-primary pull-right pl25 pr25 post-search-btn" style="border-radius:3px;"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
           </form>
@@ -97,10 +111,10 @@
 	</li>
 	
 	<li>
-	 <?php //import_admin_functions(); ?>
-	 <?php //if( user_can('Create Posts') ): ?>
+	 <?php import_admin_functions(); ?>
+	 <?php if( user_can('Create Posts') ): ?>
 	 <button class="post-editor-opener cursor-pointer btn btn-primary btn-small widget-button" data-parent-id="0" title="Create post">+ New Post</button>
-	 <?php //endif; ?>
+	 <?php endif; ?>
 	 <?php if(!$user_is_logged_in): ?><button class="user-auth-btn cursor-pointer btn btn-primary btn-small widget-button">Login</button><?php endif; ?>
 	</li>
 	
@@ -208,6 +222,8 @@ function notify(msg,opts)
 			runSearch( editor );
 		}
 	});
+	
+	<?php if($show_post_forums_field): ?>
 	$('#post-search-filter-forums').tagEditor({
 		forceLowercase : false,
 		placeholder    : 'Type to filter by forums',
@@ -232,6 +248,9 @@ function notify(msg,opts)
 			runSearch( editor );
 		}
 	});
+	<?php endif; ?>
+	
+	<?php if($show_post_categories_field): ?>
 	$('#post-search-filter-categories').tagEditor({
 		forceLowercase : false,
 		placeholder    : 'Type to filter by categories',
@@ -256,6 +275,9 @@ function notify(msg,opts)
 			runSearch( editor );
 		}
 	});
+	<?php endif; ?>
+	
+	<?php if($show_post_tags_field): ?>
 	$('#post-search-filter-tags').tagEditor({
 		forceLowercase : false,
 		placeholder    : 'Type to filter by tags',
@@ -280,14 +302,28 @@ function notify(msg,opts)
 			runSearch( editor );
 		}
 	});
+	<?php endif; ?>
+	
 	$('.post-search-btn').on('click', function(e){
 		e.preventDefault();
 		
 		var title      = $('#post-search-keyword').val();
 		var authors    = $('#post-search-filter-authors').tagEditor('getTags')[0].tags; //.val();
-		var forums     = $('#post-search-filter-forums').tagEditor('getTags')[0].tags; //.val();
-		var categories = $('#post-search-filter-categories').tagEditor('getTags')[0].tags; //.val();
-		var tags       = $('#post-search-filter-tags').tagEditor('getTags')[0].tags; //.val();
+		var forums     = []; 
+		var categories = []; 
+		var tags       = []; 
+		
+		<?php if($show_post_forums_field): ?>
+		forums = $('#post-search-filter-forums').tagEditor('getTags')[0].tags; //.val();
+		<?php endif; ?>
+		
+		<?php if($show_post_categories_field): ?>
+		categories = $('#post-search-filter-categories').tagEditor('getTags')[0].tags; //.val();
+		<?php endif; ?>
+		
+		<?php if( get_app_setting('show-post-tag-field', true) ): ?>
+		tags = $('#post-search-filter-tags').tagEditor('getTags')[0].tags; //.val();
+		<?php endif; ?>
 		
 		searchPosts(function(data){
 			if(data.length <= 0)
@@ -334,9 +370,17 @@ function notify(msg,opts)
 	{
 		$('#param-post-search-keywords').html(getKeywordsHTML());
 		$('#param-post-search-authors').html(getAuthorsHTML());
+		<?php if($show_post_forums_field): ?>
 		$('#param-post-search-forums').html(getForumsHTML());
+		<?php endif; ?>
+		
+		<?php if($show_post_categories_field): ?>
 		$('#param-post-search-categories').html(getCategoriesHTML());
+		<?php endif; ?>
+		
+		<?php if($show_post_tags_field): ?>
 		$('#param-post-search-tags').html(getTagsHTML());
+		<?php endif; ?>
 		
 		function getKeywordsHTML()
 		{
@@ -366,6 +410,8 @@ function notify(msg,opts)
 			
 			return str;
 		}
+		
+		<?php if($show_post_forums_field): ?>
 		function getForumsHTML()
 		{
 			var str = '';
@@ -378,6 +424,9 @@ function notify(msg,opts)
 			
 			return str;
 		}
+		<?php endif; ?>
+		
+		<?php if($show_post_categories_field): ?>
 		function getCategoriesHTML()
 		{
 			var str        = '';
@@ -390,6 +439,9 @@ function notify(msg,opts)
 			
 			return str;
 		}
+		<?php endif; ?>
+		
+		<?php if($show_post_tags_field): ?>
 		function getTagsHTML()
 		{
 			var str  = '';
@@ -402,6 +454,8 @@ function notify(msg,opts)
 			
 			return str;
 		}
+		<?php endif; ?>
+		
 		function assembleParameterHTML(paramName, paramType)
 		{
 			var baseUrl = siteURL;
@@ -435,13 +489,29 @@ function notify(msg,opts)
 	}
 	function getSearchParameter(paramName)
 	{
+		var forums = [];
+		var categories = [];
+		var tags = [];
+		
+		<?php if($show_post_forums_field): ?>
+		forums = $('#post-search-filter-forums').tagEditor('getTags')[0].tags;
+		<?php endif; ?>
+		
+		<?php if($show_post_categories_field): ?>
+		categories = $('#post-search-filter-categories').tagEditor('getTags')[0].tags;
+		<?php endif; ?>
+		
+		<?php if($show_post_tags_field): ?>
+		tags = $('#post-search-filter-tags').tagEditor('getTags')[0].tags;
+		<?php endif; ?>
+		
 		switch( paramName.toLowerCase() )
 		{
 			case 'keywords'   : return $('#post-search-keyword').val();
 			case 'authors'    : return $('#post-search-filter-authors').tagEditor('getTags')[0].tags;
-			case 'forums'     : return $('#post-search-filter-forums').tagEditor('getTags')[0].tags;
-			case 'categories' : return $('#post-search-filter-categories').tagEditor('getTags')[0].tags;
-			case 'tags'       : return $('#post-search-filter-tags').tagEditor('getTags')[0].tags;
+			case 'forums'     : forums;
+			case 'categories' : categories;
+			case 'tags'       : tags;
 		}
 	}
 	function runSearch(focusedElement)
@@ -492,9 +562,9 @@ function notify(msg,opts)
 		$('#post-search-quick-results').css('display', display);
 		function assembleHTML(post)
 		{
-			var forum    = post.forum;
-			var category = post.category;
-			var tags     = post.tags;
+			var forum    = typeof post.forum != 'undefined' ? post.forum : '';
+			var category = typeof post.category != 'undefined' ? post.category : '';
+			var tags     = typeof post.tags != 'undefined' ? post.tags : [];
 			var author   = post.author;
 			var postImg  = post.imageURL;
 			var tagsHTML = '';
@@ -511,8 +581,15 @@ function notify(msg,opts)
 				'<a style="float:left; margin-right:7px;" href="' + post.url + '"><img style="width:105px; height:105px; "src="' + post.imageURL + '"></a>',
 				'<span class="post-search-result-item">Author: <a class="post-author" href="' + author.url + '">' + author.username + '</a></span><br>',
 				'<span class="post-search-result-item" title="' + post.fDateCreated + '">Created: ' + post.dateCreated + ' ago</span><br>',
+				
+				<?php if($show_post_forums_field): ?>
 				'<span class="post-search-result-item" title="View posts filed under ' + post.forum.name + ' forum">Forum: <a href="'  + post.forum.url    + '">' + post.forum.name    + '</a></span><br>',
+				<?php endif; ?>
+				
+				<?php if($show_post_categories_field): ?>
 				'<span class="post-search-result-item" title="View posts filed under ' + post.category.name + ' category">Category : <a href="' + post.category.url + '">' + post.category.name + '</a></span><br>',
+				<?php endif; ?>
+				
 				tagsHTML,
 				//'<span class="post-views" title="' + post.viewCount + '">' + post.fViewCount + '</span><br>',
 				//'<span class="post-comments" title="' + post.commentCount + '">' + post.fCommentCount + '</span>',
