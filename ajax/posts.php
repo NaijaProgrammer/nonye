@@ -24,6 +24,7 @@ if(isset($_POST['create']))
 		array('error_condition'=>$require_post_title && empty($title), 'error_message'=>'Enter a title for your post', 'error_type'=>'emptyTitle'),
 		array('error_condition'=>$require_post_forum && empty($forum_id), 'error_message'=>'Choose a forum to post to', 'error_type'=>'emptyForum'),
 		array('error_condition'=>$require_post_category && empty($category_id), 'error_message'=>'Select your post category', 'error_type'=>'emptyCategory'),
+		array('error_condition'=>empty($status), 'error_message'=>'Please choose a status for the post', 'error_type'=>'emptyPostStatus'),
 		array('error_condition'=>$require_post_body && empty($content), 'error_message'=>'Enter the content of your post', 'error_type'=>'emptyContent'),
 		array('error_condition'=>count($tags) < $min_post_tags, 'error_message'=>'Add at least '. count($tags). ' tag(s) to your post', 'error_type'=>'tagCountIncomplete')
 	));

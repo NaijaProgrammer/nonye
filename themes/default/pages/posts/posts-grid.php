@@ -63,7 +63,7 @@ $page_instance->add_nav();
 	 <div class="row">
 	  <div class="col-xs-12 col-md-12" style="margin-top:-3px; margin-bottom:-3px;">
 	   <a class="post-author" href="<?php echo sanitize_html_attribute(get_user_profile_url($post_author->get('id'))); ?>"><?php echo $post_author->get('username'); ?></a>
-	   <span class="date" title="<?php echo sanitize_html_attribute(format_date($post->get('date_added'))); ?>"><?php echo get_time_elapsed($post->get('date_added')). ' ago'; ?></span>
+	   <span class="date" title="<?php echo sanitize_html_attribute(format_date($post->get('date_created'))); ?>"><?php echo get_time_elapsed($post->get('date_created')). ' ago'; ?></span>
 	  </div>
 	 </div>
 	 <?php /*

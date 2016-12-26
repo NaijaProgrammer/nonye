@@ -243,21 +243,30 @@ function format_activity($activity_id, $user_id)
 function get_post_data($post_id)
 {
 	$post     = PostModel::get_post_instance($post_id);
-	$forum    = ForumModel::get_forum_instance( $post->get_forums()[0] );
-	$category = CategoryModel::get_category_instance( $post->get_categories()[0] );
-	$tags     = $post->get_tags();
+	$forum    = ( !empty($post->get_forums())   ? ForumModel::get_forum_instance( $post->get_forums()[0] ) : null );
+	$category = ( !empty($post->get_categories) ? CategoryModel::get_category_instance( $post->get_categories()[0] ) : null );
+	$tags     = ( !empty($post->get_tags())        ? $post->get_tags() : null ) ;
 	$author   = UserModel::get_user_instance( $post->get('author_id') );
 	
-	$forum_a    = array( 'name'=>$forum->get('name'), 'url'=>generate_url(array('controller'=>'posts', 'action'=>'forum', 'qs'=>array($forum->get('name')))) );
-	$category_a = array( 'name'=> $category->get('name'), 'url'=>generate_url(array('controller'=>'posts', 'action'=>'category', 'qs'=>array($category->get('name')))));
-	$author_a   = array( 'username'=>$author->get('username'), 'url'=>get_user_profile_url($author->get('id')), 'imageURL'=>$author->get('image-url', get_app_setting('default-user-image-url')) );
+	$forum_a    = array();
+	$category_a = array();
 	$tags_a     = array();
-
+	
+	if( !empty($forum) )
+	{
+		$forum_a = array( 'name'=>$forum->get('name'), 'url'=>generate_url(array('controller'=>'posts', 'action'=>'forum', 'qs'=>array($forum->get('name')))) );
+	}
+	if( !empty($category) )
+	{
+		$category_a = array( 'name'=> $category->get('name'), 'url'=>generate_url(array('controller'=>'posts', 'action'=>'category', 'qs'=>array($category->get('name')))));
+	}
 	for($i=0, $len=count($tags); $i < $len; $i++)
 	{
 		$tag = TagModel::get_tag_instance($tags[$i]); 
 		$tags_a[] = array( 'name'=>$tag->get('name'), 'url'=>generate_url(array('controller'=>'posts', 'action'=>'tagged', 'qs'=>array($tag->get('name')))) );
 	}
+	
+	$author_a   = array( 'username'=>$author->get('username'), 'url'=>get_user_profile_url($author->get('id')), 'imageURL'=>$author->get('image-url', get_app_setting('default-user-image-url')) );
 	
 	$data = array(
 		'id'            => $post_id,

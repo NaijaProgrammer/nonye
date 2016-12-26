@@ -82,13 +82,13 @@ if($show_post_category_field && !$show_post_forum_field)
  <div class="topic-elements" style="">
  
  <?php if($show_post_title_field): ?>
- <div class="col-md-4" style="padding-left:0 !important;">
+ <div class="col-md-3" style="padding-left:0 !important;">
   <input id="post-title-field" class="form-control" type="text" placeholder="title"/>
  </div>
  <?php endif; ?>
  
  <?php if($show_post_forum_field): ?>
- <div class="col-md-4">
+ <div class="col-md-3">
   <select id="post-forum-selector" class="form-control">
    <option></option>
    <?php foreach($forums AS $forum): ?><option value="<?php echo $forum['id']; ?>"><?php echo $forum['name']; ?></option><?php endforeach; ?>
@@ -97,7 +97,7 @@ if($show_post_category_field && !$show_post_forum_field)
  <?php endif; ?>
  
  <?php if($show_post_category_field): ?>
- <div class="col-md-4">
+ <div class="col-md-3">
   <select id="post-category-selector" class="form-control bg-right bg-no-repeat">
    <option value="">Category</option>
    <?php if(!$show_post_forum_field): ?>
@@ -106,8 +106,16 @@ if($show_post_category_field && !$show_post_forum_field)
   </select>
  </div>
  </div>
- <div class="clear">&nbsp;</div>
  <?php endif; ?>
+ 
+ <div class="col-md-3">
+  <select id="post-status-selector" class="form-control">
+    <option value="">Status</option>
+    <option value="published">Published</option>
+	<option value="draft">Draft</option>
+   </select>
+ </div>
+ <div class="clear">&nbsp;</div>
 
  <?php if($show_post_body_field): ?>
  <div id="editor-window-wrapper"  class="float-left"><textarea id="post-editor" tabindex="101"></textarea></div>
@@ -125,7 +133,9 @@ if($show_post_category_field && !$show_post_forum_field)
   <?php endif; ?>
   
   <input id="parent-post-id" type="hidden" value="0"/>
-  <div class="col-md-2" style="padding-right:0 !important;"><button id="post-create-btn" class="btn btn-primary float-right pr25 pl25">Create</button></div>
+  <div class="col-md-2" style="padding-right:0 !important;">
+   <button id="post-create-btn" class="btn btn-primary float-right pr25 pl25">Create</button>
+  </div>
  </div>
  
  <div class="col-md-6" style="padding-right:0 !important;"><span id="status-message" class="status-message"></span></div>
@@ -138,6 +148,7 @@ if($show_post_category_field && !$show_post_forum_field)
  
 </div>
 
+<script src="<?php echo $site_url; ?>/js/lib/jslib/u-i-n-x/form.js"></script>
 <script src="<?php echo $site_url; ?>/js/lib/tinymce/tinymce.min.js"></script>
 <link rel="stylesheet" href="<?php echo $site_url; ?>/js/lib/select2/css/select2.css" />
 <script src="<?php echo $site_url; ?>/js/lib/select2/js/select2.js"></script>
@@ -580,6 +591,7 @@ $('#new-post-form').on('submit', function(e){
 		var postForum    = '';
 		var postCategory = '';
 		var postTags     = '[]';
+		var postStatus   = form.getSelectElementSelectedValue('post-status-selector');
 		
 		<?php if($show_post_title_field): ?>
 		postTitle = $('#post-title-field').val();
@@ -603,6 +615,7 @@ $('#new-post-form').on('submit', function(e){
 			forum    : postForum, //$('#post-forum-selector').val(),
 			category : postCategory, //$('#post-category-selector').val(),
 			tags     : postTags, //JSON.stringify( postTagsField.tagEditor('getTags')[0].tags )
+			status   : postStatus,
 		}
 	}
 		

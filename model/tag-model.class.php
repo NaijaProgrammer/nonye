@@ -16,7 +16,7 @@ class TagModel extends BaseModel
 		try
 		{
 			$dbh = self::get_db_connection();
-			$stmt = $dbh->prepare( "INSERT INTO {$tp}tags (`creator_id`, `name`, `description`, `date_added`) VALUES (?, ?, ?, UTC_TIMESTAMP())" );
+			$stmt = $dbh->prepare( "INSERT INTO {$tp}tags (`creator_id`, `name`, `description`, `date_created`) VALUES (?, ?, ?, UTC_TIMESTAMP())" );
 			$stmt->bind_param("iss", $creator_id, $name, $description);
 			$stmt->execute();
 			$insert_id = $stmt->insert_id;
@@ -42,7 +42,7 @@ class TagModel extends BaseModel
 	public static function get_tags( $ids_only = true, $where=array(), $order=array(), $limit = 0 )
 	{
 		$tp      = self::get_tables_prefix();
-		$sel_str = $ids_only ? "`id`" : "`id`, `name`, `description`, `creator_id`, `date_added`";
+		$sel_str = $ids_only ? "`id`" : "`id`, `name`, `description`, `creator_id`, `date_created`";
 		$select  = "SELECT $sel_str FROM {$tp}tags";
 		$tags    = array();
 		$where_data = parent::parse_where_data($where);
@@ -54,7 +54,7 @@ class TagModel extends BaseModel
 			$replacement_values = $where_data['where_values'];
 		}
 		
-		$select .= parent:: parse_order_data($order, array('id', 'name', 'description', 'creator_id', 'date_added'));
+		$select .= parent:: parse_order_data($order, array('id', 'name', 'description', 'creator_id', 'date_created'));
 		
 		if( !empty($limit) )
 		{
@@ -84,10 +84,10 @@ class TagModel extends BaseModel
 			}
 			else
 			{
-				$stmt->bind_result($tag_id, $name, $description, $creator_id, $date_added);
+				$stmt->bind_result($tag_id, $name, $description, $creator_id, $date_created);
 				while ($stmt->fetch())
 				{
-					$tags[] = array('id'=>$tag_id, 'name'=>$name, 'description'=>$description, 'creator_id'=>$creator_id, 'date_added'=>$date_added);
+					$tags[] = array('id'=>$tag_id, 'name'=>$name, 'description'=>$description, 'creator_id'=>$creator_id, 'date_added'=>$date_created);
 				}
 			}
 			
@@ -128,7 +128,7 @@ class Tag extends TagModel
 		
 		foreach( $update_data AS $key => $value )
 		{
-			if( ($key != 'id') && ($key != 'date_added') )
+			if( ($key != 'id') && ($key != 'date_created') )
 			{
 				$udata[$key] = $value;
 			}
@@ -222,7 +222,7 @@ class Tag extends TagModel
 				$replacement_values = $where_data['where_values'];
 			}
 			
-			$select .= parent::parse_order_data($order, array('id', 'parent_id', 'title', 'description', 'creator_id', 'date_added'));
+			$select .= parent::parse_order_data($order, array('id', 'parent_id', 'title', 'description', 'creator_id', 'date_created'));
 				
 			if( !empty($limit) )
 			{

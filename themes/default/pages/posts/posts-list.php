@@ -156,8 +156,8 @@ $page_instance->add_nav();
 		 <a class="post-title" href="<?php echo sanitize_html_attribute(get_post_url($post_id)); ?>" title="<?php echo sanitize_html_attribute($post->get('title')); ?>">
 		  <?php echo $post->get('title'); ?>
 		 </a>
-		 <small class="post-date" title="Posted on <?php echo sanitize_html_attribute(format_date($post->get('date_added'))); ?>">
-		  <i class="fa fa-edit"></i>&nbsp;<?php echo format_date($post->get('date_added'), 'F d, Y'); ?>
+		 <small class="post-date" title="Posted on <?php echo sanitize_html_attribute(format_date($post->get('date_created'))); ?>">
+		  <i class="fa fa-edit"></i>&nbsp;<?php echo format_date($post->get('date_created'), 'F d, Y'); ?>
 		 </small>
 		 <!--<div class="summary-text"><?php //echo substr($post->get('content'), 0, 140); ?></div>-->
 		 <div style="margin-top:5px;">
