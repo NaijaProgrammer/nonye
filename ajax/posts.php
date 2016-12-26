@@ -59,7 +59,8 @@ if(isset($_POST['create']))
 			'author_id'   => $author_id,
 			'forum_id'    => $forum_id,
 			'category_id' => $category_id,
-			'tags'        => $tags
+			'tags'        => $tags,
+			'status'      => $status
 		));
 		
 		if( is_object($post) )
