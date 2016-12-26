@@ -705,6 +705,7 @@ function showPostEditor(parentPostID)
 		$('#post-category-selector').hide();
 		$('#post-tags-field').hide();
 		$('#tags-container').hide();
+		$('#post-status-selector').hide();
 	}
 	else
 	{
