@@ -31,7 +31,7 @@ $page_instance->add_nav();
 <?php $post_content    = $post->get('content'); ?>
 <?php $icons_url       = $theme_url. '/images/social-icons'; ?>
 <?php $post_author     = UserModel::get_user_instance( $post->get('author_id') ); ?>
-<?php $post_date_added = $post->get('date_added'); ?>
+<?php $post_date_added = $post->get('date_created'); ?>
 <?php $default_img_url = get_app_setting('default-user-image-url'); ?>
 <div class="container main-container">
  <div class="col-lg-3 hidden-xs" style="border:none;1px solid #ccc; padding-left:0">
