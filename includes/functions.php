@@ -4,7 +4,12 @@
 */
 function get_accepted_origins()
 {
-	$accepted_origins = array("http://localhost", "http://192.168.1.1");
+	$allowed_cors_origins = ItemModel::get_items( array('category'=>'allowed-cors-origins') );
+	$accepted_origins = array(); //array("http://localhost", "http://127.0.0.1", "http://192.168.1.1");
+	
+	foreach($allowed_cors_origins AS $origin){
+		$accepted_origins[] = $origin['value'];
+	}
 	return $accepted_origins;
 }
 function verify_request_origin($die = true, $message='')
