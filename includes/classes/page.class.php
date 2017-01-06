@@ -216,16 +216,24 @@ class Page
 	
 	/*
 	* $opts data members:
+	* current_url
 	* redirect_url
 	*/
 	public function authenticate_user( $opts = array() )
 	{
 	    extract($opts);
 
-		if( UserModel::user_is_logged_in() && !empty($redirect_url) )
+		if( UserModel::user_is_logged_in() )
 		{
-			header("Location:". $redirect_url);
-			exit;
+			if($current_url == $redirect_url)
+			{
+				return;
+			}
+			if( !empty($redirect_url) )
+			{
+				header("Location:". $redirect_url);
+				exit;
+			}
 		}
 		
 		else if(!UserModel::user_is_logged_in())

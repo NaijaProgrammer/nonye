@@ -1,6 +1,5 @@
 <?php
-if($_SERVER['REQUEST_METHOD'] == 'POST')
-{
+if($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$return_data = array();
 	
 	$validate = Validator::validate(array(
@@ -8,45 +7,48 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 		array( 'error_condition'=>!user_can('Edit Site Settings'), 'error_message'=>'You lack sufficient privilege to perform this action', 'error_type'=>'insufficientPrivilege')
 	));
 
-	if($validate['error'])
-	{
+	if($validate['error']) {
 		$return_data = array('error'=>true, 'message'=>$validate['status_message'], 'errorType'=>$validate['error_type']. 'Error');
 		create_json_string($return_data, true);
 		exit;
 	}
 
-	foreach($_POST AS $key => $value)
-	{
-		$$key = trim($value);
+	foreach($_POST AS $key => $value) {
+		$$key = is_string($value) ? trim($value) : $value;
 	}
 	
-	if($action == 'update_site_name')
-	{
+	if($action == 'update_site_name') {
 		update_app_settings( array('site-name'=>$site_name) );
 		$return_data = array('success'=>true, 'message'=>'Settings updated successfully');
 	}
 	
-	if($action == 'update_session_lifetime')
-	{
+	if($action == 'update_session_lifetime') {
 		update_app_settings( array('session-lifetime'=>$session_lifetime) );
 		$return_data = array('success'=>true, 'message'=>'Settings have been updated successfully');
 	}
 	
-	if($action == 'set_active_theme')
-	{
-		if( !empty($theme) )
-		{
+	if($action == 'update_allowed_cors_origins') {
+		
+		$allowed_origins = explode(',', $allowed_cors_origins);
+		foreach($allowed_origins AS $value){
+			if(!empty(trim($value))) {
+				ItemModel::add_item( array('category'=>'allowed-cors-origins', 'value'=>trim($value)) );
+			}
+		}
+		$return_data = array('success'=>true, 'message'=>'Settings have been updated successfully');
+	}
+	
+	if($action == 'set_active_theme') {
+		if( !empty($theme) ) {
 			update_app_settings( array('active-theme'=>$theme) );
 			$return_data = array( 'success'=>true, 'message'=>'Theme updated successfully' );
 		} 
-		else
-		{
+		else {
 			$return_data = array( 'error'=>true, 'message'=>'No theme specified', 'error_type'=>'NoThemeNameGiven' );
 		}
 	}
 	
-	if($action == 'update_auto_mailer')
-	{
+	if($action == 'update_auto_mailer') {
 		$update_type = strtolower($update_type);
 		update_app_settings( array($update_type. '-sender'=>$mail_sender, $update_type. '-message'=>htmlspecialchars($mail_message)) );
 		/*
@@ -114,6 +116,14 @@ $page_instance->load_nav();
     <span class="input-group-addon">Session Lifetime (in seconds)</span>
     <input type="text" id="session-lifetime" data-key="session_lifetime" value="<?php echo get_app_setting('session-lifetime'); ?>" class="form-control">
 	<span data-update-key="session-lifetime" data-action="update_session_lifetime" class="input-group-addon btn btn-primary bg-no-repeat bg-right bg-processing update-btn">Update</span>
+   </div>
+   <div class="form group">
+    <label>Allowed <span title="Cross Origin Resource Sharing">(CORS)</span> Request Origins</label>
+	<?php $allowed_cors_origins = ItemModel::get_items( array('category'=>'allowed-cors-origins') ); ?>
+	<textarea class="form-control" id="allowed-cors-origins" data-key="allowed_cors_origins" placeholder="Enter origin urls, separated by commas"><?php foreach($allowed_cors_origins AS $origin): echo $origin['value']. ', '; endforeach; ?></textarea>
+	<button data-update-key="allowed-cors-origins" data-action="update_allowed_cors_origins" 
+	class="btn btn-primary bg-no-repeat bg-right bg-processing update-btn pull-right" style="position:relative; top:5px;">Update</button>
+	<div class="clear"></div>
    </div>
    
    <fieldset>
@@ -203,7 +213,15 @@ function attachUpdateListener(updateBtn)
 		var action = updateBtn.getAttribute('data-action');
 		var elemID = updateBtn.getAttribute('data-update-key');
 		var key    = $O(elemID).getAttribute('data-key');
-		var value  = $O(elemID).value;
+		var value  = ''
+		
+		//the cors-origins field is a textarea
+		if(key === 'allowed-cors-origins'){
+			$Html(elemId);
+		}
+		else{
+			value = $O(elemID).value;
+		}
 		
 		var postData = 'action=' + action +
 		'&' + key + '=' + value;
