@@ -29,9 +29,11 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 	if($action == 'update_allowed_cors_origins') {
 		
-		$allowed_origins = explode(',', $allowed_cors_origins);
+		$existing_origins = get_accepted_origins();
+		$allowed_origins  = explode(',', $allowed_cors_origins);
 		foreach($allowed_origins AS $value){
-			if(!empty(trim($value))) {
+			$value = trim($value);
+			if( !empty($value) && !in_array($value, $existing_origins) ) {
 				ItemModel::add_item( array('category'=>'allowed-cors-origins', 'value'=>trim($value)) );
 			}
 		}
@@ -119,8 +121,8 @@ $page_instance->load_nav();
    </div>
    <div class="form group">
     <label>Allowed <span title="Cross Origin Resource Sharing">(CORS)</span> Request Origins</label>
-	<?php $allowed_cors_origins = ItemModel::get_items( array('category'=>'allowed-cors-origins') ); ?>
-	<textarea class="form-control" id="allowed-cors-origins" data-key="allowed_cors_origins" placeholder="Enter origin urls, separated by commas"><?php foreach($allowed_cors_origins AS $origin): echo $origin['value']. ', '; endforeach; ?></textarea>
+	<?php $allowed_cors_origins = get_accepted_origins(); ?>
+	<textarea class="form-control" id="allowed-cors-origins" data-key="allowed_cors_origins" placeholder="Enter origin urls, separated by commas"><?php foreach($allowed_cors_origins AS $origin): echo $origin. ', '; endforeach; ?></textarea>
 	<button data-update-key="allowed-cors-origins" data-action="update_allowed_cors_origins" 
 	class="btn btn-primary bg-no-repeat bg-right bg-processing update-btn pull-right" style="position:relative; top:5px;">Update</button>
 	<div class="clear"></div>

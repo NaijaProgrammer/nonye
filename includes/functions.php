@@ -10,7 +10,7 @@ function get_accepted_origins()
 	foreach($allowed_cors_origins AS $origin){
 		$accepted_origins[] = $origin['value'];
 	}
-	return $accepted_origins;
+	return array_unique($accepted_origins);
 }
 function verify_request_origin($die = true, $message='')
 {
