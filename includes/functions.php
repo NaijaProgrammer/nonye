@@ -34,6 +34,22 @@ function verify_request_origin($die = true, $message='')
 		}
     }
 }
+
+/*
+* $name string facebook | google | twitter | linkedin
+*/
+function add_social_connect_button( $name, $data = array() )
+{
+	extract($data);
+	include_once(SITE_DIR. '/includes/social-connect-buttons/social-connect-buttons-style.php');
+	include SITE_DIR. '/includes/social-connect-buttons/'. $name. '-connect-button.php';
+}
+function add_or_separator()
+{
+	include_once(SITE_DIR. '/includes/social-connect-buttons/social-connect-buttons-style.php');
+	include SITE_DIR. '/includes/social-connect-buttons/or-separator.php';
+}
+
 function get_db_instance()
 {
 	return Db::get_instance(DB_SERVER, DB_USER, DB_PASS, DB_NAME);
@@ -865,7 +881,7 @@ function extract_number_from_string($string_with_number)
 function format_number($number, $num_of_decimals = 2)
 {
 	$number = extract_number_from_string($number);
-	$number = number_format($number, $num_of_decimals);
+	$number = number_format($number, $num_of_decimals); //number_format($number, 2, '.', ',')
 	return $number;
 }
 
