@@ -27,6 +27,11 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$return_data = array('success'=>true, 'message'=>'Settings have been updated successfully');
 	}
 	
+	if($action == 'update_company_address') {
+		update_app_settings( array('company-address'=>$company_address) );
+		$return_data = array('success'=>true, 'message'=>'Settings have been updated successfully');
+	}
+	
 	if($action == 'update_allowed_cors_origins') {
 		
 		$existing_origins = get_accepted_origins();
@@ -119,10 +124,22 @@ $page_instance->load_nav();
     <input type="text" id="session-lifetime" data-key="session_lifetime" value="<?php echo get_app_setting('session-lifetime'); ?>" class="form-control">
 	<span data-update-key="session-lifetime" data-action="update_session_lifetime" class="input-group-addon btn btn-primary bg-no-repeat bg-right bg-processing update-btn">Update</span>
    </div>
+   
+   <div class="form group">
+    <label>Business Address (Enter new lines by hitting the "Enter" button)</label>
+	<textarea class="form-control resize-vertical" 
+	id="company-address" data-key="company_address" 
+	placeholder="Enter address (newlines by hitting 'Enter')"
+	style="height:120px;"><?php echo get_app_setting('company-address'); ?></textarea>
+	<button data-update-key="company-address" data-action="update_company_address" 
+	class="btn btn-primary bg-no-repeat bg-right bg-processing update-btn pull-right" style="position:relative; top:5px;">Update</button>
+	<div class="clear"></div>
+   </div>
+   
    <div class="form group">
     <label>Allowed <span title="Cross Origin Resource Sharing">(CORS)</span> Request Origins</label>
 	<?php $allowed_cors_origins = get_accepted_origins(); ?>
-	<textarea class="form-control" id="allowed-cors-origins" data-key="allowed_cors_origins" placeholder="Enter origin urls, separated by commas"><?php foreach($allowed_cors_origins AS $origin): echo $origin. ', '; endforeach; ?></textarea>
+	<textarea class="form-control resize-vertical" id="allowed-cors-origins" data-key="allowed_cors_origins" placeholder="Enter origin urls, separated by commas"><?php foreach($allowed_cors_origins AS $origin): echo $origin. ', '; endforeach; ?></textarea>
 	<button data-update-key="allowed-cors-origins" data-action="update_allowed_cors_origins" 
 	class="btn btn-primary bg-no-repeat bg-right bg-processing update-btn pull-right" style="position:relative; top:5px;">Update</button>
 	<div class="clear"></div>
