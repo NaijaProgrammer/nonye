@@ -175,6 +175,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'):
 		'active-theme'                       => 'default',
 		'session-lifetime'                   => 60,
 		'password-min-length'                => 6,
+		'company-address'                    => '',
 		'default-user-image-url'             => get_site_url(). '/resources/images/default-user-avatar.png',
 		'registration-success-mail-message'  => htmlspecialchars( $registration_success_msg ),
 		'registration-success-mail-sender'   => 'admin@{{site_name}}.com',
