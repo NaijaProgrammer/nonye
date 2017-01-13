@@ -7,6 +7,7 @@
 	<link rel="Shortcut Icon" type="image/x-icon" href="<?php echo SITE_URL; ?>/favicon.png" />
 	
 	<!--<link href="<?php echo ADMIN_URL; ?>/css/lib/iconFont.css" rel="stylesheet" />-->
+	<link href="<?php echo SITE_URL; ?>/css/util.css" rel="stylesheet" />
     <link href="<?php echo $theme_url; ?>/css/bootstrap.min.css" rel="stylesheet" />
 	<link href="<?php echo $theme_url; ?>/css/jasny-bootstrap.min.css" rel="stylesheet" />
 	
@@ -20,6 +21,7 @@
 	<script src="<?php echo SITE_URL; ?>/js/lib/jslib/u-i-n-x/form.js"></script>
 	<script src="<?php echo SITE_URL; ?>/js.php"></script>
 	<script src="<?php echo SITE_URL; ?>/js/site.js"></script>
+	<script src="<?php echo SITE_URL; ?>/js/functions.js"></script>
 	<script src="<?php echo $theme_url; ?>/js/jquery.min.js"></script>
 	<script src="<?php echo $theme_url; ?>/js/theme.js"></script>
 </head>
