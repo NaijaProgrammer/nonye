@@ -1173,15 +1173,15 @@ function format_date($date, $format = 'F d, Y H:i:s')
 	//return date( $format, strtotime($date) );
 }
 
-function get_time_elapsed($start, $return_highest=true, $end='')
+function get_time_difference($start, $return_highest=true, $end='')
 {
 	$data = array(
-		'years'   => get_difference($start, 'y', $end),
-		'months'  => get_difference($start, 'm', $end),
-		'days'    => get_difference($start, 'd', $end),
-		'hours'   => get_difference($start, 'h', $end),
-		'minutes' => get_difference($start, 'i', $end),
-		'seconds' => get_difference($start, 's', $end),
+		'years'   => get_difference_in($start, 'y', $end),
+		'months'  => get_difference_in($start, 'm', $end),
+		'days'    => get_difference_in($start, 'd', $end),
+		'hours'   => get_difference_in($start, 'h', $end),
+		'minutes' => get_difference_in($start, 'i', $end),
+		'seconds' => get_difference_in($start, 's', $end),
 	);
 	
 	if($return_highest)
@@ -1199,10 +1199,10 @@ function get_time_elapsed($start, $return_highest=true, $end='')
 
 /*
 * Cf. http://ca2.php.net/manual/en/dateinterval.format.php
-* Most used formats for this app:
+* Most used formats :
 * y, m, d, h, i, s, 
 */
-function get_difference($start, $format, $end ='')
+function get_difference_in($start, $format, $end ='')
 {
     $start_date = new DateTime($start);
 	$end_date   = new DateTime($end);
