@@ -254,7 +254,7 @@ class Page
 		$options['site_url']      = SITE_URL;
 		$options['theme_url']     = $this->get_theme_url();
 		$options['theme_dir']     = $this->get_theme_dir();
-		$options['current_user']  = UserModel::get_user_instance(UserModel::get_current_user_id());
+		$options['current_user']  = ( UserModel::user_is_logged_in() ? UserModel::get_user_instance(UserModel::get_current_user_id()) : null );
 		$options['page_instance'] = $this;
 		
 		extract($options);
