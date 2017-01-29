@@ -163,7 +163,7 @@ function get_user_posts($user_id, $where_data = array(), $order_data = array(), 
 /* Utility Functions */
 function get_time_elapsed_intelligent($the_date)
 {
-	$time_elapsed = get_time_elapsed($the_date, true);
+	$time_elapsed = get_time_difference($the_date, true);
 	return ( (stristr($time_elapsed, 'days') !== FALSE) && ( intval($time_elapsed) > 7 ) ) ? format_date($the_date, 'F d, Y') : $time_elapsed. ' ago';
 }
 
@@ -274,7 +274,7 @@ function get_post_data($post_id)
 		'title'         => $post->get('title'),
 		'fTitle'        => get_substring($post->get('title')),
 		'imageURL'      => get_post_image_url($post_id),
-		'dateCreated'   => get_time_elapsed($post->get('date_added')),
+		'dateCreated'   => get_time_difference($post->get('date_added')),
 		'fDateCreated'  => format_date( $post->get('date_added') ),
 		'viewCount'     => $post->get_view_data($count=true),
 		'fViewCount'    => format_count($post->get_view_data($count=true)),
