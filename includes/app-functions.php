@@ -289,6 +289,13 @@ function get_post_data($post_id)
 function get_post_image_url($post_id, $default_img_src='')
 {
 	$post    = PostModel::get_post_instance($post_id);
+	$featured_image_url      = trim ( $post->get_meta('featured-image-url') );
+	$featured_image_url_path = str_replace( get_site_url(). '/', '', $featured_image_url );
+	
+	if( !empty($featured_image_url_path) ) {
+		return $featured_image_url;
+	}
+	
 	$post_c  = $post->get('content');
 	$img_src = '';
 	
