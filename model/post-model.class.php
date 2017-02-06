@@ -12,13 +12,11 @@ class PostModel extends BaseModel
 	*/
 	public static function create($data)
 	{
-		if( !isset($data['parent_id']) )
-		{
+		if( !isset($data['parent_id']) ) {
 			$data['parent_id'] = 0;
 		}
 		
-		if( !isset($data['excerpt']) )
-		{
+		if( !isset($data['excerpt']) ) {
 			$data['excerpt'] = '';
 		}
 		
@@ -38,18 +36,15 @@ class PostModel extends BaseModel
 			{
 				$post = self::get_post_instance($stmt->insert_id);
 				
-				if( isset($forum_id) )
-				{
+				if( isset($forum_id) ) {
 					$post->add_to_forum($forum_id);
 				}
 				
-				if( isset($category_id) )
-				{
+				if( isset($category_id) ) {
 					$post->add_to_category($category_id);
 				}
 				
-				if( isset($tags) && is_array($tags) )
-				{
+				if( isset($tags) && is_array($tags) ) {
 					array_walk( $tags, array($post, 'tag') );
 					/*
 					foreach($tags AS $tag)
@@ -67,8 +62,7 @@ class PostModel extends BaseModel
 		}
 		catch(Exception $e)
 		{
-			if( is_development_server() )
-			{
+			if( is_development_server() ) {
 				die( $e->getMessage() );
 			}
 			return null;
@@ -343,21 +337,50 @@ class Post extends PostModel
 	* author_id
 	* title
 	* content
+	* meta data e.g featured-image-url and other values not in the courses table
+	* meta data should be added as array in format: meta_key =>array('value'=>your_value, 'overwrite'=>boolean
+	* e.g update( array(
+	* 'title' => 'course title',
+	* 'description' => 'course description',
+	* 'featured-image' => array('value'=>'theUrl', 'overwrite'=>true)
+	* ) )
+	* The meta data 'overwrite' parameter is optional, defaults to false
 	*/
 	public function update($update_data)
 	{
 		$udata = array();
+		$meta_data = array();
 		$where = array( 'id'=>$this->get_id() );
 		
+		foreach( $update_data AS $key => $value ) {
+			if( ($key != 'id') && ($key != 'parent_id') && ($key != 'date_created') ) {
+
+				if( is_array($value) ){
+					$meta_data[$key] = $value;
+				}
+				else{
+					$udata[$key] = $value;
+				}
+			}
+		}
+		
+		if( !empty($meta_data) ){
+			$this->update_meta_data($meta_data); 
+		}
+		if( !empty($udata) ){
+			$this->update_table( self::get_tables_prefix(). "posts", $udata, $where );
+		}
+		
+		/*
 		foreach( $update_data AS $key => $value )
 		{
-			if( ($key != 'id') && ($key != 'parent_id') && ($key != 'date_created') )
-			{
+			if( ($key != 'id') && ($key != 'parent_id') && ($key != 'date_created') ) {
 				$udata[$key] = $value;
 			}
 		}
 		
 		return $this->update_table( self::get_tables_prefix(). "posts", $udata, $where );
+		*/
 	}
 	
 	/*
@@ -501,6 +524,59 @@ class Post extends PostModel
 				die( $e->getMessage() );
 			}
 			return '';
+		}
+	}
+	
+	public function get_meta($meta_key, $order = array(), $limit = '')
+	{
+		$tp       = self::get_tables_prefix();
+		$meta_key = trim($meta_key);
+		$limit    = trim($limit);
+		$post_id  = $this->get_id();
+		$values   = array();
+		//$unique_metas = array('price');
+		
+		try {
+			$dbh  = self::get_db_connection();
+			$str  = "SELECT `meta_value` FROM {$tp}post_meta WHERE `post_id` = $post_id AND `meta_key` = ?";
+			$str .= parent::parse_order_data($order, array('post_id', 'meta_value', 'date'));
+			$str .= !empty($limit) ? " LIMIT ?" : "";
+			$stmt = $dbh->prepare( $str );
+			
+			if( !empty($limit) ) {
+				$stmt->bind_param("ss", $meta_key, $limit);
+			}
+			else {
+				$stmt->bind_param("s", $meta_key);
+			}
+			
+			$stmt->execute();
+			
+			//without this, $stmt->num_rows returns 0, even if there is some result set returned
+			$stmt->store_result();
+			
+			$num_rows = $stmt->num_rows;
+			
+			//without this, we get: Warning: Course::get_meta(): Couldn't fetch mysqli_stmt in FILE_PATH 
+			if($num_rows < 1){
+				return '';
+			}
+			
+			$stmt->bind_result($meta_value);
+			
+			while ($stmt->fetch()) {
+				$values[] = $meta_value;
+			}
+			
+			$stmt->close();
+			//return ( in_array( $meta_key, $unique_metas ) || $limit == '1' ? $values[0] : $values );
+			return ( $num_rows == 1 || $limit == '1' ? $values[0] : $values );
+		}
+		catch(Exception $e) {
+			if( is_development_server() ) {
+				die( $e->getMessage() );
+			}
+			return null;
 		}
 	}
 	
@@ -697,6 +773,97 @@ class Post extends PostModel
 		}
 		
 		return array_unique( $author_ids );
+	}
+	
+	private function insert_meta_data($meta_key, $meta_value)
+	{
+		$tp  = self::get_tables_prefix();
+		$post_id = $this->get_id();
+		
+		try {
+			$dbh  = self::get_db_connection();
+			$stmt = $dbh->prepare( "INSERT INTO {$tp}post_meta (`post_id`, `meta_key`, `meta_value`, `date`) VALUES (?, ?, ?, UTC_TIMESTAMP())" );
+			$stmt->bind_param("iss", $post_id, $meta_key, $meta_value);
+			$stmt->execute();
+			
+			if($stmt->affected_rows) {
+				return $stmt->insert_id;
+			}
+			
+			$stmt->close();
+		}
+		catch(Exception $e) {
+			if( is_development_server() ) {
+				die( $e->getMessage() );
+			}
+			return null;
+		}
+	}
+	
+	/*
+	* $data_array associative array of associative array(s) 
+	* format : array(
+	* 	key => array('value'=>value, 'overwrite'=>boolean),
+	*	key => array('value'=>value, 'overwrite'=>boolean),
+	*	...
+	* )
+	* e.g array(
+	*	'featured-image-url' => array('value'=>'http://url/images/src', 'overwrite'=>true)
+	*)
+	*/
+	private function update_meta_data($data_array)
+	{
+		$tp      = self::get_tables_prefix();
+		$post_id = $this->get_id();
+		
+		foreach($data_array AS $meta_key => $val_array){
+			if( $this->meta_exists($meta_key) && !empty($val_array['overwrite']) ){
+				$where = array('post_id'=>$post_id, 'meta_key'=>$meta_key);
+				$this->update_table( self::get_tables_prefix(). "post_meta", array('meta_value'=>$val_array['value']), $where);
+			}
+			else{
+				$this->insert_meta_data($meta_key, $val_array['value']);
+			}
+		}
+	}
+	
+	private function meta_exists($meta_key)
+	{
+		$tp      = self::get_tables_prefix();
+		$post_id = $this->get_id();
+		$ids     = array();
+		
+		try {
+			$dbh  = self::get_db_connection();
+			$stmt = $dbh->prepare( "SELECT `id` FROM {$tp}post_meta WHERE `post_id` = $post_id AND `meta_key` = ? LIMIT 1" );
+			$stmt->bind_param("s", $meta_key);
+			$stmt->execute();
+			
+			//without this, $stmt->num_rows returns 0, even if there is some result set returned
+			$stmt->store_result();
+			
+			$num_rows = $stmt->num_rows;
+			
+			//without this, we get: Warning: Course::get_meta(): Couldn't fetch mysqli_stmt in FILE_PATH 
+			if($num_rows < 1){
+				return false;
+			}
+			
+			$stmt->bind_result($meta_id);
+			
+			while ($stmt->fetch()) {
+				$ids[] = $meta_id;
+			}
+			
+			$stmt->close();
+			return !empty($ids);
+		}
+		catch(Exception $e) {
+			if( is_development_server() ) {
+				die( $e->getMessage() );
+			}
+			return null;
+		}
 	}
 	
 	private function get_id()

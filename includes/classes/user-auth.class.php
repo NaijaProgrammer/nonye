@@ -6,15 +6,13 @@ class UserAuth
 	* email string
 	* password string
 	*/
-	public static function register_user($data)
+	public static function register_user($data, $send_success_mail = true)
 	{  
 		$decoded_data = self::_decode_supplied_user_data_($data);
 		$signup_data  = array();
 		
-		foreach($decoded_data AS $key => $value)
-		{
-			if(Util::is_scalar($value))
-			{
+		foreach($decoded_data AS $key => $value) {
+			if(Util::is_scalar($value)) {
 				$signup_data[$key] = is_string($value) ? trim($value) : $value;
 			}
 		}
@@ -28,46 +26,41 @@ class UserAuth
 			array( 'error_condition'=>empty($password), 'error_message'=>'Enter your password' )
 		));
 		
-		if($validate['error'])
-		{
+		if($validate['error']) {
 			$response_data = array('error'=>true, 'message'=>DataSanitizer::escape_output_string($validate['status_message']));
 		}
 			
-		else
-		{
+		else {
 			$signup_data['login'] = $email;
 			$registrant_id        = UserModel::process_user_registration($signup_data);
 			
-			if($registrant_id)
-			{
-				$site_name = get_app_setting('site-name');
-				assign_role_to_user($registrant_id, 'User');
-				
-				if(empty($username))
-				{
-					$username = generate_username($registrant_id);
-				}
-				
-				$mail_subject = 'Welcome to '. $site_name;
-				$mail_message = get_mail_message('registration-success-mail-message', array('username'=>$username)); //get_app_setting('registration-success-message'); //get_registration_success_message($signup_data);
-				
-				send_email(array(
-					'to'      => $email,
-					'from'    => $site_name. ' <'. get_app_setting('registration-success-mail-sender'). '>',
-					'subject' => $mail_subject,
-					'message' => generate_html_mail( array('title'=>$mail_subject, 'message'=>$mail_message) )
-				));
-				
+			if($registrant_id) {
 				$response_data = array('success'=>true, 'userID'=>$registrant_id, 'userEmail'=>$email, 'userLogin'=>$email);
 				
-				if( is_development_server() )
-				{
-					$response_data['message'] = escape_output_string($mail_message);
+				assign_role_to_user($registrant_id, 'User');
+				
+				if(empty($username)) {
+					$username = generate_username($registrant_id);
+				}
+				if( $send_success_mail ) {
+					$site_name    = get_app_setting('site-name');
+					$mail_subject = 'Welcome to '. $site_name;
+				    $mail_message = get_mail_message('registration-success-mail-message', array('username'=>$username)); //get_app_setting('registration-success-message'); //get_registration_success_message($signup_data);
+				
+				    @send_email(array(
+					    'to'      => $email,
+					    'from'    => $site_name. ' <'. get_app_setting('registration-success-mail-sender'). '>',
+					    'subject' => $mail_subject,
+					    'message' => generate_html_mail( array('title'=>$mail_subject, 'message'=>$mail_message) )
+				    ));
+					
+					if( is_development_server() ) {
+					    $response_data['message'] = escape_output_string($mail_message);
+				    }
 				}
 			}
 			
-			else
-			{
+			else {
 				$response_data = array('error'=>true, 'status_message'=>'There was a problem processing your request. <br/>Please try again.');
 			}
 		}

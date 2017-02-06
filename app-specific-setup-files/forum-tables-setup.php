@@ -62,12 +62,13 @@ function create_forum_tables()
 				`post_id`    int NOT NULL DEFAULT '0',
 				`meta_key`   varchar(255) DEFAULT NULL,
 				`meta_value` longtext,
+				`date`       datetime NOT NULL,
 				PRIMARY KEY (`id`),
 				KEY `post_id` (`post_id`),
 				KEY `meta_key` (`meta_key`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;" );
 		}
-		
+
 		else if($tables[$i] == "comments")
 		{
 			$db_obj->execute_query("CREATE TABLE IF NOT EXISTS {$tables_prefix}comments (
