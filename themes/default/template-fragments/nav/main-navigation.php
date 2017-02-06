@@ -27,10 +27,11 @@
 	 </ul>
 	</li>
 	<?php else: ?>
-	<li class="user-auth-btn" title="Login or Signup"><a class="glyphicon glyphicon-user cursor-pointer"></a></li>
+	<?php //<li class="user-auth-btn" title="Login or Signup"><a class="glyphicon glyphicon-user cursor-pointer"></a></li> ?>
 	<?php endif; ?>
    </ul>
    <ul class="nav navbar-nav full-effect">
+    <?php if($user_is_logged_in): ?>
 	<li class="hidden-xs hidden-sm">
 	 <div id="user-notification-dropdown-container" class="dropdown dropdown-lg">
 	  <span class="notification-counter"></span>
@@ -42,11 +43,14 @@
 	  </div>
 	 </div>
 	</li>
-	<?php if($user_is_logged_in): ?>
 	 <li>
 	  <div id="user-welcome-container"><span style="color:#aaa;">Welcome</span>
 	   <a style="text-decoration:none; color:#aaa;" href="<?php echo get_user_profile_url(); ?>"><?php echo get_user_data(UserModel::get_current_user_id(), 'username'); ?></a>
 	  </div>
+	 </li>
+	 <?php else: ?>
+	 <li class="hidden-xs hidden-sm">
+	  <div id="user-notification-dropdown-container" class="dropdown dropdown-lg">&nbsp;</div>
 	 </li>
 	<?php endif; ?>
    </ul>

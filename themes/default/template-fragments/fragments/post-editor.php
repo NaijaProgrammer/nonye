@@ -9,7 +9,7 @@
 	z-index:1000; 
 	padding:25px 25px; 
 	background-color:#e9e9e9; 
-	display: <?php echo ( isset($show_on_init) && $show_on_init ? 'block' : 'none' ); ?>
+	display: none; /*<?php //echo ( $auto_display ? 'block' : 'none' ); ?>*/
 }
 #editor-collapser
 {
@@ -60,6 +60,9 @@
 <?php
 $value       = isset($value)       ? $value       : '';
 $placeholder = isset($placeholder) ? $placeholder : '';
+$auto_display = isset($auto_display) ? $auto_display : false;
+$parent_post_id = isset($parent_post_id) ? $parent_post_id : 0;
+$on_before_submit = isset($on_before_submit) ? $on_before_submit : 'function(){ return true; }';
 
 $show_post_title_field    = get_app_setting('show-post-title-field', true);
 $show_post_forum_field    = get_app_setting('show-post-forum-field', true);
@@ -68,12 +71,7 @@ $show_post_body_field     = get_app_setting('show-post-body-field', true);
 $show_post_tags_field     = get_app_setting('show-post-tags-field', true);
 ?>
 <?php if($show_post_forum_field): $forums = ForumModel::get_forums( false, array(), array('name'=>'ASC'), 0 ); endif; ?>
-<?php 
-if($show_post_category_field && !$show_post_forum_field)
-{
-	$categories = CategoryModel::get_categories( false, array(), array('name'=>'ASC'), 0 );
-}
-?>
+<?php if($show_post_category_field && !$show_post_forum_field): $categories = CategoryModel::get_categories( false, array(), array('name'=>'ASC'), 0 ); endif; ?>
 
 <div id="post-editor-wrapper">
 <form id="new-post-form">
@@ -579,13 +577,11 @@ $('#new-post-form').on('submit', function(e){
 	var extraData = null;
 	var parentPostID = $('#parent-post-id').val();
 
-	if( parentPostID > 0 )
-	{
+	if( parentPostID > 0 ) {
 		//this is a reply/response
 		extraData = { reply : true, parent_id : parentPostID }
 	}
-	else
-	{
+	else {
 		//this is a brand-new post
 		var postTitle    = '';
 		var postForum    = '';
@@ -618,9 +614,22 @@ $('#new-post-form').on('submit', function(e){
 			status   : postStatus,
 		}
 	}
+	
+	var onBeforeSubmit = <?php echo $on_before_submit; ?>;
+	if( typeof onBeforeSubmit === 'function' ) {
+		var moreData = onBeforeSubmit(); 
 		
-	for(var x in extraData)
-	{
+		if(moreData === false) {
+			return;
+		}
+		if(typeof moreData === 'object') {
+			for(var x in moreData) {
+		        extraData[x] = moreData[x];
+	        }
+		}
+	}
+
+	for(var x in extraData) {
 		data[x] = extraData[x];
 	}
 
@@ -628,42 +637,37 @@ $('#new-post-form').on('submit', function(e){
 		method   : "POST",
 		cache    : false,
 		data     : data,
-		error    : function(jqXHR, status, error){
+		error    : function(jqXHR, status, error) {
 			enable('post-create-btn');
 			unsetAsProcessing('post-create-btn');
 		},
-		success  : function(data, status, jqXHR){
+		success  : function(data, status, jqXHR) {
 			
 			data = JSON.parse(data);
 
-			if(data.error)
-			{
+			if(data.error) {
 				$('#status-message').removeClass('success');
 				$('#status-message').addClass('error');
 				$('#status-message').html( data.message );
-				if(data.errorType == 'unauthenticatedUserError')
-				{
+				if(data.errorType == 'unauthenticatedUserError') {
 					showLoginForm();
 					
-					function showLoginForm()
-					{
+					function showLoginForm() {
 						//$('#user-authentication-section').modal();
 						setTimeout(function redirect(){location.reload()}, 2000);
 					}
 				}
-				else
-				{
+				else {
 					enable('post-create-btn');
 					unsetAsProcessing('post-create-btn');
 				}
 			}
-			else
-			{
+			else {
 				$('#status-message').removeClass('error');
 				$('#status-message').addClass('success');
 				$('#new-post-form')[0].reset();
 				
-				if( parentPostID > 0 ){
+				if( parentPostID > 0 ) {
 					enable('post-create-btn');
 					unsetAsProcessing('post-create-btn');
 					return; //since we are now using ajax to auto-get the most recent comments, (in view.php) no need to refresh the page to see the comment
@@ -674,8 +678,7 @@ $('#new-post-form').on('submit', function(e){
 				setTimeout(function redirect(){location.reload()}, 1000);
 			}
 		},
-		complete : function(jqXHR, status)
-		{
+		complete : function(jqXHR, status) {
 
 		}
 	})
@@ -720,3 +723,16 @@ function showPostEditor(parentPostID)
 	}
 }
 </script>
+
+<?php if( $auto_display ): ?>
+<script>
+$(document).ready(function(){
+	showPostEditor( <?php echo $parent_post_id; ?> );
+	
+	$('.post-editor-opener').on('click', function(event){ 
+		event.preventDefault();
+		$('body,html').animate({scrollTop:$(document).height()},1000);
+	});
+});
+</script>
+<?php endif; ?>

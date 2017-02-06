@@ -2,7 +2,7 @@
 function create_forum_tables()
 { 
 	$db_obj        = get_db_instance();
-	$tables        = array('forums', 'categories', 'tags', 'posts', 'comments', 'forum_categories', 'forum_posts', 'category_posts', 'tag_posts', 'post_views');
+	$tables        = array('forums', 'categories', 'tags', 'posts', 'post_meta', 'comments', 'forum_categories', 'forum_posts', 'category_posts', 'tag_posts', 'post_views');
 	$tables_len    = count($tables);
 	$tables_prefix = TABLES_PREFIX;
 	
@@ -56,6 +56,18 @@ function create_forum_tables()
 			) DEFAULT CHARACTER SET utf8 AUTO_INCREMENT=3456;" ); //end sql command
 		}
 	  
+	    else if($tables[$i] == "post_meta") {
+			$db_obj->execute_query("CREATE TABLE IF NOT EXISTS {$tables_prefix}post_meta (
+				`id`         int NOT NULL AUTO_INCREMENT,
+				`post_id`    int NOT NULL DEFAULT '0',
+				`meta_key`   varchar(255) DEFAULT NULL,
+				`meta_value` longtext,
+				PRIMARY KEY (`id`),
+				KEY `post_id` (`post_id`),
+				KEY `meta_key` (`meta_key`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;" );
+		}
+		
 		else if($tables[$i] == "comments")
 		{
 			$db_obj->execute_query("CREATE TABLE IF NOT EXISTS {$tables_prefix}comments (

@@ -1,35 +1,4 @@
-<?php $page_instance = Page::get_instance(); ?>
-<?php
-$page_instance->add_header(array(
-	'page_title'       => $page_title,
-	'page_keywords'    => $page_keywords,
-	'page_description' => $page_description,
-	'robots_value'     => $robots_value,
-	'open_graph_data'  => $open_graph_data,
-	'current_user'     => $current_user //coming from the app-controller class
-));
-
-$page_instance->add_stylesheets(array());
-$page_instance->add_nav();
-?>
 <script src="<?php echo SITE_URL; ?>/js/lib/holder/holder.js"></script>
-<div class="view-switcher-box"><?php include __DIR__. '/common/view-switcher.php'; ?></div>
-<?php $page_instance->add_nav('secondary-navigation'); ?>
-
-
-<div class="container posts-listing main-container">
-  
- <div class="clear"></div>
- <?php include __DIR__. '/common/new-posts-alert.php'; ?>
- <div class="clear" style="margin-bottom:5px;"></div>
- <div class="col-lg-3 hidden-xs" style="border:none;1px solid #ccc; padding-left:0">
-  <?php $page_instance->add_sidebar('recent-comments'); ?>
-  
-  <?php if( get_app_setting('show-post-forum-field', true) ): $page_instance->add_sidebar('forums'); endif; ?>
-  <?php if( get_app_setting('show-post-category-field', true) ): $page_instance->add_sidebar('categories'); endif; ?>
-  
-  <?php $page_instance->add_sidebar('popular-links'); ?>
- </div>
  <div id="posts-grid-container" class="col-lg-9" style="border:none; padding:0;">
   <?php foreach($posts AS $post_id): ?>
   <?php $post = PostModel::get_post_instance($post_id); ?>
@@ -96,12 +65,6 @@ $page_instance->add_nav();
   <?php endforeach; ?>
  </div>
  
- <div class="clear">&nbsp;</div>
- <?php include __DIR__. '/common/older-posts-load-button.php'; ?>
-  
-</div>
-<div class="clear">&nbsp;</div>
-
 <script>
 function createPostHTML(post)
 {
@@ -152,6 +115,3 @@ function createPostHTML(post)
 <?php $post_html_creator = 'createPostHTML'; ?>
 <?php $posts_container   = "$('#posts-grid-container')"; ?>
 <?php include __DIR__. '/common/posts-loader-script.php'; ?>
-
-<?php //$page_instance->add_footer(); ?>
-<?php $page_instance->close_page(); ?>
