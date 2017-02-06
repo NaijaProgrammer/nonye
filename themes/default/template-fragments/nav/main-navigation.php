@@ -391,10 +391,8 @@ function notify(msg,opts)
 			var str      = '';
 			var keywords = getSearchParameter('keywords').split(' ');
 			
-			for(var i = 0; i < keywords.length; i ++)
-			{
-				if( trim(keywords[i]) != '')
-				{
+			for(var i = 0; i < keywords.length; i ++) {
+				if( trim(keywords[i]) != '') {
 					str += assembleParameterHTML(keywords[i], 'keyword');
 				}
 			}
@@ -407,8 +405,7 @@ function notify(msg,opts)
 			var str = '';
 			var authors = getSearchParameter('authors');
 			
-			for(var i = 0; i < authors.length; i ++)
-			{
+			for(var i = 0; i < authors.length; i ++) {
 				str += assembleParameterHTML(authors[i], 'author');
 			}
 			
@@ -421,8 +418,7 @@ function notify(msg,opts)
 			var str = '';
 			var forums = getSearchParameter('forums');
 			
-			for(var i = 0; i < forums.length; i ++)
-			{
+			for(var i = 0; i < forums.length; i ++) {
 				str += assembleParameterHTML(forums[i], 'forum');
 			}
 			
@@ -436,8 +432,7 @@ function notify(msg,opts)
 			var str        = '';
 			var categories = getSearchParameter('categories');
 			
-			for(var i = 0; i < categories.length; i ++)
-			{
+			for(var i = 0; i < categories.length; i ++) {
 				str += assembleParameterHTML(categories[i], 'category');
 			}
 			
@@ -451,8 +446,7 @@ function notify(msg,opts)
 			var str  = '';
 			var tags = getSearchParameter('tags');
 			
-			for(var i = 0; i < tags.length; i ++)
-			{
+			for(var i = 0; i < tags.length; i ++) {
 				str += assembleParameterHTML(tags[i], 'tag');
 			}
 			
@@ -465,8 +459,7 @@ function notify(msg,opts)
 			var baseUrl = siteURL;
 			var paramPath = '';
 			
-			switch(paramType.toLowerCase())
-			{
+			switch(paramType.toLowerCase()) {
 				case 'keywords' : paramPath = ''; break;
 				case 'author'   : paramPath = '/users/' + paramName; break;
 				case 'forum'    : paramPath = '/forums/' + paramName; break;
@@ -509,13 +502,12 @@ function notify(msg,opts)
 		tags = $('#post-search-filter-tags').tagEditor('getTags')[0].tags;
 		<?php endif; ?>
 		
-		switch( paramName.toLowerCase() )
-		{
+		switch( paramName.toLowerCase() ) {
 			case 'keywords'   : return $('#post-search-keyword').val();
 			case 'authors'    : return $('#post-search-filter-authors').tagEditor('getTags')[0].tags;
-			case 'forums'     : forums;
-			case 'categories' : categories;
-			case 'tags'       : tags;
+			case 'forums'     : return forums;
+			case 'categories' : return categories;
+			case 'tags'       : return tags;
 		}
 	}
 	function runSearch(focusedElement)
@@ -636,17 +628,11 @@ function notify(msg,opts)
 				'categories'   : JSON.stringify(categories),
 				'tags'         : JSON.stringify(tags)
 			},
-			error : function(jqXHR, status, error){
-				if(isDevServer)
-				{
-					console.log( 'Post search filter attempt status : ' + status + '\r\nerror : ' + error );
-				}
-				
+			error : function(jqXHR, status, error) {
 				displayStatusMessage(statusMsgFieldID, 'An unknown error occurred. Please try again.', 'error');
 			},
-			success  : function(data, status, jqXHR){
-				if(isDevServer)
-				{
+			success  : function(data, status, jqXHR) {
+				if(isDevServer) {
 					console.log( 'Post search filter attempt status : ' + status + '\r\nsuccess : ' + data );
 				}
 				
@@ -654,18 +640,15 @@ function notify(msg,opts)
 				setSearchParametersBoxValues();
 				callback(data);
 				
-				if(data.length > 0)
-				{
+				if(data.length > 0) {
 					showSearchParametersBox();
 				}
-				else
-				{
+				else {
 					hideSearchParametersBox();
 				}
 				
 			},
-			complete : function(jqXHR, status)
-			{
+			complete : function(jqXHR, status) {
 				//unsetAsProcessing(btnID);
 				//enable(btnID);
 			}
