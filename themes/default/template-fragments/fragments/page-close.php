@@ -1,8 +1,3 @@
-<?php 
-$display_post_editor = isset($display_post_editor) ? $display_post_editor : true;
-$parent_post_id = isset($parent_post_id) ? $parent_post_id : 0;
-$header_title = isset($header_title) ? $header_title : 'Create new post';
-?>
 <?php if(UserModel::user_is_logged_in()): ?>
 <script>
 (function compulsoryActions(){
@@ -194,32 +189,8 @@ $(document).ready(function(){
 });
 </script>
 <script src="<?php echo $theme_url; ?>/js/bootstrap.min.js"></script>
-<?php
-//if( UserModel::user_is_logged_in() ) : $page_instance->add_fragment( 'post-editor', array('value'=>'', 'placeholder'=>'Type in your post here') );
-//import_admin_functions();
-//if( user_can('Create Posts') )
-//{
-	echo '<h3 class="post-editor-header-title text-centered">'. $header_title. '</h3>';
-	get_post_editor( $opts = array('placeholder'=>'Enter Post', 'value'=>'', 'show_on_init'=>false) );
-//}
 
-if( !UserModel::user_is_logged_in() )
-{
-	$page_instance->add_fragment( 'login-signup-forms', array() );
-}
-?>
-<?php if( $display_post_editor ): ?>
-<script>
-$(document).ready(function(){
-	showPostEditor( <?php echo $parent_post_id; ?> );
-	
-	$('.post-editor-opener').on('click', function(event){ 
-		event.preventDefault();
-		$('body,html').animate({scrollTop:$(document).height()},1000);
-	});
-});
-</script>
-<?php endif; ?>
+<?php if( !UserModel::user_is_logged_in() ) : $page_instance->add_fragment( 'login-signup-forms', array() ); endif; ?>
 
 <?php //include(INCLUDES_DIR. '/user-timezone-setter.php'); ?>
 <?php //echo date_default_timezone_get(); ?>

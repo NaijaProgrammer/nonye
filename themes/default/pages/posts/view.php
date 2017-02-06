@@ -12,6 +12,7 @@ $page_instance->add_header(array(
 $page_instance->add_stylesheets(array());
 $page_instance->add_nav();
 ?>
+<?php $user_is_logged_in = ($current_user != null); ?>
 <?php $page_instance->add_nav('secondary-navigation'); ?>
 <?php 
 /*
@@ -177,6 +178,8 @@ $page_instance->add_nav();
  </div>
 
 </div>
+
+<div style="margin-top:20px;"></div>
 
 <!--<script src="<?php //echo $site_url; ?>/js/lib/jquery-ui/jquery-ui.min.js"></script>-->
 
@@ -346,14 +349,18 @@ function initUserCard(){
 </script>
 
 <style>
-#post-editor-wrapper { position:relative !important;  width:50% !important; margin-left:auto !important; margin-right:auto !important; }
+#post-editor-wrapper, 
+#comment-poster-data-field { position:relative !important;  width:50% !important; margin-left:auto !important; margin-right:auto !important; }
+#comment-poster-name-field, #comment-poster-email-field { display:inline-block !important; width:49.7% !important; }
 #preview-window-wrapper { display:none; }
 #editor-window-wrapper { width:100% !important; }
 #post-create-btn { position: relative;  bottom: 15px; left:312px; /*right: 225px;*/ }
 #status-message { position:relative; right:327px; bottom:10px; }
 
 @media screen and (max-width: 767px){
-	#post-editor-wrapper { width:100% !important; }
+	#post-editor-wrapper, #comment-poster-data-field { width:100% !important; }
+	#comment-poster-name-field, #comment-poster-email-field { display:block !important; width:98% !important; margin-left:auto; margin-right:auto;}
+	#comment-poster-name-field { margin-bottom:5px; }
 	#editor-collapser { }
 	#post-create-btn { position:relative; left:0; right:15px; }
 	#status-message { position:relative; right:15px; bottom:10px; }
@@ -376,6 +383,34 @@ $(document).ready(function(){
 	showPostEditor(<?php echo $post_id; ?>);
 });
 </script>-->
+
+<?php if(!$user_is_logged_in): ?>
+<div id="comment-poster-data-field" class="form-group" style="margin-bottom:10px;">
+ <input id="comment-poster-name-field" class="form-control" type="text" placeholder="Enter your name"/>
+ <input id="comment-poster-email-field" class="form-control" type="email" placeholder="Enter your email (required)" />
+ <script>
+  var onBeforeCommentSubmit = function() {
+	var name  = $('#comment-poster-name-field').val();
+	var email = $('#comment-poster-email-field').val();
+	
+	if( !Site.Util.isValidEmail(email) ) { 
+		return false;
+	}
+	
+	return { 'name': name, 'email': email }
+  }
+ </script>
+</div>
+<?php endif; ?>
+<?php 
+get_post_editor( array(
+   'parent_post_id'   =>  $post_id, 
+   'placeholder'      => 'Enter Your comment', 
+   'value'            => '', 
+   'auto_display'     => true, 
+   'on_before_submit' => !$user_is_logged_in ? 'onBeforeCommentSubmit' : 'function(){ return true; }'
+) ); 
+?>
 
 <?php //$page_instance->add_footer('post-view'); ?>
 <?php $page_instance->close_page( array('display_post_editor'=>true, 'parent_post_id'=>$post_id, 'header_title'=>'Add comment') ); ?>
