@@ -78,7 +78,7 @@ $show_post_tags_field     = get_app_setting('show-post-tags-field', true);
  <a id="editor-collapser" class="cursor-pointer"><i class="fa fa-arrow-down"></i></a>
  <div class="clear"></div>
  <div class="topic-elements" style="">
- 
+
  <?php if($show_post_title_field): ?>
  <div class="col-md-3" style="padding-left:0 !important;">
   <input id="post-title-field" class="form-control" type="text" placeholder="title"/>
@@ -616,10 +616,19 @@ $('#new-post-form').on('submit', function(e){
 	}
 	
 	var onBeforeSubmit = <?php echo $on_before_submit; ?>;
+	
 	if( typeof onBeforeSubmit === 'function' ) {
 		var moreData = onBeforeSubmit(); 
 		
-		if(moreData === false) {
+		if( moreData === false ) {
+			enable('post-create-btn');
+			unsetAsProcessing('post-create-btn');
+			return;
+		}
+		else if( (typeof moreData['error'] !== 'undefined') && (moreData['error']) ) {
+			displayStatusMessage( moreData['message'], 'error' );
+			enable('post-create-btn');
+			unsetAsProcessing('post-create-btn');
 			return;
 		}
 		if(typeof moreData === 'object') {
@@ -628,11 +637,24 @@ $('#new-post-form').on('submit', function(e){
 	        }
 		}
 	}
-
+		
 	for(var x in extraData) {
 		data[x] = extraData[x];
 	}
-
+	
+	function displayStatusMessage(message, msgType) {
+		if(msgType == 'error') {
+			$('#status-message').removeClass('success');
+			$('#status-message').addClass('error');
+		}
+		else {
+			$('#status-message').removeClass('error');
+			$('#status-message').addClass('success');
+		}
+		
+		$('#status-message').html( message );
+	}
+	
 	$.ajax(ajaxURL + '/index.php', {
 		method   : "POST",
 		cache    : false,
@@ -646,9 +668,7 @@ $('#new-post-form').on('submit', function(e){
 			data = JSON.parse(data);
 
 			if(data.error) {
-				$('#status-message').removeClass('success');
-				$('#status-message').addClass('error');
-				$('#status-message').html( data.message );
+				displayStatusMessage( data.message, 'error' );
 				if(data.errorType == 'unauthenticatedUserError') {
 					showLoginForm();
 					
@@ -663,17 +683,17 @@ $('#new-post-form').on('submit', function(e){
 				}
 			}
 			else {
-				$('#status-message').removeClass('error');
-				$('#status-message').addClass('success');
+				
 				$('#new-post-form')[0].reset();
 				
 				if( parentPostID > 0 ) {
+					displayStatusMessage('', 'success');
 					enable('post-create-btn');
 					unsetAsProcessing('post-create-btn');
 					return; //since we are now using ajax to auto-get the most recent comments, (in view.php) no need to refresh the page to see the comment
 				}
 				
-				$('#status-message').html( 'Post submitted successfully. Redirecting...' );
+				displayStatusMessage('Post submitted successfully. Redirecting...', 'success');
 				$('#post-editor-wrapper').slideUp('slow');
 				setTimeout(function redirect(){location.reload()}, 1000);
 			}

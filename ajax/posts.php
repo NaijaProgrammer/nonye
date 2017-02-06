@@ -12,6 +12,7 @@ if(isset($_POST['create']))
 	$forum_id    = $_POST['forum'];
 	$category_id = $_POST['category'];
 	$tags        = json_decode(trim($_POST['tags']));
+	$featured_image_url = isset($_POST['featured-image-url']) ? trim($_POST['featured-image-url']) : '';
 	
 	$require_post_title    = get_app_setting('require-post-title-field', true);
 	$require_post_forum    = get_app_setting('require-post-forum-field', true);
@@ -29,25 +30,19 @@ if(isset($_POST['create']))
 		array('error_condition'=>count($tags) < $min_post_tags, 'error_message'=>'Add at least '. count($tags). ' tag(s) to your post', 'error_type'=>'tagCountIncomplete')
 	));
 	
-	if($validate['error'])
-	{
+	if($validate['error']) {
 		$response_data = array('error'=>true, 'message'=>$validate['status_message'], 'errorType'=>$validate['error_type']. 'Error');
 	}
-	else
-	{
+	else {
 		import_admin_functions();
-		for($i = 0, $len = count($tags); $i < $len; $i++)
-		{
+		for($i = 0, $len = count($tags); $i < $len; $i++) {
 			$tag_name = $tags[$i];
 			
-			if( !tag_exists($tag_name) )
-			{
-				if( user_can('Create Tags') )
-				{
+			if( !tag_exists($tag_name) ) {
+				if( user_can('Create Tags') ) {
 					TagModel::create( array('creator_id'=>$current_user_id, 'name'=>strtolower($tag_name), 'description'=>'') );
 				}
-				else
-				{
+				else {
 					unset($tags[$i]);
 				}
 			}
@@ -63,11 +58,16 @@ if(isset($_POST['create']))
 			'status'      => $status
 		));
 		
-		if( is_object($post) )
-		{
-			if( $status == 'published' )
-			{
+		if( is_object($post) ){
+			
+			if( $status == 'published' ) {
 				$post->set_publish_date();
+			}
+			
+			if( !empty($featured_image_url) ) {
+				$post->update(array(
+				    'featured-image-url' => array('value'=>$featured_image_url, 'overwrite'=>true)
+				));
 			}
 			
 			$post_id     = $post->get('id');
@@ -82,8 +82,7 @@ if(isset($_POST['create']))
 			create_short_url($post_id);
 			$response_data = array('success'=>true, 'postID'=>$post->get('id'));
 		}
-		else
-		{
+		else {
 			$response_data = array('error'=>true, 'message'=>'An unexpected error occurred', 'errorType'=>'internalSystemError');
 		}
 	}
@@ -96,21 +95,51 @@ else if(isset($_POST['reply']))
 		content
 		creator_id
 	*/
-	$parent_id   = $_POST['parent_id'];
-	$author_id   = $current_user_id; //$_POST['creator_id'];
-	$content     = $_POST['content'];
+	$parent_id    = $_POST['parent_id'];
+	$author_id    = $current_user_id; //$_POST['creator_id'];
+	$author_name  = isset($_POST['commenter-name']) ? trim($_POST['commenter-name']) : '';
+	$author_email = isset($_POST['commenter-email']) ? trim($_POST['commenter-email']) : '';
+	$content      = $_POST['content'];
+	
+	$email_field_was_sent = isset($_POST['commenter-email']);
+	$email_field_is_valid = ( $email_field_was_sent && is_valid_email($author_email) );
 	
 	$validate = Validator::validate(array(
-		array('error_condition'=>!$user_is_logged_in, 'error_message'=>'Login to reply to this post', 'error_type'=>'unauthenticatedUser'),
+	    array('error_condition'=>(!$user_is_logged_in && !$email_field_was_sent), 'error_message'=>'Login to reply to this post', 'error_type'=>'unauthenticatedUser'),
+		array('error_condition'=>(!$user_is_logged_in && !$email_field_is_valid), 'error_message'=>'Please enter your email or Login to reply to this post', 'error_type'=>'emailFieldEmpty'),
 		array('error_condition'=>empty($content), 'error_message'=>'Enter the content of your post', 'error_type'=>'emptyContent'),
 	));
 	
-	if($validate['error'])
-	{
+	if($validate['error']) {
 		$response_data = array('error'=>true, 'message'=>$validate['status_message'], 'errorType'=>$validate['error_type']. 'Error');
 	}
-	else
-	{
+	else {
+		
+		if( email_exists($author_email) ) {
+			$author_id = get_user_id($author_email);
+		}
+		else {
+			
+			$fullname  = $author_name;
+		    $name_data = explode(' ', $fullname);
+		    $firstname = !empty($name_data[0]) ? trim($name_data[0]) : '';
+		    $lastname  = !empty($name_data[1]) ? trim($name_data[1]) : '';
+			
+			$registrant_data = array( 
+			    'firstname' => $firstname,
+				'lastname'  => $lastname,
+			    'email'     => $author_email, 
+				'password'  => generate_random_string('ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz123456789', 9) 
+			);
+			
+			$registration_data = UserAuth::register_user( $registrant_data, $send_success_mail = false );
+			
+			if( is_array($registration_data) && isset($registration_data['success']) ) {
+				$author_id = $registration_data['userID'];
+				update_user_last_seen_data( $author_id, get_post_url($parent_id) );
+			}
+		}
+		
 		$post = PostModel::create(array(
 			'title'     => '',
 			'parent_id' => $parent_id,
@@ -118,8 +147,7 @@ else if(isset($_POST['reply']))
 			'author_id' => $author_id,
 		));
 		
-		if( is_object($post) )
-		{
+		if( is_object($post) ) {
 			$post_id     = $post->get('id');
 			$activity_id =  ActivityManager::create_activity(array(
 				'object_id'      => $post_id,
@@ -129,16 +157,14 @@ else if(isset($_POST['reply']))
 				'description'    => ''
 			));
 			
-			if($activity_id)
-			{
+			if($activity_id) {
 				publish_notification($activity_id);
 			}
 			
 			create_short_url($post_id);
 			$response_data = array('success'=>true, 'postID'=>$post->get('id'));
 		}
-		else
-		{
+		else {
 			$response_data = array('error'=>true, 'message'=>'An unexpected error occurred', 'errorType'=>'internalSystemError');
 		}
 	}

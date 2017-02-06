@@ -354,7 +354,7 @@ function initUserCard(){
 #comment-poster-name-field, #comment-poster-email-field { display:inline-block !important; width:49.7% !important; }
 #preview-window-wrapper { display:none; }
 #editor-window-wrapper { width:100% !important; }
-#post-create-btn { position: relative;  bottom: 15px; left:312px; /*right: 225px;*/ }
+#post-create-btn { position: relative;  bottom: 15px; left:312px; z-index:999; /*right: 225px;*/ }
 #status-message { position:relative; right:327px; bottom:10px; }
 
 @media screen and (max-width: 767px){
@@ -394,10 +394,10 @@ $(document).ready(function(){
 	var email = $('#comment-poster-email-field').val();
 	
 	if( !Site.Util.isValidEmail(email) ) { 
-		return false;
+		return { 'error':true, 'message': 'Login or enter your email' }
 	}
 	
-	return { 'name': name, 'email': email }
+	return { 'commenter-name': name, 'commenter-email': email }
   }
  </script>
 </div>
