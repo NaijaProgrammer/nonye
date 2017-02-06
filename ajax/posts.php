@@ -343,50 +343,41 @@ else if(isset($_GET['search-posts']))
 	
 	$keywords     = trim($_GET['keywords']);
 	$authors      = json_decode(trim($_GET['authors']));
-	$forums       = json_decode(trim($_GET['forums']));
-	$categories   = json_decode(trim($_GET['categories']));
-	$tags         = json_decode(trim($_GET['tags']));
+	$forums       = isset($_GET['forums']) ? json_decode(trim($_GET['forums'])) : array();
+	$categories   = isset($_GET['categories']) ? json_decode(trim($_GET['categories'])) : array();
+	$tags         = isset($_GET['tags']) ? json_decode(trim($_GET['tags'])) : array();
 	
-	if( empty($keywords) && empty($authors) && empty($forums) && empty($categories) && empty($tags) )
-	{
+	if( empty($keywords) && empty($authors) && empty($forums) && empty($categories) && empty($tags) ) {
 		echo json_encode($response_data, true);
 		exit;
 	}
 	
-	foreach($authors AS $username)
-	{
+	foreach($authors AS $username) {
 		$author_ids[] = get_user_id(trim($username));
 	}
-	foreach($forums AS $forum)
-	{
+	foreach($forums AS $forum) {
 		$forum_ids[] = get_forum_id(trim($forum));
 	}
-	foreach($categories AS $category)
-	{
+	foreach($categories AS $category) {
 		$category_ids[] = get_category_id(trim($category));
 	}
-	foreach($tags AS $tag)
-	{
+	foreach($tags AS $tag) {
 		$tag_ids[] = get_tag_id(trim($tag));
 	}
 	
-	if(!empty($forum_ids))
-	{
+	if(!empty($forum_ids)) {
 		$filter_data['forum'] = $forum_ids;
 	}
-	if(!empty($category_ids))
-	{
+	if(!empty($category_ids)) {
 		$filter_data['category'] = $category_ids;
 	}
-	if(!empty($tag_ids))
-	{
+	if(!empty($tag_ids)) {
 		$filter_data['tag'] = $tag_ids;
 	}
 	
 	$post_ids = PostModel::search($keywords, $author_ids, $filter_data, $orders, $limit);
 	
-	foreach($post_ids AS $post_id)
-	{
+	foreach($post_ids AS $post_id) {
 		$response_data[] = get_post_data($post_id);
 	}
 }

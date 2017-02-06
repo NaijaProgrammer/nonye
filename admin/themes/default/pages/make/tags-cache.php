@@ -32,7 +32,7 @@ $page_instance->load_nav();
 	$creator_id  = $tag->get('creator_id');
 	$name        = escape_output_string($tag->get('name'));
 	$description = escape_output_string($tag->get('description'));
-	$date_added  = $tag->get('date_added');
+	$date_added  = $tag->get('date_created');
 	$posts_count = $tag->get_posts_count();
 	$output_str .= "   array('id'=>'$tag_id', 'creator_id'=>'$creator_id', 'name'=>'$name', 'description'=>'$description', 'posts_count'=>'$posts_count', 'date_added'=>'$date_added'),". NL;
   }

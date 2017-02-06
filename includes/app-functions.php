@@ -244,7 +244,7 @@ function get_post_data($post_id)
 {
 	$post     = PostModel::get_post_instance($post_id);
 	$forum    = ( !empty($post->get_forums())   ? ForumModel::get_forum_instance( $post->get_forums()[0] ) : null );
-	$category = ( !empty($post->get_categories) ? CategoryModel::get_category_instance( $post->get_categories()[0] ) : null );
+	$category = ( !empty($post->get_categories()) ? CategoryModel::get_category_instance( $post->get_categories()[0] ) : null );
 	$tags     = ( !empty($post->get_tags())        ? $post->get_tags() : null ) ;
 	$author   = UserModel::get_user_instance( $post->get('author_id') );
 	
@@ -252,16 +252,13 @@ function get_post_data($post_id)
 	$category_a = array();
 	$tags_a     = array();
 	
-	if( !empty($forum) )
-	{
+	if( !empty($forum) ) {
 		$forum_a = array( 'name'=>$forum->get('name'), 'url'=>generate_url(array('controller'=>'posts', 'action'=>'forum', 'qs'=>array($forum->get('name')))) );
 	}
-	if( !empty($category) )
-	{
+	if( !empty($category) ) {
 		$category_a = array( 'name'=> $category->get('name'), 'url'=>generate_url(array('controller'=>'posts', 'action'=>'category', 'qs'=>array($category->get('name')))));
 	}
-	for($i=0, $len=count($tags); $i < $len; $i++)
-	{
+	for($i=0, $len=count($tags); $i < $len; $i++) {
 		$tag = TagModel::get_tag_instance($tags[$i]); 
 		$tags_a[] = array( 'name'=>$tag->get('name'), 'url'=>generate_url(array('controller'=>'posts', 'action'=>'tagged', 'qs'=>array($tag->get('name')))) );
 	}
@@ -274,8 +271,8 @@ function get_post_data($post_id)
 		'title'         => $post->get('title'),
 		'fTitle'        => get_substring($post->get('title')),
 		'imageURL'      => get_post_image_url($post_id),
-		'dateCreated'   => get_time_difference($post->get('date_added')),
-		'fDateCreated'  => format_date( $post->get('date_added') ),
+		'dateCreated'   => get_time_difference($post->get('date_created')),
+		'fDateCreated'  => format_date( $post->get('date_created') ),
 		'viewCount'     => $post->get_view_data($count=true),
 		'fViewCount'    => format_count($post->get_view_data($count=true)),
 		'commentCount'  => $post->get_comments($count=true),

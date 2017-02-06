@@ -32,7 +32,7 @@ $page_instance->load_nav();
 	$creator_id  = $category->get('creator_id');
 	$name        = escape_output_string($category->get('name'));
 	$description = escape_output_string($category->get('description'));
-	$date_added  = $category->get('date_added');
+	$date_added  = $category->get('date_created');
 	$posts_count = $category->get_posts_count();
 	$output_str .= "   array('id'=>'$category_id', 'creator_id'=>'$creator_id', 'name'=>'$name', 'description'=>'$description', 'posts_count'=>'$posts_count', 'date_added'=>'$date_added'),". NL;
   }
