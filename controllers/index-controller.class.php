@@ -4,8 +4,8 @@ class IndexController extends AppController
 {
 	public function execute()
 	{
-		$this->get_controller('posts')->execute();
-		exit;
+		//$this->get_controller('posts')->execute();
+		//exit;
 		
 		/* 
 		 * inherits from base controller: read-only
