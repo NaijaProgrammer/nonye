@@ -83,45 +83,37 @@ class PostModel extends BaseModel
 		$where_data = parent::parse_where_data($where);
 		$replacement_values = array();
 		
-		if( !empty($where_data) )
-		{
+		if( !empty($where_data) ) {
 			$select .= " WHERE ". $where_data['where_clause'];
 			$replacement_values = $where_data['where_values'];
 		}
 		
 		$select .= parent::parse_order_data($order, array('id', 'parent_id', 'title', 'excerpt', 'content', 'status', 'creator_id', 'date_created'));
 		
-		if( !empty($limit) )
-		{
-			$select .= " LIMIT ?";
-			array_push($replacement_values, $limit);
+		if( !empty($limit) ) {
+			$select .= " LIMIT $limit";
+			//array_push($replacement_values, $limit);
 		}
 		
-		try
-		{
+		try {
 			$dbh = self::get_db_connection();
 			$stmt = $dbh->prepare( $select );
 			
-			if( !empty($replacement_values) )
-			{
+			if( !empty($replacement_values) ) {
 				$stmt = parent::bind_statement_replacement_values( $stmt, parent::parse_replacement_values($replacement_values) );
 			}
 			
 			$stmt->execute();
 			
-			if($ids_only)
-			{
+			if($ids_only) {
 				$stmt->bind_result($post_id);
-				while ($stmt->fetch())
-				{
+				while ($stmt->fetch()) {
 					$posts[] = $post_id;
 				}
 			}
-			else
-			{
+			else {
 				$stmt->bind_result($post_id, $parent_id, $name, $excerpt, $description, $status, $creator_id, $date_created);
-				while ($stmt->fetch())
-				{
+				while ($stmt->fetch()) {
 					$posts[] = array('id'=>$post_id, 'parent_id'=>$parent_id, 'name'=>$name, 'excerpt'=>$excerpt, 
 						'description'=>$description, 'status'=>$status, 'creator_id'=>$creator_id, 'date_created'=>$date_created);
 				}
@@ -129,10 +121,8 @@ class PostModel extends BaseModel
 			
 			return $posts;
 		}
-		catch(Exception $e)
-		{
-			if( is_development_server() )
-			{
+		catch(Exception $e){
+			if( is_development_server() ) {
 				die( $e->getMessage() );
 			}
 			return array();
