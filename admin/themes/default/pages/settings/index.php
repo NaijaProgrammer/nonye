@@ -27,6 +27,11 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$return_data = array('success'=>true, 'message'=>'Settings have been updated successfully');
 	}
 	
+	if($action == 'update_newsletter_subscription_provider') {
+		update_app_settings( array('newsletter-subscription-provider'=>$newsletter_subscription_provider) );
+		$return_data = array('success'=>true, 'message'=>'Settings have been updated successfully');
+	}
+	
 	if($action == 'update_company_address') {
 		update_app_settings( array('company-address'=>$company_address) );
 		$return_data = array('success'=>true, 'message'=>'Settings have been updated successfully');
@@ -78,6 +83,54 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$return_data = array('success'=>true, 'message'=>'Settings have been updated successfully');
 	}
 	
+	if( !empty($_FILES['file']['name']) )
+	{
+		$rel_dir       = 'resources/uploads/images/logos';
+		$target_dir    = rtrim(SITE_DIR, '/'). '/'. $rel_dir. '/';
+		
+		is_dir($target_dir) || mkdir($target_dir, 0777, $recursive = true);
+		
+		if(!is_dir($target_dir)) {
+			$return_data = array('error'=>true, 'message'=>'Error creating the image storage folder. Please try again', 'errorType'=>'invalidUploadDirectory');
+		}
+
+		$file_names  = $_FILES['file']['name'];
+		$file_types  = $_FILES['file']['type'];
+		$tmp_names   = $_FILES['file']['tmp_name'];
+		$file_errors = $_FILES['file']['error'];
+		$file_sizes  = $_FILES['file']['size'];
+
+		$num_of_files = count($file_names);
+
+		$curr_file_name = $_FILES['file']['name'];
+		$temp_file      = $_FILES['file']['tmp_name']; 
+		$target_file    = rtrim($target_dir, '/'). '/'. $curr_file_name;
+		$image_url      = rtrim(SITE_URL, '/'). '/'. $rel_dir. '/'. $curr_file_name;
+		
+		if( move_uploaded_file($temp_file, $target_file) ) {
+			update_app_settings( array('logo-url'=>$image_url) );
+			
+			/*
+			* keep track of images used as logo images
+			*/
+			ItemModel::add_item(array(
+				'category'    => 'logo-images',
+				'uploader_id' => UserModel::get_current_user_id(),
+				'image_name'  => $curr_file_name, 
+				'image_path'  => $rel_dir, 
+				'image_file'  => $curr_file_name
+			));
+			
+			$return_data = array('success'=>true, 'imageUrl'=>$image_url);
+		}
+		
+		//header("Content-type: application/json");
+		//dropzone.js requires text/string, even though the string is in JSON format, 
+		//otherwise, we get : Invalid JSON response from server
+		echo create_json_string($return_data, false); 
+		exit;
+	}
+	
 	/* If we are doing a bulk update
 	else
 	{
@@ -125,7 +178,18 @@ $page_instance->load_nav();
 	<span data-update-key="session-lifetime" data-action="update_session_lifetime" class="input-group-addon btn btn-primary bg-no-repeat bg-right bg-processing update-btn">Update</span>
    </div>
    
-   <div class="form group">
+   <div class="input-group">
+    <span class="input-group-addon">Newsletter Subscription Provider</span>
+    <?php $curr_provider = get_app_setting('newsletter-subscription-provider'); ?>
+    <select class="form-control" id="newsletter-subscription-provider" data-key="newsletter_subscription_provider">
+	 <option value="">Select</option>
+     <option value="mailchimp" <?php echo set_as_selected_option('mailchimp', $curr_provider); ?>>MailChimp</option>
+     <option value="mailrelay" <?php echo set_as_selected_option('mailrelay', $curr_provider); ?>>MailRelay</option>
+    </select>
+	<span data-update-key="newsletter-subscription-provider" data-action="update_newsletter_subscription_provider" class="input-group-addon btn btn-primary bg-no-repeat bg-right bg-processing update-btn">Update</span>
+   </div>
+   
+   <div class="form-group">
     <label>Business Address (Enter new lines by hitting the "Enter" button)</label>
 	<textarea class="form-control resize-vertical" 
 	id="company-address" data-key="company_address" 
@@ -136,13 +200,24 @@ $page_instance->load_nav();
 	<div class="clear"></div>
    </div>
    
-   <div class="form group">
+   <div class="form-group">
     <label>Allowed <span title="Cross Origin Resource Sharing">(CORS)</span> Request Origins</label>
 	<?php $allowed_cors_origins = get_accepted_origins(); ?>
 	<textarea class="form-control resize-vertical" id="allowed-cors-origins" data-key="allowed_cors_origins" placeholder="Enter origin urls, separated by commas"><?php foreach($allowed_cors_origins AS $origin): echo $origin. ', '; endforeach; ?></textarea>
 	<button data-update-key="allowed-cors-origins" data-action="update_allowed_cors_origins" 
 	class="btn btn-primary bg-no-repeat bg-right bg-processing update-btn pull-right" style="position:relative; top:5px;">Update</button>
 	<div class="clear"></div>
+   </div>
+   
+   <div class="form-group">
+    <label>Site Logo</label>
+    <?php $site_url = get_site_url(); ?>
+    <link rel="stylesheet" href="<?php echo $site_url; ?>/js/lib/dropzone/dropzone.css" />
+    <style>.dz-preview, .dz-success-mark, .dz-error-mark{display:none;}</style>
+    <script src="<?php echo $site_url; ?>/js/lib/dropzone/dropzone.js"></script>
+    <img class="form-control" src="<?php echo get_app_setting('logo-url'); ?>" id="site-logo" style="width:150px; height:auto; margin-bottom:5px;"/>
+    <button id="site-logo-change-button" class="btn btn-primary cursor-pointer pr25 pl25">Change Site Logo</button>
+    <div class="clear"></div>
    </div>
    
    <fieldset>
@@ -198,7 +273,7 @@ $page_instance->load_nav();
 	<div class="clearfix">&nbsp;</div>
 	<hr/>
 	
-	<div class="half-width float-left">
+	<div class="half-width float-left" style="margin-right:5px;">
      <div class="form-group">
 	  <label>User Privilege Change Mail Sender</label>
 	  <input id="user-privilege-change-mail-sender-field" class="form-control" type="text" value="<?php echo sanitize_html_attribute(get_app_setting('user-privilege-change-mail-sender')); ?>"/>
@@ -209,6 +284,61 @@ $page_instance->load_nav();
      </div>
 	 <button data-update="user-privilege-change-mail" class="btn btn-primary pull-right mail-message-update-btn">Save</button>
     </div>
+	
+	<div class="clearfix">&nbsp;</div>
+	<hr/>
+	
+	<div class="half-width float-left" style="margin-right:5px;">
+     <div class="form-group">
+	  <label>Order Request Mail Sender</label>
+	  <input id="order-request-mail-sender-field" class="form-control" type="text" value="<?php echo sanitize_html_attribute(get_app_setting('order-request-mail-sender')); ?>"/>
+     </div>
+	 <div class="form-group">
+      <label>Order Request Mail Message</label>
+	  <textarea id="order-request-mail-message-field" class="form-control mail-message"><?php echo get_app_setting('order-request-mail-message'); ?></textarea>
+     </div>
+	 <button data-update="order-request-mail" class="btn btn-primary pull-right mail-message-update-btn">Save</button>
+    </div>
+	
+	<div class="half-width float-left">
+     <div class="form-group">
+	  <label>Order Request Notification Mail Sender</label>
+	  <input id="order-request-notification-mail-sender-field" class="form-control" type="text" value="<?php echo sanitize_html_attribute(get_app_setting('order-request-notification-mail-sender')); ?>"/>
+     </div>
+	 <div class="form-group">
+      <label>Order Request Notification Mail Message</label>
+	  <textarea id="order-request-notification-mail-message-field" class="form-control mail-message"><?php echo get_app_setting('order-request-notification-mail-message'); ?></textarea>
+     </div>
+	 <button data-update="order-request-notification-mail" class="btn btn-primary pull-right mail-message-update-btn">Save</button>
+    </div>
+	
+	<div class="clearfix">&nbsp;</div>
+	<hr/>
+	
+	<div class="half-width float-left" style="margin-right:5px;">
+     <div class="form-group">
+	  <label>Payment Success Mail Sender</label>
+	  <input id="payment-success-mail-sender-field" class="form-control" type="text" value="<?php echo sanitize_html_attribute(get_app_setting('payment-success-mail-sender')); ?>"/>
+     </div>
+	 <div class="form-group">
+      <label>Payment Success Mail Message</label>
+	  <textarea id="payment-success-mail-message-field" class="form-control mail-message"><?php echo get_app_setting('payment-success-mail-message'); ?></textarea>
+     </div>
+	 <button data-update="payment-success-mail" class="btn btn-primary pull-right mail-message-update-btn">Save</button>
+    </div>
+	
+	<div class="half-width float-left">
+     <div class="form-group">
+	  <label>Payment Notification Mail Sender</label>
+	  <input id="payment-notification-mail-sender-field" class="form-control" type="text" value="<?php echo sanitize_html_attribute(get_app_setting('payment-notification-mail-sender')); ?>"/>
+     </div>
+	 <div class="form-group">
+      <label>Payment Notification Mail Message</label>
+	  <textarea id="payment-notification-mail-message-field" class="form-control mail-message"><?php echo get_app_setting('payment-notification-mail-message'); ?></textarea>
+     </div>
+	 <button data-update="payment-notification-mail" class="btn btn-primary pull-right mail-message-update-btn">Save</button>
+    </div>
+	
    </fieldset>
    
  </div>
@@ -216,14 +346,13 @@ $page_instance->load_nav();
 <script>
 var updateBtns = document.querySelectorAll('.update-btn');
 
-for(var i = 0, len = updateBtns.length; i < len; i++)
-{
+for(var i = 0, len = updateBtns.length; i < len; i++) {
 	attachUpdateListener(updateBtns[i]);
 }
 
 function attachUpdateListener(updateBtn)
 {
-	Site.Event.attachListener(updateBtn, 'click', function(evt){
+	Site.Event.attachListener(updateBtn, 'click', function(evt) {
 		
 		Site.Event.cancelDefaultAction(evt);
 		disable(updateBtn);
@@ -234,11 +363,18 @@ function attachUpdateListener(updateBtn)
 		var key    = $O(elemID).getAttribute('data-key');
 		var value  = ''
 		
-		//the cors-origins field is a textarea
-		if(key === 'allowed-cors-origins'){
-			$Html(elemId);
+		//the newsletter subscription provider field is a select dropdown
+		if(key == 'newsletter_subscription_provider') {
+			value = form.getSelectElementSelectedValue(elemID);
 		}
-		else{
+		
+		//the cors-origins field is a textarea
+		//if(key === 'allowed-cors-origins'){
+		/*if(key === 'allowed_cors_origins') {
+			value = $Html(elemID);
+		}*/
+		
+		else {
 			value = $O(elemID).value;
 		}
 		
@@ -252,30 +388,24 @@ function attachUpdateListener(updateBtn)
 			'requestData'        : postData,
 			'debugCallback'      : function(reply){ console.log(reply); },
 			'readyStateCallback' : function(){},
-			'errorCallback'      : function(xhrObject, aborted)
-			{
-				if(aborted)
-				{
+			'errorCallback'      : function(xhrObject, aborted) {
+				if(aborted) {
 					alert('Sorry. This request timed out. Please try again');
 					hideProcessing(updateBtn);
 					enable(updateBtn);
 				}
 			},
-			'successCallback' : function(reply)
-			{
+			'successCallback' : function(reply) {
 				var response = Site.Util.parseAjaxResponse(reply.rawValue);
-				if(response.error)
-				{
+				if(response.error) {
 					alert(response.message);
-					switch(response.errorType)
-					{
+					switch(response.errorType) {
 						case 'unauthenticatedUserError'   : setTimeout( function(){ location.reload(); }, 5000 ); break;
 						case 'insufficientPrivilegeError' : setTimeout( function(){ location.href='<?php echo ADMIN_URL; ?>'; }, 5000 ); break;
 						default : '';
 					}
 				}
-				else if(response.success)
-				{
+				else if(response.success) {
 					alert(response.message);
 				}
 					
@@ -392,4 +522,105 @@ function attachMailMessageUpdateListener(updateBtn)
 	});
 }
 </script>
+<script>
+(function(){
+			
+	var btnID = 'site-logo-change-button';
+	var myDropzone = new Dropzone("#" + btnID, { 
+		method                       : "post",
+		url                          : '',
+		paramName                    : "file", // The name that will be used to transfer the file
+		params                       : {'action':'update-logo-image'},
+		maxFilesize                  : 1, // MB
+		maxFiles                     : null,
+		uploadMultiple               : false,
+		acceptedFiles                : 'image/*',
+		autoProcessQueue             : false,
+		dictResponseError            : 'Error from server with status {{statusCode}}',
+		dictInvalidFileType          : 'Error invalid file type',
+		dictFileTooBig               : 'Error file too big. file size is {{filesize}}, max allowed upload size is {{maxFilesize}}',
+		addRemoveLinks               : false,
+		dictCancelUpload             : 'Cancel this upload', 
+		dictCancelUploadConfirmation : 'Are you sure you wana cancel this upload?',
+		dictRemoveFile               : 'Remove this file',
+		parallelUploads              : 1, 
+				
+		processing(file)
+		{
+			setAsProcessing(btnID);
+			disable(btnID);
+		},
+		accept: function(file, done)
+		{ 
+			done(); 
+			hideDropZonePreview(); 
+			myDropzone.processQueue();
+		},
+		error: function(file, errorMessage)
+		{
+			myDropzone.errors = true;
+			myDropzone.errorMsg = errorMessage;
+			hideDropZonePreview();
+			hideDropZoneErrorAndSuccessMarks();
+			unsetAsProcessing(btnID);
+			enable(btnID);
+		},
+		queuecomplete: function()
+		{
+			if(myDropzone.errors) {
+				if( myDropzone.errorType == 'invalidUploadDirectory' ) {
+					displayImageUploadStatusMessage('Unable to create image directory. Please try again later');
+				}
+				else {
+					displayImageUploadStatusMessage(myDropzone.errorMsg);
+				}
+
+				unsetAsProcessing(btnID);
+					enable(btnID);
+				}
+				else {
+					//displayImageUploadStatusMessage('Image successfully uploaded');
+				}
+			}
+		});
+		
+		myDropzone.on('success', function(file, response) {
+
+			console.log(response, 'raw response from server');
+
+			if(typeof response === 'string') {
+				response = JSON.parse(response);
+				console.log(response, 'response as json object');
+			}
+			if(response.error) {
+				myDropzone.error = true;
+				myDropzone.message = response.message;
+				myDropzone.errorType = response.errorType;
+			}
+			else {
+				myDropzone.error = false;
+				$O('site-logo').src = response.imageUrl;
+			} 
+			
+			hideDropZonePreview();
+			unsetAsProcessing(btnID);
+			enable(btnID);
+		});
+		
+		function displayImageUploadStatusMessage(msg)
+		{
+			alert(msg);
+		}
+		function hideDropZonePreview()
+		{
+			document.querySelectorAll('.dz-preview')[0].style.display = 'none';
+		}
+		function hideDropZoneErrorAndSuccessMarks()
+		{
+			document.querySelectorAll('.dz-success-mark')[0].style.display = 'none';
+			document.querySelectorAll('.dz-error-mark')[0].style.display = 'none';
+		}
+})();
+</script>
+
 <?php $page_instance->load_footer('', array()); ?>

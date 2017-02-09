@@ -2,6 +2,10 @@
 /*
 * Core Framework API Functions
 */
+function get_site_logo_url()
+{
+	return get_app_setting('site-logo-url');
+}
 function get_accepted_origins()
 {
 	$allowed_cors_origins = ItemModel::get_items( array('category'=>'allowed-cors-origins') );
@@ -225,7 +229,7 @@ function send_email( $opts = array() )
 			$headers .= "To: ". $to. "\r\n";
 			$headers .= "From: ". $from;
 
-			return mail($to, $subject, $message, $headers);	
+			return @mail($to, $subject, $message, $headers);	
 		}
 }
 
@@ -1199,7 +1203,7 @@ function get_time_difference($start, $return_highest=true, $end='')
 
 /*
 * Cf. http://ca2.php.net/manual/en/dateinterval.format.php
-* Most used formats :
+* Most used formats for this app:
 * y, m, d, h, i, s, 
 */
 function get_difference_in($start, $format, $end ='')
@@ -1208,6 +1212,49 @@ function get_difference_in($start, $format, $end ='')
 	$end_date   = new DateTime($end);
 	$interval   = $end_date->diff($start_date);
 	return $interval->format('%'. $format);
+	
+	/*
+	// Specified date/time in your computer's time zone.
+	$date = new DateTime('2000-01-01');
+	echo $date->format('Y-m-d H:i:sP') . "\n";
+
+	// Specified date/time in the specified time zone.
+	$date = new DateTime('2000-01-01', new DateTimeZone('Pacific/Nauru'));
+	echo $date->format('Y-m-d H:i:sP') . "\n";
+
+	// Current date/time in your computer's time zone.
+	$date = new DateTime();
+	echo $date->format('Y-m-d H:i:sP') . "\n";
+
+	// Current date/time in the specified time zone.
+	$date = new DateTime(null, new DateTimeZone('Pacific/Nauru'));
+	echo $date->format('Y-m-d H:i:sP') . "\n";
+
+	// Using a UNIX timestamp.  Notice the result is in the UTC time zone.
+	$date = new DateTime('@946684800');
+	echo $date->format('Y-m-d H:i:sP') . "\n";
+
+	// Non-existent values roll over.
+	$date = new DateTime('2000-02-30');
+	echo $date->format('Y-m-d H:i:sP') . "\n";
+	
+	// New Timezone Object 
+	$timezone = new DateTimeZone('America/New_York'); 
+
+	// New DateTime Object 
+	$date =  new DateTime('@1306123200', $timezone);    
+
+	// You would expect the date to be 2011-05-23 00:00:00 
+	 // But it actually outputs 2011-05-23 04:00:00 
+	echo $date->format('Y-m-d H:i:s'); 
+
+	// You can still set the timezone though like so...        
+	$date->setTimezone($timezone); 
+
+	// This will now output 2011-05-23 00:00:00 
+	echo $date->format('Y-m-d H:i:s'); 
+
+	*/
 }
 
 //$offset e.g -7:00
