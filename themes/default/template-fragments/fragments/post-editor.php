@@ -61,14 +61,32 @@
 $value       = isset($value)       ? $value       : '';
 $placeholder = isset($placeholder) ? $placeholder : '';
 $auto_display = isset($auto_display) ? $auto_display : false;
+$post_id      = isset($post_id) ? $post_id : 0;
 $parent_post_id = isset($parent_post_id) ? $parent_post_id : 0;
 $on_before_submit = isset($on_before_submit) ? $on_before_submit : 'function(){ return true; }';
+$on_success       = isset($on_success) ? $on_success : 'undefined';
 
 $show_post_title_field    = get_app_setting('show-post-title-field', true);
 $show_post_forum_field    = get_app_setting('show-post-forum-field', true);
 $show_post_category_field = get_app_setting('show-post-category-field', true);
 $show_post_body_field     = get_app_setting('show-post-body-field', true);
 $show_post_tags_field     = get_app_setting('show-post-tags-field', true);
+
+$post = !empty($post_id) ? PostModel::get_post_instance($post_id) : null;
+
+$post_title = '';
+$post_status = '';
+$post_content  = '';
+$post_desc     = '';
+
+$editing_post = ($post != null);
+
+if($post != null) {
+	$post_title    = $post->get('title');
+    $post_status   = $post->get('status');
+	$post_content  = $post->get('content');
+	$post_desc     = $post->get('excerpt');
+}
 ?>
 <?php if($show_post_forum_field): $forums = ForumModel::get_forums( false, array(), array('name'=>'ASC'), 0 ); endif; ?>
 <?php if($show_post_category_field && !$show_post_forum_field): $categories = CategoryModel::get_categories( false, array(), array('name'=>'ASC'), 0 ); endif; ?>
@@ -81,7 +99,7 @@ $show_post_tags_field     = get_app_setting('show-post-tags-field', true);
 
  <?php if($show_post_title_field): ?>
  <div class="col-md-3" style="padding-left:0 !important;">
-  <input id="post-title-field" class="form-control" type="text" placeholder="title"/>
+  <input id="post-title-field" class="form-control" type="text" value="<?php echo sanitize_html_attribute($post_title); ?>" placeholder="title"/>
  </div>
  <?php endif; ?>
  
@@ -109,8 +127,8 @@ $show_post_tags_field     = get_app_setting('show-post-tags-field', true);
  <div class="col-md-3">
   <select id="post-status-selector" class="form-control">
     <option value="">Status</option>
-    <option value="published">Published</option>
-	<option value="draft">Draft</option>
+    <option value="published" <?php echo set_as_selected_option('published', $post_status); ?>>Published</option>
+	<option value="draft" <?php echo set_as_selected_option('draft', $post_status); ?>>Draft</option>
    </select>
  </div>
  <div class="clear">&nbsp;</div>
@@ -132,7 +150,9 @@ $show_post_tags_field     = get_app_setting('show-post-tags-field', true);
   
   <input id="parent-post-id" type="hidden" value="0"/>
   <div class="col-md-2" style="padding-right:0 !important;">
-   <button id="post-create-btn" class="btn btn-primary float-right pr25 pl25">Create</button>
+   <?php $action_btn_id   = ( ($editing_post) ? 'post-update-btn' : 'post-create-btn' ); ?>
+   <?php $action_btn_text = ( ($editing_post) ? 'Update' : 'Create' ); ?>
+   <button id="<?php echo sanitize_html_attribute($action_btn_id); ?>" class="btn btn-primary float-right pr25 pl25"><?php echo $action_btn_text; ?></button>
   </div>
  </div>
  
@@ -151,19 +171,13 @@ $show_post_tags_field     = get_app_setting('show-post-tags-field', true);
 <link rel="stylesheet" href="<?php echo $site_url; ?>/js/lib/select2/css/select2.css" />
 <script src="<?php echo $site_url; ?>/js/lib/select2/js/select2.js"></script>
 
-<!--
-<link rel="stylesheet" href="<?php //echo SITE_URL; ?>/js/lib/jquery-tag-editor/jquery.tag-editor.css">
-<script src="<?php //echo SITE_URL; ?>/js/lib/jquery-ui/jquery-ui.min.js"></script>
-<script src="<?php //echo SITE_URL; ?>/js/lib/jquery-tag-editor/jquery.caret.min.js"></script>
-<script src="<?php// echo SITE_URL; ?>/js/lib/jquery-tag-editor/jquery.tag-editor.min.js"></script>
--->
-
 <script>
 //var siteURL = '<?php echo $site_url; ?>';
 var ajaxURL = siteURL + '/ajax';
 var postTagsField = $('#post-tags-field');
 var tagsContainerIsVisible = false;
 
+(function doInitTinyMCE() {
 //https://www.tinymce.com/docs/configure/editor-appearance/
 //https://www.tinymce.com/docs/configure/file-image-upload/
 //https://www.tinymce.com/docs/configure/integration-and-setup/
@@ -222,7 +236,7 @@ tinymce.init({
 				console.log('paste');
 			});
 			
-			function updateContent()
+			/* function updateContent()
 			{
 				var editorContent = tinymce.activeEditor.getContent();
 				var buffer        = editorContent;
@@ -335,10 +349,14 @@ tinymce.init({
 						}
 					});
 				}
-			}
+			}*/
 		},
 		init_instance_callback : function(editor){  
 			//editor.getBody().style.backgroundColor = "#FFFF66"; 
+			<?php if(!empty($value)): ?>
+			editor.setContent('<?php echo $value; ?>');
+			updateContent();
+			<?php endif; ?>
 		},
 	  
 		file_picker_callback: function(callback, value, meta) {
@@ -360,6 +378,120 @@ tinymce.init({
 			}
 		},
 });
+
+	function updateContent()
+	{
+				var editorContent = tinymce.activeEditor.getContent();
+				var buffer        = editorContent;
+				var urls          = extractUrlParts(editorContent); 
+				
+				//var urlParts = extractUrlParts(text, function(elem, index, url){ return (elem.parentNode.className.indexOf( getEmbeddedUrlContainerID(url, index)) ) != -1; });
+				//console.log(urls);
+				
+				for(var i = 0; i < urls.length; i++)
+				{
+					var url = urls[i].href;
+					
+					if(isInMap(url))
+					{ 
+						//console.log('url => ' + url);
+						//console.log(urlMaps);
+						buffer = buffer.replace( new RegExp( getSpinner(), 'gm' ), '' );
+						buffer = buffer.replace( new RegExp( escapeRegex('<a href="' + url + '">' + url + '</a>'), 'gm'), getValue(url) );
+					}
+					else
+					{
+						var anchorLink = '<a href="' + url + '">' + url + '</a>';
+						buffer = buffer.replace( new RegExp(escapeRegex(anchorLink), 'gm'), getSpinner() +  anchorLink );
+					}
+				}
+				
+				$('#preview-window').html(buffer);
+				
+				inlineEmbedUrls(editorContent);
+	}
+	function getSpinner()
+	{
+		return '<span class="bg-no-repeat bg-spinner" style="display:inline-block;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>';
+	}
+	function getValue(url)
+	{
+				for(var i = 0; i < urlMaps.length; i++)
+				{
+					var currObj = urlMaps[i];
+					if( (typeof currObj == 'object')  && (currObj.key == url) )
+					{
+						return ( (currObj.value != '') ? currObj.value : '<a href="' + url + '">' + url + '</a>' );
+					}
+				}
+
+				return '<a href="' + url + '">' + url + '</a>';
+	}
+	function isInMap(url)
+	{
+		for(var i = 0; i < urlMaps.length; i++){
+			var currObj = urlMaps[i];
+			if( (typeof currObj == 'object')  && (currObj.key == url) ){
+				return true;
+			}
+		}
+
+		return false;
+	}
+		function inlineEmbedUrls(text)
+	{
+				var urlParts = extractUrlParts(text);
+
+				for(var i = 0; i < urlParts.length; i++)
+				{
+					var url = urlParts[i].href;
+					
+					if(isInMap(url))
+					{
+						continue;
+					}
+					else
+					{
+						embed(url);
+					}
+				}
+				
+				function embed(url)
+				{
+					$.ajax(ajaxURL, {
+						method   : 'GET',
+						cache    : false,
+						data     : { p : 'posts', 'get-embed-code':true, 'url':url },
+						error    : function(jqXHR, status, error){
+							if(isDevServer)
+							{
+								console.log( 'Url embed status : ' + status + '\r\nerror : ' + error );
+							}
+						},
+						success  : function(data, status, jqXHR){
+							if(isDevServer)
+							{
+								console.log( 'Url embed status : ' + status + '\r\nsuccess : ' + data );
+							}
+							
+							data     = JSON.parse(data);
+							var url  = decodeURIComponent(data.url);
+							var html = data.html;
+							
+							//$('#preview-window').html( tinymce.activeEditor.getContent().replace( new RegExp( '<a href="' + url + '">' + url + '</a>', 'gm'), html ) );
+							$('#preview-window').html( $('#preview-window').html().replace( new RegExp( getSpinner(), 'gm' ), '' ) );
+							$('#preview-window').html( $('#preview-window').html().replace( new RegExp( escapeRegex('<a href="' + url + '">' + url + '</a>'), 'gm'), html ) );
+							
+							urlMaps.push({'key':url, 'value':html});
+						},
+						complete : function(jqXHR, status)
+						{
+							
+						}
+					});
+				}
+	}	
+})();
 
 //because the initial display value of the editor-wrapper is none,
 //If these are init-ed on page load, before we set the display to block (using the slide function)
@@ -565,8 +697,11 @@ $('#new-post-form').on('submit', function(e){
 	e.preventDefault();
 	$('#status-message').html( '' );
 	
-	setAsProcessing('post-create-btn');
-	disable('post-create-btn');
+	var editingPost = '<?php echo $editing_post; ?>';
+	var btnID       = editingPost ? 'post-update-btn' : 'post-create-btn';
+	
+	setAsProcessing(btnID);
+	disable(btnID);
 	
 	var formContent = ''; //$('#preview-window').html(); //tinymce.activeEditor.getContent();
 	<?php if($show_post_body_field): ?>
@@ -582,7 +717,7 @@ $('#new-post-form').on('submit', function(e){
 		extraData = { reply : true, parent_id : parentPostID }
 	}
 	else {
-		//this is a brand-new post
+		
 		var postTitle    = '';
 		var postForum    = '';
 		var postCategory = '';
@@ -593,42 +728,56 @@ $('#new-post-form').on('submit', function(e){
 		postTitle = $('#post-title-field').val();
 		<?php endif; ?>
 		
-		<?php if($show_post_forum_field): ?>
-		postForum = $('#post-forum-selector').val();
-		<?php endif; ?>
+		if(editingPost) {
+			//we are updating a previously created post
+			extraData = {
+				update : true,
+				id     : '<?php echo $post_id; ?>',
+				title  : postTitle, 
+				status : postStatus,
+			}
+		}
 		
-		<?php if($show_post_category_field): ?>
-		postCategory = $('#post-category-selector').val();
-		<?php endif; ?>
-		
-		<?php if($show_post_tags_field): ?>
-		postTags = JSON.stringify( postTagsField.tagEditor('getTags')[0].tags );
-		<?php endif; ?>
-		
-		extraData = {
-			create   : true,
-			title    : postTitle, //$('#post-title-field').val(),
-			forum    : postForum, //$('#post-forum-selector').val(),
-			category : postCategory, //$('#post-category-selector').val(),
-			tags     : postTags, //JSON.stringify( postTagsField.tagEditor('getTags')[0].tags )
-			status   : postStatus,
+		else {
+			//this is a brand-new post
+			<?php if($show_post_forum_field): ?>
+			postForum = $('#post-forum-selector').val();
+			<?php endif; ?>
+			
+			<?php if($show_post_category_field): ?>
+			postCategory = $('#post-category-selector').val();
+			<?php endif; ?>
+			
+			<?php if($show_post_tags_field): ?>
+			postTags = JSON.stringify( postTagsField.tagEditor('getTags')[0].tags );
+			<?php endif; ?>
+			
+			extraData = {
+				create   : true,
+				title    : postTitle, //$('#post-title-field').val(),
+				forum    : postForum, //$('#post-forum-selector').val(),
+				category : postCategory, //$('#post-category-selector').val(),
+				tags     : postTags, //JSON.stringify( postTagsField.tagEditor('getTags')[0].tags )
+				status   : postStatus,
+			}
 		}
 	}
 	
 	var onBeforeSubmit = <?php echo $on_before_submit; ?>;
+	var onSuccess = <?php echo $on_success; ?>;
 	
 	if( typeof onBeforeSubmit === 'function' ) {
 		var moreData = onBeforeSubmit(); 
 		
 		if( moreData === false ) {
-			enable('post-create-btn');
-			unsetAsProcessing('post-create-btn');
+			enable(btnID);
+			unsetAsProcessing(btnID)
 			return;
 		}
 		else if( (typeof moreData['error'] !== 'undefined') && (moreData['error']) ) {
 			displayStatusMessage( moreData['message'], 'error' );
-			enable('post-create-btn');
-			unsetAsProcessing('post-create-btn');
+			enable(btnID);
+			unsetAsProcessing(btnID);
 			return;
 		}
 		if(typeof moreData === 'object') {
@@ -660,8 +809,8 @@ $('#new-post-form').on('submit', function(e){
 		cache    : false,
 		data     : data,
 		error    : function(jqXHR, status, error) {
-			enable('post-create-btn');
-			unsetAsProcessing('post-create-btn');
+			enable(btnID);
+			unsetAsProcessing(btnID);
 		},
 		success  : function(data, status, jqXHR) {
 			
@@ -684,18 +833,25 @@ $('#new-post-form').on('submit', function(e){
 			}
 			else {
 				
-				$('#new-post-form')[0].reset();
-				
 				if( parentPostID > 0 ) {
+					$('#new-post-form')[0].reset();
 					displayStatusMessage('', 'success');
-					enable('post-create-btn');
-					unsetAsProcessing('post-create-btn');
 					return; //since we are now using ajax to auto-get the most recent comments, (in view.php) no need to refresh the page to see the comment
 				}
 				
-				displayStatusMessage('Post submitted successfully. Redirecting...', 'success');
-				$('#post-editor-wrapper').slideUp('slow');
-				setTimeout(function redirect(){location.reload()}, 1000);
+				if( typeof onSuccess == 'function') {
+					//onSuccess signature(form)
+					onSuccess( $('#new-post-form')[0] )
+				}
+				else {
+					$('#new-post-form')[0].reset();
+					displayStatusMessage('Post submitted successfully. Redirecting...', 'success');
+				    $('#post-editor-wrapper').slideUp('slow');
+				    setTimeout(function redirect(){location.reload()}, 1000);
+				}
+				
+				enable(btnID);
+				unsetAsProcessing(btnID);
 			}
 		},
 		complete : function(jqXHR, status) {

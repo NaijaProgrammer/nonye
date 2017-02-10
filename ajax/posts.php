@@ -87,6 +87,91 @@ if(isset($_POST['create']))
 		}
 	}
 }
+else if(isset($_POST['update']))
+{ 
+    import_admin_functions();
+	
+	$post_id     = trim( $_POST['id'] );
+	$title       = trim( $_POST['title'] );
+	$excerpt     = isset($_POST['excerpt']) ? trim( $_POST['excerpt'] ) : '';
+	$content     = trim( $_POST['content'] );
+	$status      = trim( $_POST['status'] );
+	$featured_image_url = isset($_POST['featured-image-url']) ? trim($_POST['featured-image-url']) : '';
+	
+	$post         = !empty($post_id) ? PostModel::get_post_instance($post_id) : null;
+	$author_id    = !empty($post) ? $post->get('author_id') : 0;
+	$require_post_title = get_app_setting('require-post-title-field', true);
+	$require_post_body  = get_app_setting('require-post-body-field', true);
+	
+	$validate = Validator::validate(array(
+		array('error_condition'=>!$user_is_logged_in, 'error_message'=>'Login to edit a post', 'error_type'=>'unauthenticatedUser'),
+		array('error_condition'=>( !is_super_admin() && ($author_id != $current_user_id) ), 'error_message'=>'You lack sufficient privilege to perform this action', 'error_type'=>'insufficientPrivilege'),
+		array('error_condition'=>empty($post_id), 'error_message'=>'Please specify a post to edit', 'error_type'=>'noPostSelected'),
+		array('error_condition'=>$require_post_title && empty($title), 'error_message'=>'Enter a title for your post', 'error_type'=>'emptyTitle'),
+		array('error_condition'=>empty($status), 'error_message'=>'Please choose a status for the post', 'error_type'=>'emptyPostStatus'),
+		array('error_condition'=>$require_post_body && empty($content), 'error_message'=>'Enter the content of your post', 'error_type'=>'emptyContent'),
+	));
+	
+	if($validate['error']) {
+		$response_data = array('error'=>true, 'message'=>$validate['status_message'], 'errorType'=>$validate['error_type']. 'Error');
+	}
+	else {
+
+		if( is_object($post) ){
+			
+	        $prev_title   = !empty($post) ? $post->get('title') : '';
+			$prev_status  = !empty($post) ? $post->get('status') : '';
+	        $prev_content = !empty($post) ? $post->get('content') : '';
+	        $prev_excerpt = !empty($post) ? $post->get('excerpt') : '';
+			
+			$post->update(array(
+		        'title'   => $title,
+			    'content' => $content,
+		        'status'  => $status,
+			    'excerpt' => $excerpt
+		    ));
+			
+			if( ($prev_status != 'published') && ($status == 'published') ) {
+				$post->set_publish_date();
+			}
+			
+			if( !empty($featured_image_url) ) {
+				$post->update(array(
+				    'featured-image-url' => array('value'=>$featured_image_url, 'overwrite'=>true)
+				));
+			}
+			
+			$post->update( array(
+			    'last-modified' => array('value'=>time(), 'overwrite'=>true),
+				'modified-by'   => array('value'=>$current_user_id, 'overwrite'=>true),
+			) );
+			
+			ItemModel::add_item(array(
+			    'category'     => 'post-edits',
+				'post-id'      => $post_id,
+				'editor-id'    => $current_user_id,
+				'prev-title'   => $prev_title,
+				'prev-status'  => $prev_status,
+				'prev-content' => $prev_content,
+				'prev-excerpt' => $prev_excerpt
+			));
+			
+			$activity_id =  ActivityManager::create_activity(array(
+				'object_id'      => $post_id,
+				'object_type'    => 'post',
+				'subject_id'     => $post->get('author_id'), 
+				'subject_action' => 'update',
+				'description'    => ''
+			));
+			
+			$response_data = array('success'=>true, 'postID'=>$post_id);
+		}
+		else {
+			$response_data = array('error'=>true, 'message'=>'An unexpected error occurred', 'errorType'=>'internalSystemError');
+		}
+	}
+}
+
 else if(isset($_POST['reply']))
 {
 	/*

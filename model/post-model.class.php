@@ -373,6 +373,12 @@ class Post extends PostModel
 		*/
 	}
 	
+	public function publish()
+	{
+		$this->update( array('status' => 'published') );
+		$this->set_publish_date();
+	}
+	
 	/*
 	* $date in format: 'YYYY-mm-dd HH:mm:ss'
 	*/
