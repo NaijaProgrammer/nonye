@@ -436,6 +436,13 @@ function update_post_view($post_id)
 	}
 }
 
+function get_post_excerpt($post_id, $excerpt_length = '')
+{
+	$post    = PostModel::get_post_instance($post_id);
+	$excerpt = trim( $post->get('excerpt') );
+	return !empty($excerpt) ? get_substring($excerpt, $excerpt_length) : get_substring( $post->get('content'), $excerpt_length );
+}
+
 function get_post_url($post_id)
 {
 	$post = PostModel::get_post_instance($post_id);
