@@ -199,15 +199,17 @@ tinymce.init({
 		images_upload_credentials: true,
 		images_upload_base_path: siteURL,
 		image_advtab      : true,
-		toolbar1          : 'undo redo | styleselect | bold italic underline | bullist numlist outdent indent | forecolor emoticons | image',
+		toolbar1          : 'undo redo | styleselect | bold italic underline | bullist numlist outdent indent | forecolor emoticons | image code',
 		//toolbar1          : 'undo redo | styleselect | bold italic underline | bullist numlist outdent indent | forecolor emoticons | link image',
+		//menubar: "tools",
+        code_dialog_width: 800,
 		//automatic_uploads : false,
 		file_picker_types : 'file image media',
 		plugins:[
 			'advlist autolink lists link image charmap print preview hr anchor pagebreak',
 			'searchreplace wordcount visualblocks visualchars code fullscreen',
 			'insertdatetime media nonbreaking save table contextmenu directionality',
-			'emojis template paste textcolor colorpicker textpattern imagetools'
+			'emojis template paste textcolor colorpicker textpattern imagetools codesample toc'
 		],
 		templates:[
 			{ title: 'Test template 1', content: 'Test 1' },
