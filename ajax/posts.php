@@ -339,11 +339,14 @@ else if(isset($_GET['most-recent-comment']))
 	{
 		$rc_author = UserModel::get_user_instance( $rc->get('author_id') );
 		$rc_parent = PostModel::get_post_instance( get_top_level_parent_post($rc_id) );
+		$date_created = $rc->get('date_created');
 		
 		$response_data = array(
 			'id'             => $rc_id,
 			'content'        => $rc->get('content'),
 			'url'            => get_post_url($rc_id),
+			'creationDate'   => format_date($date_created),
+			'elapsedTime'    => get_time_elapsed_intelligent(format_date($date_created)),
 			'author'         => $rc_author->get('username'),
 			'authorURL'      => get_user_profile_url($rc_author->get('id')),
 			'authorImageURL' => $rc_author->get('image-url', get_app_setting('default-user-image-url')),
@@ -401,11 +404,14 @@ else if(isset($_GET['recent-comments']))
 		{
 			$comment_author = UserModel::get_user_instance( $comment->get('author_id') );
 			$comment_parent = PostModel::get_post_instance( get_top_level_parent_post($comment_id) );
+			$date_created = $comment->get('date_created');
 			
 			$response_data[] = array(
 				'id'             => $comment_id,
 				'content'        => $comment->get('content'),
 				'url'            => get_post_url($comment_id),
+				'creationDate'   => format_date($date_created),
+			    'elapsedTime'    => get_time_elapsed_intelligent(format_date($date_created)),
 				'shortURL'       => get_post_short_url($comment_id),
 				'author'         => $comment_author->get('username'),
 				'authorURL'      => get_user_profile_url($comment_author->get('id')),
