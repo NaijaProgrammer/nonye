@@ -143,17 +143,21 @@ else if(isset($_POST['update']))
 			
 			$post->update( array(
 			    'last-modified' => array('value'=>time(), 'overwrite'=>true),
-				'modified-by'   => array('value'=>$current_user_id, 'overwrite'=>true),
+				'modified-by'   => array('value'=>$current_user_id, 'overwrite'=>true)
 			) );
 			
-			ItemModel::add_item(array(
-			    'category'     => 'post-edits',
-				'post-id'      => $post_id,
-				'editor-id'    => $current_user_id,
-				'prev-title'   => $prev_title,
-				'prev-status'  => $prev_status,
-				'prev-content' => $prev_content,
-				'prev-excerpt' => $prev_excerpt
+			$revision = new PostRevision($post_id);
+			$revision->update(array(
+			    'date-modified' => array('value'=>time(), 'overwrite'=>false),
+				'editor-id'     => array('value'=>$current_user_id, 'overwrite'=>false),
+				'prev-title'    => array('value'=>$prev_title, 'overwrite'=>false),
+				'new-title'     => array('value'=>$title, 'overwrite'=>false),
+				'prev-status'   => array('value'=>$prev_status, 'overwrite'=>false),
+				'new-status'    => array('value'=>$status, 'overwrite'=>false),
+				'prev-content'  => array('value'=>$prev_content, 'overwrite'=>false),
+				'new-content'   => array('value'=>$content, 'overwrite'=>false),
+				'prev-excerpt'  => array('value'=>$prev_excerpt, 'overwrite'=>false),
+				'new-excerpt'   => array('value'=>$excerpt, 'overwrite'=>false)
 			));
 			
 			$activity_id =  ActivityManager::create_activity(array(
@@ -437,7 +441,12 @@ else if(isset($_GET['get-embed-code']))
 	
 	$url = $_GET['url'];
 	$response = make_remote_request('http://api.embed.ly/1/oembed?url='. urlencode($url). '&key=:'. $embedly_api_key, array(CURLOPT_SSL_VERIFYPEER=>0,CURLOPT_SSL_VERIFYHOST=>0));
-	$response_data = array('url'=>$url, 'html'=>parse_data(json_decode($response)));
+	if( is_string($response) ) {
+		$response_data = array('url'=>$url, 'html'=>parse_data(json_decode($response)));
+	}
+	else {
+		$response_data = array('url'=>$url, 'html'=>'');
+	}
 }
 else if(isset($_GET['search-posts']))
 { 

@@ -176,6 +176,7 @@ if($post != null) {
 var ajaxURL = siteURL + '/ajax';
 var postTagsField = $('#post-tags-field');
 var tagsContainerIsVisible = false;
+var urlMaps = [];
 
 (function doInitTinyMCE() {
 //https://www.tinymce.com/docs/configure/editor-appearance/
@@ -209,7 +210,7 @@ tinymce.init({
 			'advlist autolink lists link image charmap print preview hr anchor pagebreak',
 			'searchreplace wordcount visualblocks visualchars code fullscreen',
 			'insertdatetime media nonbreaking save table contextmenu directionality',
-			'emojis template paste textcolor colorpicker textpattern imagetools codesample toc'
+			'emojis template paste textcolor colorpicker textpattern imagetools codesample'
 		],
 		templates:[
 			{ title: 'Test template 1', content: 'Test 1' },
@@ -222,7 +223,7 @@ tinymce.init({
 		
 		setup: function(editor){ 
 		
-			var urlMaps = [];
+			//var urlMaps = [];
 			
 			//http://stackoverflow.com/a/29526186/1743192
 			//also checkout : http://stackoverflow.com/a/17825012/1743192
@@ -356,7 +357,7 @@ tinymce.init({
 		init_instance_callback : function(editor){  
 			//editor.getBody().style.backgroundColor = "#FFFF66"; 
 			<?php if(!empty($value)): ?>
-			editor.setContent('<?php echo $value; ?>');
+			editor.setContent('<?php echo escape_output_string($value); ?>');
 			updateContent();
 			<?php endif; ?>
 		},

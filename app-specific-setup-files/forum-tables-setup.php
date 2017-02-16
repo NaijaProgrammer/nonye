@@ -2,7 +2,8 @@
 function create_forum_tables()
 { 
 	$db_obj        = get_db_instance();
-	$tables        = array('forums', 'categories', 'tags', 'posts', 'post_meta', 'comments', 'forum_categories', 'forum_posts', 'category_posts', 'tag_posts', 'post_views');
+	$tables        = array('forums', 'categories', 'tags', 'posts', 'post_meta', 'post_revisions', 'post_revision_meta', 
+	                       'comments', 'forum_categories', 'forum_posts', 'category_posts', 'tag_posts', 'post_views');
 	$tables_len    = count($tables);
 	$tables_prefix = TABLES_PREFIX;
 	
@@ -69,6 +70,28 @@ function create_forum_tables()
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;" );
 		}
 
+		else if($tables[$i] == "post_revisions")
+		{
+			$db_obj->execute_query("CREATE TABLE IF NOT EXISTS {$tables_prefix}post_revisions (
+				`id`      int NOT NULL auto_increment PRIMARY KEY,
+				`post_id` int NOT NULL default 0,
+				`date`    datetime NOT NULL
+			) DEFAULT CHARACTER SET utf8 AUTO_INCREMENT=3456;" ); //end sql command
+		}
+	  
+	    else if($tables[$i] == "post_revision_meta") {
+			$db_obj->execute_query("CREATE TABLE IF NOT EXISTS {$tables_prefix}post_revision_meta (
+				`id`                int NOT NULL AUTO_INCREMENT,
+				`post_revision_id`  int NOT NULL DEFAULT '0',
+				`meta_key`          varchar(255) DEFAULT NULL,
+				`meta_value`        longtext,
+				`date`              datetime NOT NULL,
+				PRIMARY KEY (`id`),
+				KEY `post_revision_id` (`post_revision_id`),
+				KEY `meta_key` (`meta_key`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;" );
+		}
+		
 		else if($tables[$i] == "comments")
 		{
 			$db_obj->execute_query("CREATE TABLE IF NOT EXISTS {$tables_prefix}comments (
