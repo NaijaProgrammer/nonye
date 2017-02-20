@@ -49,11 +49,14 @@ class PostsController extends AppController
 				$keywords .= $tag->get('name'). ',';
 			endfor;
 			
-			if(get_uri_end_point( array('ignore_query_string'=>true) ) == 'edit') {
+			$endpoint = get_uri_end_point( array('ignore_query_string'=>true) );
+			if( $endpoint  == 'edit' ) {
+				$slug_from_url = 'edit';
 				$page_file = 'edit-post.php';
 			}
 			else {
 				update_post_view($post_id);
+				$slug_from_url = $endpoint;
 				$page_file = 'view.php';
 			}
 			
@@ -64,6 +67,7 @@ class PostsController extends AppController
 				'robots_value'     => 'all',
 				'post_id'          => $post_id,
 				'post'             => $post,
+				'slug_from_url'    => $slug_from_url,
 				'open_graph_data'  => array(
 					'url'          => get_post_url($post_id),
 					'title'        => sanitize_html_attribute( $post_title ),

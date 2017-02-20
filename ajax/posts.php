@@ -168,6 +168,8 @@ else if(isset($_POST['update']))
 				'description'    => ''
 			));
 			
+			delete_short_url($post_id);
+			create_short_url($post_id);
 			$response_data = array('success'=>true, 'postID'=>$post_id);
 		}
 		else {
