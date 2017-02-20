@@ -480,6 +480,17 @@ function create_short_url($post_id)
 	get_url_shortener()->create_short_url($post_real_url, $post_short_url);
 }
 
+function delete_short_url($post_id)
+{
+	$post_short_url = get_post_short_url($post_id);
+	$conn           = mysqli_connect(DB_SERVER, DB_USER, DB_PASS, DB_NAME);
+	
+	mysqli_query( $conn,
+		"DELETE FROM `tiny_url_master` ".
+		"WHERE `tiny_url` = '". addslashes($post_short_url). "'"
+	);
+}
+
 function get_url_shortener()
 {
 	require_once rtrim(SITE_DIR, '/'). '/lib/tiny-url-with-php/tinyurl.class.php';
