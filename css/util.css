@@ -11,6 +11,8 @@ a:link, a:visited, a:hover { text-decoration:none; }
 .no-padding { padding:0;}
 .no-border { border:none;}
 .no-list-style { list-style-type:none; }
+.list-lower-alpha { list-style-type: lower-alpha; }
+.list-upper-alpha { list-style-type: upper-alpha; }
 .text-centered { text-align:center; }
 .float-left { float:left; }
 .float-right { float:right; }
@@ -32,9 +34,10 @@ a:link, a:visited, a:hover { text-decoration:none; }
 .bg-spinner { background-image: url('../resources/images/spinner.svg') !important; }
 .font-bold { font-weight:bold; }
 
+
 /** Positioning */
 .position-relative { position:relative; }
-.position-absolute { position:absolut; }
+.position-absolute { position:absolute; }
 .position-fixed { position:fixed; }
 
 /* credits: http://www.paulund.co.uk/creating-different-css3-box-shadows-effects */
