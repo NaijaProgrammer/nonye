@@ -102,11 +102,18 @@ function createUserCard(data)
 	].join('');
 }
 
-function shareOnFb(url)
-{
+function shareOnFb(url, successCallback)
+{   
+    successCallback = ( (typeof successCallback == 'function') ? successCallback : function(){} );
+	
 	shareOnFacebook(url, {
-		'success': function(msg) { notify(msg); },
-		'error'  : function(msg) { notify(msg); }
+		'success': function(msg) { 
+		    notify(msg); 
+			successCallback(); 
+		},
+		'error'  : function(msg) { 
+		    notify(msg);
+		}
 	});
 	
 	function shareOnFacebook(url, opts)
@@ -129,13 +136,17 @@ function shareOnFb(url)
 	}
 }
 
-function shareOnGPlus(url)
+function shareOnGPlus(url, successCallback)
 {
+	successCallback = ( (typeof successCallback == 'function') ? successCallback : function(){} );
+	
 	Site.Util.popup('https://plus.google.com/share?url=' + url, 600, 300);
 }
 
-function shareOnLinkedIn(url, shareTitle, shareText)
+function shareOnLinkedIn(url, shareTitle, shareText, success)
 {  
+    successCallback = ( (typeof successCallback == 'function') ? successCallback : function(){} );
+	
 	Site.Util.popup('https://www.linkedin.com/shareArticle?url=' + url + '&mini=true&title=' + shareTitle + '&summary' + shareText, '520', '570');
 }
 
