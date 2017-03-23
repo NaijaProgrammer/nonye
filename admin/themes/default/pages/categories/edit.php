@@ -1,13 +1,11 @@
 <?php
 if($_SERVER['REQUEST_METHOD'] == 'POST')
 {  
-	foreach($_POST AS $key => $value)
-	{
+	foreach($_POST AS $key => $value) {
 		$$key = trim($value);
 	}
 	
-	if($action == 'create_categories')
-	{
+	if($action == 'create_categories') {
 		$categories_array = explode(',', $categories); //category1Name:category1Description, category2Name:category2Description,
 		$categories_count = count($categories_array);
 			
@@ -17,24 +15,21 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 			array( 'error_condition'=>empty($categories_array[0]), 'error_message'=>'You must specify at least one category name', 'error_type'=>'noCategorySpecified')
 		));
 			
-		if($validate['error'])
-		{
+		if($validate['error']) {
 			$return_data = array('error'=>true, 'message'=>$validate['status_message'], 'errorType'=>$validate['error_type']. 'Error');
 		}
 			
-		else
-		{
-			for($i = 0; $i < $categories_count; $i++)
-			{
+		else {
+			for($i = 0; $i < $categories_count; $i++) {
 				$curr_category_data  = $categories_array[$i]; //category1Name:category1Description
 				$curr_category_array = explode(':', $curr_category_data);
 					
 				$category_name = isset($curr_category_array[0]) ? trim($curr_category_array[0]) : '';
 				$category_desc = isset($curr_category_array[1]) ? trim($curr_category_array[1]) : '';
 				
-				if( !empty($category_name) )
-				{
+				if( !empty($category_name) ) {
 					$category = CategoryModel::create(array(
+					    'parent_id'   => $parent_id,
 						'name'        => $category_name,
 						'description' => $category_desc,
 						'creator_id'  => UserModel::get_current_user_id()
@@ -46,47 +41,38 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 		}
 	}
 		
-	elseif($action == 'update_category')
-	{
+	elseif($action == 'update_category') {
 		$validate = Validator::validate(array(
 			array( 'error_condition'=>!UserModel::user_is_logged_in(), 'error_message'=>'You must be logged in to perform this action', 'error_type'=>'unauthenticatedUser'),
 			array( 'error_condition'=>!user_can('Manage Categories'), 'error_message'=>'You lack sufficient privilege to perform this action', 'error_type'=>'insufficientPrivilege'),
 			array( 'error_condition'=>empty($category_id), 'error_message'=>'No Category Specified', 'error_type'=>'emptyCategoryID'),
 		));
 			
-		if($validate['error'])
-		{
+		if($validate['error']) {
 			$return_data = array('error'=>true, 'message'=>$validate['status_message'], 'errorType'=>$validate['error_type']. 'Error');
 		}
 			
-		else
-		{
+		else {
 			$forums_add    = json_decode($forums_add, true);
 			$forums_remove = json_decode($forums_remove, true);
 			$category      = CategoryModel::get_category_instance($category_id);
 			
-			foreach($forums_add AS $forum)
-			{
-				if( !$category->belongs_to_forum($forum) )
-				{
+			foreach($forums_add AS $forum) {
+				if( !$category->belongs_to_forum($forum) ) {
 					$category->add_to_forum($forum);
 				}
 			}
 
-			foreach($forums_remove AS $forum)
-			{
-				if( $category->belongs_to_forum($forum) )
-				{
+			foreach($forums_remove AS $forum) {
+				if( $category->belongs_to_forum($forum) ) {
 					$category->remove_from_forum($forum);
 				}
 			}
 			
-			if( $category->update( array('name'=>$category_name, 'description'=>$category_desc) ) )
-			{
+			if( $category->update( array('parent_id'=>$parent_id, 'name'=>$category_name, 'description'=>$category_desc) ) ) {
 				$return_data = array('success'=>true, 'message'=>'Category updated successfully');
 			}
-			else
-			{
+			else {
 				$return_data = array('error'=>true, 'message'=>'Update operation failed', 'errorType'=>'updateOperationFailureError');
 			}
 		}
@@ -158,6 +144,29 @@ $page_instance->load_nav();
     <textarea id="categories" class="form-control resize-vertical" placeholder="Enter category names and descriptions in the form: category1Name:category1Description, category2Name:category2Description"></textarea>
    </div>
   <?php endif; ?>
+  
+  <div class="form-group">
+   <label>Select Parent Category</label>
+   <?php $categories = CategoryModel::get_categories(); ?>
+   <select id="parent-category" class="form-control">
+   <option value="0">Select Parent Category</option>
+   <?php foreach($categories AS $curr_cat_id): ?>
+   <?php $curr_cat = CategoryModel::get_category_instance($curr_cat_id); ?>
+   <option 
+       value="<?php echo sanitize_html_attribute( $curr_cat->get('id') ); ?>"
+	   
+	   <?php if( $mode == 'edit' ): ?>
+	   <?php //$category instance was retrieved above in the first if($mode == 'edit') ?>
+	   <?php //if current category id EQUALS/IS the parent id of the category we are currently editing ?>
+	   <?php echo set_as_selected_option( $curr_cat->get('id'), $category->get('parent_id') ); ?>
+	   <?php endif; ?>
+   >
+    <?php echo $curr_cat->get('name'); ?>
+   </option>
+   <?php endforeach; ?>
+   </select>
+  </div>
+  
   <div id="status-message" class="text-centered status-message"></div>
   <div><button id="submit-btn" class="btn btn-primary processing-bg bg-no-repeat bg-right pull-right">Save</button></div>
  </div>
@@ -171,6 +180,8 @@ $page_instance->load_nav();
 		Site.Event.cancelDefaultAction(e);
 		disable(btnID);
 		showProcessing(btnID);
+		
+		var parentCategory = form.getSelectElementSelectedValue('parent-category');
 		
 		<?php if( $mode == 'edit' ): ?>
 		
@@ -193,6 +204,7 @@ $page_instance->load_nav();
 		var params = ''    +
 		'action='          + 'update_category'                 +
 		'&category_id='    + $O('category-id').value           +
+		'&parent_id='      + parentCategory                    + 
 		'&category_name='  + $O('category-name').value         +
 		'&category_desc='  + $O('category-description').value  + 
 		'&forums_add='     + JSON.stringify(forumsToAddTo)     +
@@ -202,7 +214,8 @@ $page_instance->load_nav();
 		
 		var params = '' +
 		'action='       + 'create_categories' +
-		'&categories='      + $O('categories').value;
+		'&categories='  + $O('categories').value +
+		'&parent_id='   + parentCategory;
 		
 		<?php endif; ?>
 		

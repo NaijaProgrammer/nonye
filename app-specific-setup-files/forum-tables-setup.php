@@ -24,6 +24,7 @@ function create_forum_tables()
 		{
 			$db_obj->execute_query("CREATE TABLE IF NOT EXISTS {$tables_prefix}categories(
 				`id`          int NOT NULL auto_increment PRIMARY KEY,
+				`parent_id`   int NOT NULL default 0,
 				`name`        varchar(100),
 				`description` text,
 				`creator_id`  int NOT NULL,
