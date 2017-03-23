@@ -2,6 +2,7 @@
 class CategoryModel extends BaseModel
 {
 	/*
+	* parent_id
 	* creator_id
 	* name
 	* description
@@ -9,6 +10,7 @@ class CategoryModel extends BaseModel
 	public static function create($data)
 	{
 		extract($data);
+		$parent_id = empty($parent_id) ? 0 : $parent_id;
 		$tp  = self::get_tables_prefix();
 		
 		//It's not a parameter of the query, in that you don't have to supply a value to MySQL.
@@ -16,8 +18,8 @@ class CategoryModel extends BaseModel
 		try
 		{
 			$dbh = self::get_db_connection();
-			$stmt = $dbh->prepare( "INSERT INTO {$tp}categories (`creator_id`, `name`, `description`, `date_created`) VALUES (?, ?, ?, UTC_TIMESTAMP())" );
-			$stmt->bind_param("iss", $creator_id, $name, $description);
+			$stmt = $dbh->prepare( "INSERT INTO {$tp}categories (`parent_id`, `creator_id`, `name`, `description`, `date_created`) VALUES (?, ?, ?, ?, UTC_TIMESTAMP())" );
+			$stmt->bind_param("iiss", $parent_id, $creator_id, $name, $description);
 			$stmt->execute();
 			$insert_id = $stmt->insert_id;
 			$stmt->close();
@@ -42,7 +44,7 @@ class CategoryModel extends BaseModel
 	public static function get_categories( $ids_only = true, $where=array(), $order=array(), $limit = 0 )
 	{
 		$tp      = self::get_tables_prefix();
-		$sel_str = $ids_only ? "`id`" : "`id`, `name`, `description`, `creator_id`, `date_created`";
+		$sel_str = $ids_only ? "`id`" : "`id`, `parent_id`, `name`, `description`, `creator_id`, `date_created`";
 		$select  = "SELECT $sel_str FROM {$tp}categories";
 		$categories = array();
 		$where_data = parent::parse_where_data($where);
@@ -54,7 +56,7 @@ class CategoryModel extends BaseModel
 			$replacement_values = $where_data['where_values'];
 		}
 		
-		$select .= parent:: parse_order_data($order, array('id', 'name', 'description', 'creator_id', 'date_created'));
+		$select .= parent:: parse_order_data($order, array('id', 'parent_id', 'name', 'description', 'creator_id', 'date_created'));
 		
 		if( !empty($limit) )
 		{
@@ -84,10 +86,10 @@ class CategoryModel extends BaseModel
 			}
 			else
 			{
-				$stmt->bind_result($category_id, $name, $description, $creator_id, $date_created);
+				$stmt->bind_result($category_id, $parent_id, $name, $description, $creator_id, $date_created);
 				while ($stmt->fetch())
 				{
-					$categories[] = array('id'=>$category_id, 'name'=>$name, 'description'=>$description, 'creator_id'=>$creator_id, 'date_created'=>$date_created);
+					$categories[] = array('id'=>$category_id, 'parent_id'=>$parent_id, 'name'=>$name, 'description'=>$description, 'creator_id'=>$creator_id, 'date_created'=>$date_created);
 				}
 			}
 			
@@ -161,7 +163,7 @@ class Category extends CategoryModel
 		}
 		
 		try
-		{
+		{  
 			$stmt = $dbh->prepare( "SELECT $sel_str FROM  {$tp}categories WHERE `id` = ". $this->get_id() );
 			$stmt->execute();
 			

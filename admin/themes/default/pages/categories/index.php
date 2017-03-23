@@ -77,6 +77,7 @@ $page_instance->load_nav();
     <tr>
      <th class="text-centered">Serial No.</th>
      <th class="text-centered">Name</th>
+	 <th class="text-centered">Parent</th>
      <th class="text-centered">Description</th>
      <th class="text-centered">Posts count</th>
      <th class="text-centered">Actions</th>
@@ -86,6 +87,7 @@ $page_instance->load_nav();
     <tr>
      <th class="text-centered">Serial No.</th>
      <th class="text-centered">Name</th>
+	 <th class="text-centered">Parent</th>
      <th class="text-centered">Description</th>
      <th class="text-centered">Posts count</th>
      <th class="text-centered">Actions</th>
@@ -99,6 +101,14 @@ $page_instance->load_nav();
 	<tr id="category-<?php echo $curr_category->get('id'); ?>-row" class="<?php echo $row_class; ?>">
      <td class="text-centered"><?php echo $serial_no; ?></td>
      <td class="text-centered"><?php echo $curr_category->get('name'); ?></td>
+	 <td class="text-centered">
+	  <?php if( $parent_id = $curr_category->get('parent_id') ): ?>
+	   <?php $parent_category = CategoryModel::get_category_instance( $parent_id ); ?>
+	   <?php echo $parent_category->get('name'); ?>
+	  <?php else: ?>
+	   N/A
+	  <?php endif; ?>
+	 </td>
      <td class="text-centered"><?php echo $curr_category->get('description'); ?></td>
      <td class="text-centered"><?php echo $curr_category->get_posts_count(); ?></td>
      <td class="text-centered">
